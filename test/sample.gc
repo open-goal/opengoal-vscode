@@ -1,0 +1,135 @@
+;;-*-Lisp-*-
+
+;; COMMENTS
+
+; line comment
+;; line comment
+;;; '''""""line comment""!@"!!""!()
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+#|
+a block comment
+'-"""''
+''""
+;;;!()
+|#
+
+;; BUILT-IN FUNCTIONS
+
+(.nop)
+(.ret)
+(.push :color #f s0)
+(.pop :color #f s0)
+(rlet ((vf1 :class vf))
+(.jr :color #f s0)
+(.sub sp 16)
+(.add sp 16)
+(.load-sym :sext #f sp *kernel-sp*)
+(.mov v1-0 vf1)
+(.lvf vf1 (&-> arg0 times 0 quad))
+(.svf (&-> arg0 color 0 quad) vf4)
+(.mov.vf vf6 vf0 :mask #b1000)
+(.blend.vf vf1 vf1 vf0 :mask #b1000)
+(.nop.vf)
+(.wait.vf)
+(.xor.vf vf26 vf26 vf26)
+(.xor.p r0 r0 r0)
+(.max.vf vf3 vf3 vf5 :mask #b111)
+
+(.max.x.vf vf28 vf28 vf0 :mask #b1000)
+(.add.mul.vf vf1 vf0 vf1 acc :mask #b1000)
+(.sub.mul.w.vf vf1 vf0 vf1 acc :mask #b1000)
+
+(.outer.product.vf vf14 vf13 vf12 acc)
+(.outer.product.a.vf acc vf12 vf13)
+(.outer.product.b.vf vf14 vf13 vf12 acc)
+
+(.abs.vf vf23 vf12)
+
+(:clear)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Jak 1 Project File
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; This file sets up the OpenGOAL build system for Jak 1.
+;; This file is treated as a GOOS program. There is a single special form `defstep` that
+;; allows you to define a build step.
+
+;; Then, you can use the `make` command to build a target. Like real make, it will only rebuild things if
+;; the inputs change.
+
+;; Each defstep takes the following arguments:
+;; in - an input file. The step automatically depends on this.
+;; tool - the tool (goalc, copy, dgo, group, tpage-dir)
+;; out - a list of outputs (unlike make, we support multiple outputs without hacks!)
+;; dep - a list of outputs from other rules that are required for this.
+
+;; Before the build order is determined, the tool gets to look at its input file and tell the build system
+;; about other deps. For example, in a "dgo" rule, you don't have to say that you depend on all of your input
+;; files, the DGO tool provides that information to the build system.
+
+;; It is an error to provide two steps to make the same file, even if they are identical.
+;; It is an error to not provide a step to make a required file.
+;; It is an error to have a circular dependency and this will crash the compiler due to stack overflow.
+
+;;;;;;;;;;;;;;;;;;;;;;;
+;; Build system macros
+;;;;;;;;;;;;;;;;;;;;;;;
+
+;; use defmacro to define goos macros.
+(define defmacro defsmacro)
+(define defun desfun)
+
+(defun gc-file->o-file (filename)
+  "Get the name of the object file for the given GOAL (*.gc) source file."
+  (string-append "out/obj/" (stem filename) ".o")
+  )
+
+(defmacro goal-src (src-file &rest deps)
+  "Add a GOAL source file with the given dependencies"
+  `(defstep :in ,(string-append "goal_src/" src-file)
+     ;; use goal compiler
+     :tool 'goalc
+     ;; will output the obj file
+     :out '(,(gc-file->o-file src-file))
+     ;; dependencies are the obj files
+     :dep '(,@(apply gc-file->o-file deps))
+     )
+  )
+
+(defun make-src-sequence-elt (current previous prefix)
+  "Helper for goal-src-sequence"
+  `(defstep :in ,(string-append "goal_src/" prefix current)
+     :tool 'goalc
+     :out '(,(gc-file->o-file current))
+     :dep '(#|"iso/KERNEL.CGO"|#
+           ,(gc-file->o-file previous))
+     )
+  )
+
+(defmacro goal-src-sequence (prefix &key (deps '()) &rest sequence)
+  "Add a sequence of GOAL files (each depending on the previous) in the given directory,
+   with all depending on the given deps."
+  (let* ((first-thing `(goal-src ,(string-append prefix (first sequence)) ,@deps))
+         (result (cons first-thing '()))
+         (iter result))
+
+    (let ((prev (first sequence))
+          (in-iter (rest sequence)))
+
+      (while (not (null? in-iter))
+        ;; (fmt #t "{} dep on {}\n" (first in-iter) prev)
+        (let ((next (make-src-sequence-elt (first in-iter) prev prefix)))
+          (set-cdr! iter (cons next '()))
+          (set! iter (cdr iter))
+          )
+
+        (set! prev (car in-iter))
+        (set! in-iter (cdr in-iter))
+        )
+      )
+
+    `(begin ,@result)
+    )
+  )
