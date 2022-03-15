@@ -1,0 +1,11 @@
+{
+	"defun": {
+		"prefix": "defun",
+		"body": [
+			"(defun ${1:name} (${2:vars})",
+			"\t\"${3:doc-string}\"",
+			"\t$0)"
+		],
+		"description": "Create a new function"
+	}
+}

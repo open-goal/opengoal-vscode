@@ -49,8 +49,8 @@
     ],
     "snippets": [
       {
-        "language": "javascript",
-        "path": "./snippets/goal-snippets.json"
+        "language": "opengoal",
+        "path": "./snippets/opengoal.json"
       }
     ]
   }
