@@ -1,0 +1,57 @@
+{
+  "name": "opengoal",
+  "displayName": "OpenGOAL",
+  "description": "OpenGOAL Support for VSCode",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.65.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "opengoal",
+        "aliases": [
+          "OpenGOAL",
+          "opengoal"
+        ],
+        "extensions": [
+          ".gc",
+          ".gd"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "opengoal-goos",
+        "aliases": [
+          "OpenGOAL-GOOS",
+          "opengoal-goos"
+        ],
+        "extensions": [
+          ".gs"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "opengoal",
+        "scopeName": "source.opengoal",
+        "path": "./syntaxes/opengoal.tmLanguage.json"
+      },
+      {
+        "language": "opengoal-goos",
+        "scopeName": "source.opengoal-goos",
+        "path": "./syntaxes/opengoal-goos.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "javascript",
+        "path": "./snippets/goal-snippets.json"
+      }
+    ]
+  }
+}
