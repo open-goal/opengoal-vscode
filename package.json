@@ -2,6 +2,7 @@
   "name": "opengoal",
   "displayName": "OpenGOAL",
   "description": "OpenGOAL Support for VSCode",
+  "publisher": "opengoal",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.65.0"
@@ -9,6 +10,12 @@
   "categories": [
     "Programming Languages"
   ],
+  "icon": "img/logo.png",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/open-goal/opengoal-vscode"
+  },
   "contributes": {
     "configurationDefaults": {
       "[opengoal-ir]": {
@@ -211,10 +218,7 @@
           "opengoal-ir"
         ],
         "filenamePatterns": [
-          ".*_ir2"
-        ],
-        "extensions": [
-          ".asm"
+          "*_ir2.asm"
         ],
         "icon": {
           "light": "./icons/opengoal-ir.png",
