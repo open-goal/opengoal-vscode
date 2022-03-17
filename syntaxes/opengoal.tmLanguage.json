@@ -43,6 +43,14 @@
             }
           }
 				},
+        {
+					"match": "(`)(\\b|\\()",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.quasiquote.opengoal"
+            }
+          }
+				},
 				{
 					"match": "(,)(\\b|\\()",
           "captures": {
@@ -72,7 +80,7 @@
 		"functionsAndMacros": {
 			"patterns": [
         {
-          "match": "\\(\\s*(define|defun|defmacro|defstep|define-extern|defmethod)\\b",
+          "match": "\\(\\s*(\\:(?:bp|break|clear|cont|di|disasm|dump-all-mem|exit|pm|status|stop|sym-name|ubp)|\\.(?:abs|add|add\\.mul|blend|div|ftoi|isqrt|itof|max|min|mov|mul|nop|outer\\.product|outer\\.product\\.a|outer\\.product\\.b|sqrt|sub|wait|xor)\\.vf|\\.(?:add|add\\.mul|max|min|mul|sub\\.mul|sub)\\.[w-z]\\.vf|\\.(?:add|jr|load-sym|lvf|mov|nop|pand|pceqb|pceqh|pceqw|pceqw|pcgtb|pcgth|pcgtw|pcpyld|pcpyud|pextlb|pextlh|pextlw|pextub|pextuh|pextuw|pnor|pop|por|ppach|psubw|push|pw\\.sll|pw\\.sra|pw\\.srl|xor\\.p|ret|sub|svf)|(?:\\-|\\-\\>|\/|\\&\\+?|\\#cond|\\+|\\*|\\<\\=?|\\!?\\=|\\>\\=?)|(?:add-macro-to-autocomplete|and|asm-data-file|asm-file|asm-text-file|autocomplete|begin|block|build-dgos|car|cdr|cond|dbg|dbs|declare-file|declare-type|declare|defconstant|defenum|defglobalconstant|define-extern|define-state-hook|define-virtual-state-hook|define|defmethod|deftype|eq\\?|fmax|fmin|get-info|go-hook|goto|gs|imul64|in-package|inline|label|lambda|listen-to-target|load-project|local-vars|logand|logior|lognot|logxor|make|method-of-object|method-of-type|mlet|mod|neq\\?|new|none|nop!|not|or|print-debug-compiler-stats|print-type|psize-of|quote|reload|repl-help|reset-target|return-from|rlet|sar|set-config\\!|set\\!|seval|shl|shr|size-of|sqrtf-no-fabs|the-as|the|top-level|when-goto)|(?:defun|defmacro|defstep|defstate|let|let\\*|while))(?:\\s|\\))",
           "captures": {
             "1": {
               "name": "entity.name.function.builtin"

@@ -1,0 +1,20 @@
+{
+  "comments": {
+      "lineComment": ";;",
+      "blockComment": [ "#|", "|#" ]
+  },
+  // symbols used as brackets
+  "brackets": [
+      ["(", ")"]
+  ],
+  "surroundingPairs": [
+      ["(", ")"],
+      ["\"", "\""]
+  ],
+  "folding": {
+    "markers": {
+      "start": "^; \\.function.*",
+      "end": "^;; \\.endfunction\\b"
+    }
+  }
+}

@@ -48,35 +48,6 @@ a block comment
 
 (:clear)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Jak 1 Project File
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; This file sets up the OpenGOAL build system for Jak 1.
-;; This file is treated as a GOOS program. There is a single special form `defstep` that
-;; allows you to define a build step.
-
-;; Then, you can use the `make` command to build a target. Like real make, it will only rebuild things if
-;; the inputs change.
-
-;; Each defstep takes the following arguments:
-;; in - an input file. The step automatically depends on this.
-;; tool - the tool (goalc, copy, dgo, group, tpage-dir)
-;; out - a list of outputs (unlike make, we support multiple outputs without hacks!)
-;; dep - a list of outputs from other rules that are required for this.
-
-;; Before the build order is determined, the tool gets to look at its input file and tell the build system
-;; about other deps. For example, in a "dgo" rule, you don't have to say that you depend on all of your input
-;; files, the DGO tool provides that information to the build system.
-
-;; It is an error to provide two steps to make the same file, even if they are identical.
-;; It is an error to not provide a step to make a required file.
-;; It is an error to have a circular dependency and this will crash the compiler due to stack overflow.
-
-;;;;;;;;;;;;;;;;;;;;;;;
-;; Build system macros
-;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; use defmacro to define goos macros.
 (define defmacro defsmacro)
 (define defun desfun)

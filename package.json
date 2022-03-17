@@ -10,6 +10,130 @@
     "Programming Languages"
   ],
   "contributes": {
+    "configurationDefaults": {
+      "[opengoal-ir]": {
+        "editor.bracketPairColorization.enabled": false
+      },
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": "opengoal.ir.typeanalysis",
+            "settings": {
+              "foreground": "#fe4450E6"
+            }
+          },
+          {
+            "scope": "opengoal.ir.error",
+            "settings": {
+              "foreground": "#fe4450E6"
+            }
+          },
+          {
+            "scope": "opengoal.ir.warn",
+            "settings": {
+              "foreground": "#feeb44e6"
+            }
+          },
+          {
+            "scope": "opengoal.ir.op-num",
+            "settings": {
+              "foreground": "#EC407A",
+              "fontStyle": "bold"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.a0",
+            "settings": {
+              "foreground": "#EF9A9A"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.a1",
+            "settings": {
+              "foreground": "#F48FB1"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.a2",
+            "settings": {
+              "foreground": "#CE93D8"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.a3",
+            "settings": {
+              "foreground": "#90CAF9"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.t0",
+            "settings": {
+              "foreground": "#80DEEA"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.t1",
+            "settings": {
+              "foreground": "#80CBC4"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.t2",
+            "settings": {
+              "foreground": "#A5D6A7"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.t3",
+            "settings": {
+              "foreground": "#E6EE9C"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.float",
+            "settings": {
+              "foreground": "#BCAAA4"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.return",
+            "settings": {
+              "foreground": "#FF9100"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs.stack",
+            "settings": {
+              "foreground": "#76FF03"
+            }
+          },
+          {
+            "scope": "variable.language.opengoal.ir.regs",
+            "settings": {
+              "foreground": "#B0BEC5"
+            }
+          },
+          {
+            "scope": "entity.name.function.opengoal.ir.regs.function",
+            "settings": {
+              "fontStyle": "bold"
+            }
+          },
+          {
+            "scope": "entity.name.function.opengoal.ir.regs.symbol-table",
+            "settings": {
+              "fontStyle": "bold"
+            }
+          },
+          {
+            "scope": "entity.name.function.opengoal.ir.function.call",
+            "settings": {
+              "fontStyle": "bold"
+            }
+          }
+        ]
+      }
+    },
     "languages": [
       {
         "id": "opengoal",
@@ -21,7 +145,11 @@
           ".gc",
           ".gd"
         ],
-        "configuration": "./language-configuration.json"
+        "icon": {
+          "light": "./icons/opengoal.png",
+          "dark": "./icons/opengoal.png"
+        },
+        "configuration": "./syntaxes/configs/opengoal.jsonc"
       },
       {
         "id": "opengoal-goos",
@@ -32,7 +160,29 @@
         "extensions": [
           ".gs"
         ],
+        "icon": {
+          "light": "./icons/opengoal-goos.png",
+          "dark": "./icons/opengoal-goos.png"
+        },
         "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "opengoal-ir",
+        "aliases": [
+          "OpenGOAL-IR",
+          "opengoal-ir"
+        ],
+        "filenamePatterns": [
+          ".*_ir2"
+        ],
+        "extensions": [
+          ".asm"
+        ],
+        "icon": {
+          "light": "./icons/opengoal-ir.png",
+          "dark": "./icons/opengoal-ir.png"
+        },
+        "configuration": "./syntaxes/configs/ir.jsonc"
       }
     ],
     "grammars": [
@@ -45,6 +195,14 @@
         "language": "opengoal-goos",
         "scopeName": "source.opengoal-goos",
         "path": "./syntaxes/opengoal-goos.tmLanguage.json"
+      },
+      {
+        "language": "opengoal-ir",
+        "scopeName": "source.opengoal-ir",
+        "path": "./syntaxes/opengoal-ir.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.opengoal": "opengoal"
+        }
       }
     ],
     "snippets": [

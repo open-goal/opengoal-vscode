@@ -1,0 +1,294 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "OpenGOAL",
+  "patterns": [
+    {
+      "include": "#goalCode"
+    },
+    {
+      "include": "#errorsAndWarnings"
+    },
+    {
+      "include": "#registers"
+    },
+    {
+      "include": "#labelsAndBlocks"
+    },
+    {
+      "include": "#irSyntax"
+    },
+    {
+      "include": "#comments"
+    }
+  ],
+  "repository": {
+    "goalCode": {
+      "patterns": [
+        {
+					"name": "meta.embedded.block.opengoal",
+					"begin": ";;-\\*-OpenGOAL-Start-\\*-",
+					"end": ";;-\\*-OpenGOAL-End-\\*-",
+          "patterns": [
+						{"include": "source.opengoal"}
+					]
+				}
+      ]
+    },
+    "errorsAndWarnings": {
+      "patterns": [
+        {
+          "name": "opengoal.ir.typeanalysis",
+          "match": "<uninitialized>"
+        },
+        {
+          "name": "opengoal.ir.error",
+          "match": "^.*WARN:.*"
+        },
+        {
+          "name": "opengoal.ir.warn",
+          "match": "^.*INFO:.*"
+        }
+      ]
+
+    },
+    "irSyntax": {
+      "patterns": [
+        {
+          "match": "(?:;; )\\[([\\s\\d]+)\\]",
+          "captures": {
+            "1": {
+              "name": "opengoal.ir.op-num"
+            }
+          }
+        },
+        {
+          "match": ";\\s\\.function\\s(.*)",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.opengoal.ir"
+            }
+          }
+        },
+        {
+          "match": "\\s([\\w\\d\\?\\*\\-\\!]+)\\((s7)",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.opengoal.ir.function.call"
+            },
+            "2": {
+              "name": "entity.name.function.opengoal.ir.regs.symbol-table"
+            }
+          }
+        },
+        {
+          "name": "constant.language",
+          "match": "(#t|#f)"
+        },
+        {
+          "match": "(?:\\s+)([\\-]?\\d+(?:\\.\\d+)?)(?:[\\s\\(\\>])",
+          "captures": {
+            "1": {
+              "name": "constant.numeric"
+            }
+          }
+        }
+      ]
+    },
+    "registers": {
+      "patterns": [
+        {
+          "match": "(?:\\s|\\(|\\[)(a0)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.a0"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.a0"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(a1)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.a1"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.a1"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(a2)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.a2"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.a2"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(a3)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.a3"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.a3"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(t0)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.t0"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.t0"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(t1)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.t1"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.t1"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(t2)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.t2"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.t2"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(t3)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.t3"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.t3"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(t9)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.opengoal.ir.regs.function"
+            },
+            "2": {
+              "name": "entity.name.function.opengoal.ir.regs.function"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(f\\d{1,2})(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.float"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.float"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(sp)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.stack"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.stack"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(v0)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs.return"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs.return"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(s7)(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.opengoal.ir.regs.symbol-table"
+            },
+            "2": {
+              "name": "entity.name.function.opengoal.ir.regs.symbol-table"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(gp|fp|at|v1|ra|r0|k0|k1|t8|s[0-6]|t[4-7])(-[\\d]+)?",
+          "captures": {
+            "1": {
+              "name": "variable.language.opengoal.ir.regs"
+            },
+            "2": {
+              "name": "variable.language.opengoal.ir.regs"
+            }
+          }
+        }
+      ]
+    },
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.opengoal.ir",
+					"begin": "^(?!.*;; \\[)\\s*;(?:; \\[){0}",
+          "end": "$"
+				}
+			]
+		},
+    "mnemonics": {
+      "patterns": [
+        {
+          "match": "(?:^\\s+\\b)([\\w\\.]+)(?:\\b)",
+          "captures": {
+            "1": {
+              "name": "entity.name.function"
+            }
+          }
+        }
+      ]
+    },
+    "labelsAndBlocks": {
+      "patterns": [
+        {
+          "name": "keyword.control.block",
+          "match": "^B\\d+\\:"
+        },
+        {
+          "name": "keyword.control.label",
+          "match": "^L\\d+(?:\\:|\\))"
+        },
+        {
+          "name": "keyword.control.label",
+          "match": "\\sL\\d+"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.opengoal-ir"
+}
