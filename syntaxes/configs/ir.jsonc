@@ -1,15 +1,13 @@
 {
   "comments": {
-      "lineComment": ";;",
-      "blockComment": [ "#|", "|#" ]
+    "lineComment": ";;",
+    "blockComment": ["#|", "|#"]
   },
   // symbols used as brackets
-  "brackets": [
-      ["(", ")"]
-  ],
+  "brackets": [["(", ")"]],
   "surroundingPairs": [
-      ["(", ")"],
-      ["\"", "\""]
+    ["(", ")"],
+    ["\"", "\""]
   ],
   "folding": {
     "markers": {

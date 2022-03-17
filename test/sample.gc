@@ -85,22 +85,13 @@ a block comment
   (let* ((first-thing `(goal-src ,(string-append prefix (first sequence)) ,@deps))
          (result (cons first-thing '()))
          (iter result))
-
     (let ((prev (first sequence))
           (in-iter (rest sequence)))
-
       (while (not (null? in-iter))
         ;; (fmt #t "{} dep on {}\n" (first in-iter) prev)
         (let ((next (make-src-sequence-elt (first in-iter) prev prefix)))
           (set-cdr! iter (cons next '()))
-          (set! iter (cdr iter))
-          )
-
+          (set! iter (cdr iter)))
         (set! prev (car in-iter))
-        (set! in-iter (cdr in-iter))
-        )
-      )
-
-    `(begin ,@result)
-    )
-  )
+        (set! in-iter (cdr in-iter))))
+    `(begin ,@result)))

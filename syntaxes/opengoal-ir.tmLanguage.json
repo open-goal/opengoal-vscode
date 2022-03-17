@@ -25,13 +25,11 @@
     "goalCode": {
       "patterns": [
         {
-					"name": "meta.embedded.block.opengoal",
-					"begin": ";;-\\*-OpenGOAL-Start-\\*-",
-					"end": ";;-\\*-OpenGOAL-End-\\*-",
-          "patterns": [
-						{"include": "source.opengoal"}
-					]
-				}
+          "name": "meta.embedded.block.opengoal",
+          "begin": ";;-\\*-OpenGOAL-Start-\\*-",
+          "end": ";;-\\*-OpenGOAL-End-\\*-",
+          "patterns": [{ "include": "source.opengoal" }]
+        }
       ]
     },
     "errorsAndWarnings": {
@@ -49,7 +47,6 @@
           "match": "^.*INFO:.*"
         }
       ]
-
     },
     "irSyntax": {
       "patterns": [
@@ -252,15 +249,15 @@
         }
       ]
     },
-		"comments": {
-			"patterns": [
-				{
-					"name": "comment.opengoal.ir",
-					"begin": "^(?!.*;; \\[)\\s*;(?:; \\[){0}",
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.opengoal.ir",
+          "begin": "^(?!.*;; \\[)\\s*;(?:; \\[){0}",
           "end": "$"
-				}
-			]
-		},
+        }
+      ]
+    },
     "mnemonics": {
       "patterns": [
         {

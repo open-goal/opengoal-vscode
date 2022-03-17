@@ -1,109 +1,270 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "information_for_contributors": [
+    "Largely converted from - https://github.com/microsoft/vscode/blob/main/extensions/clojure/syntaxes/clojure.tmLanguage.json"
+  ],
   "name": "OpenGOAL",
+  "scopeName": "source.opengoal",
   "patterns": [
-		{
-      "include": "#comments"
-    },
-		{
-			"include": "#readerMacros"
-		},
-		{
-			"include": "#functionsAndMacros"
-		},
     {
-      "include": "#keywords"
+      "include": "#comment"
     },
     {
-      "include": "#strings"
+      "include": "#quoted-sexp"
+    },
+    {
+      "include": "#sexp"
+    },
+    {
+      "include": "#keyfn"
+    },
+    {
+      "include": "#string"
+    },
+    {
+      "include": "#regexp"
+    },
+    {
+      "include": "#var"
+    },
+    {
+      "include": "#constants"
+    },
+    {
+      "include": "#symbol"
+    },
+    {
+      "include": "#readerMacros"
     }
   ],
   "repository": {
-		"comments": {
-			"patterns": [
-				{
-					"name": "comment.opengoal",
-					"begin": ";+",
-					"end": "$"
-				},
-        {
-					"name": "comment.block.opengoal",
-					"begin": "#\\|",
-					"end": "\\|#"
-				}
-			]
-		},
-		"readerMacros": {
-			"patterns": [
-				{
-					"match": "(')(\\b|\\()",
-          "captures": {
-            "1": {
-              "name": "keyword.operator.quote.opengoal"
-            }
-          }
-				},
-        {
-					"match": "(`)(\\b|\\()",
-          "captures": {
-            "1": {
-              "name": "keyword.operator.quasiquote.opengoal"
-            }
-          }
-				},
-				{
-					"match": "(,)(\\b|\\()",
-          "captures": {
-            "1": {
-              "name": "keyword.operator.unquote.opengoal"
-            }
-          }
-				},
-				{
-					"match": "(,@)(\\b|\\()",
-          "captures": {
-            "1": {
-              "name": "keyword.operator.unquoteSplicing.opengoal"
-            }
-          }
-				}
-			]
-		},
-    "keywords": {
+    "comment": {
       "patterns": [
         {
-          "name": "keyword.opengoal",
-          "match": ":\\b\\w*"
+          "begin": ";",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.opengoal"
+            }
+          },
+          "end": "$",
+          "name": "comment.line.semicolon.opengoal"
+        },
+        {
+          "begin": "#\\|",
+          "end": "\\|#",
+          "name": "comment.block.opengoal"
         }
       ]
     },
-		"functionsAndMacros": {
-			"patterns": [
-        {
-          "match": "\\(\\s*(\\:(?:bp|break|clear|cont|di|disasm|dump-all-mem|exit|pm|status|stop|sym-name|ubp)|\\.(?:abs|add|add\\.mul|blend|div|ftoi|isqrt|itof|max|min|mov|mul|nop|outer\\.product|outer\\.product\\.a|outer\\.product\\.b|sqrt|sub|wait|xor)\\.vf|\\.(?:add|add\\.mul|max|min|mul|sub\\.mul|sub)\\.[w-z]\\.vf|\\.(?:add|jr|load-sym|lvf|mov|nop|pand|pceqb|pceqh|pceqw|pceqw|pcgtb|pcgth|pcgtw|pcpyld|pcpyud|pextlb|pextlh|pextlw|pextub|pextuh|pextuw|pnor|pop|por|ppach|psubw|push|pw\\.sll|pw\\.sra|pw\\.srl|xor\\.p|ret|sub|svf)|(?:\\-|\\-\\>|\/|\\&\\+?|\\#cond|\\+|\\*|\\<\\=?|\\!?\\=|\\>\\=?)|(?:add-macro-to-autocomplete|and|asm-data-file|asm-file|asm-text-file|autocomplete|begin|block|build-dgos|car|cdr|cond|dbg|dbs|declare-file|declare-type|declare|defconstant|defenum|defglobalconstant|define-extern|define-state-hook|define-virtual-state-hook|define|defmethod|deftype|eq\\?|fmax|fmin|get-info|go-hook|goto|gs|imul64|in-package|inline|label|lambda|listen-to-target|load-project|local-vars|logand|logior|lognot|logxor|make|method-of-object|method-of-type|mlet|mod|neq\\?|new|none|nop!|not|or|print-debug-compiler-stats|print-type|psize-of|quote|reload|repl-help|reset-target|return-from|rlet|sar|set-config\\!|set\\!|seval|shl|shr|size-of|sqrtf-no-fabs|the-as|the|top-level|when-goto)|(?:defun|defmacro|defstep|defstate|let|let\\*|while))(?:\\s|\\))",
-          "captures": {
-            "1": {
-              "name": "entity.name.function.builtin"
-            }
-          }
-        }
-      ]
-		},
-    "strings": {
+    "constants": {
       "patterns": [
         {
-          "name": "string.quoted.double.opengoal",
-          "begin": "\"",
-          "end": "\"",
-          "patterns": [
-            {
-              "name": "constant.character.escape.opengoal",
-              "match": "\\\\."
-            }
-          ]
+          "match": "(none|#f)(?=(\\s|\\)|\\]|\\}))",
+          "name": "constant.language.nil.opengoal"
+        },
+        {
+          "match": "(#t|#f)",
+          "name": "constant.language.boolean.opengoal"
+        },
+        {
+          "match": "([-+]?\\d+/\\d+)",
+          "name": "constant.numeric.ratio.opengoal"
+        },
+        {
+          "match": "([-+]?(?:(?:3[0-6])|(?:[12]\\d)|[2-9])[rR][0-9A-Za-z]+N?)",
+          "name": "constant.numeric.arbitrary-radix.opengoal"
+        },
+        {
+          "match": "([-+]?0[xX][0-9a-fA-F]+N?)",
+          "name": "constant.numeric.hexadecimal.opengoal"
+        },
+        {
+          "match": "([-+]?0[0-7]+N?)",
+          "name": "constant.numeric.octal.opengoal"
+        },
+        {
+          "match": "([-+]?[0-9]+(?:(\\.|(?=[eEM]))[0-9]*([eE][-+]?[0-9]+)?)M?)",
+          "name": "constant.numeric.double.opengoal"
+        },
+        {
+          "match": "([-+]?\\d+N?)",
+          "name": "constant.numeric.long.opengoal"
+        },
+        {
+          "include": "#keyword"
         }
       ]
+    },
+    "keyword": {
+      "match": "(?<=(\\s|\\(|\\[|\\{)):[\\w\\#\\.\\-\\_\\:\\+\\=\\>\\<\\/\\!\\?\\*]+(?=(\\s|\\)|\\]|\\}|\\,))",
+      "name": "constant.keyword.opengoal"
+    },
+    "keyfn": {
+      "patterns": [
+        {
+          "match": "(?<=(\\s|\\(|\\[|\\{))(if(-[-\\p{Ll}\\?]*)?|when(-[-\\p{Ll}]*)?|unless(-[-\\p{Ll}]*)?|cond|do|let(-[-\\p{Ll}\\?]*)?|lambda|throw[\\p{Ll}\\-]*|([\\p{Ll}]*case))(?=(\\s|\\)|\\]|\\}))",
+          "name": "storage.control.opengoal"
+        },
+        {
+          "match": "(?<=(\\s|\\(|\\[|\\{))(declare-?|(in-)?ns|import|use|require|load|compile|(def[\\p{Ll}\\-]*))(?=(\\s|\\)|\\]|\\}))",
+          "name": "keyword.control.opengoal"
+        }
+      ]
+    },
+    "quoted-sexp": {
+      "begin": "(['``]\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.operator.opengoal punctuation.section.expression.begin.opengoal"
+        }
+      },
+      "end": "(\\))$|(\\)(?=[\\}\\]\\)\\s]*(?:;|$)))|(\\))",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.section.expression.end.trailing.opengoal"
+        },
+        "2": {
+          "name": "punctuation.section.expression.end.trailing.opengoal"
+        },
+        "3": {
+          "name": "punctuation.section.expression.end.opengoal"
+        }
+      },
+      "name": "meta.quoted-expression.opengoal",
+      "patterns": [
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "regexp": {
+      "begin": "#\"",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.regexp.begin.opengoal"
+        }
+      },
+      "end": "\"",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.regexp.end.opengoal"
+        }
+      },
+      "name": "string.regexp.opengoal",
+      "patterns": [
+        {
+          "include": "#regexp_escaped_char"
+        }
+      ]
+    },
+    "regexp_escaped_char": {
+      "match": "\\\\.",
+      "name": "constant.character.escape.opengoal"
+    },
+    "sexp": {
+      "begin": "(\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.section.expression.begin.opengoal"
+        }
+      },
+      "end": "(\\))$|(\\)(?=[\\}\\]\\)\\s]*(?:;|$)))|(\\))",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.section.expression.end.trailing.opengoal"
+        },
+        "2": {
+          "name": "punctuation.section.expression.end.trailing.opengoal"
+        },
+        "3": {
+          "name": "punctuation.section.expression.end.opengoal"
+        }
+      },
+      "name": "meta.expression.opengoal",
+      "patterns": [
+        {
+          "begin": "(?<=\\()(ns|declare|def[\\w\\d._:+=><!?*-]*|[\\w._:+=><!?*-][\\w\\d._:+=><!?*-]*/def[\\w\\d._:+=><!?*-]*)\\s+",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.opengoal"
+            }
+          },
+          "end": "(?=\\))",
+          "name": "meta.definition.global.opengoal",
+          "patterns": [
+            {
+              "match": "([\\p{L}\\.\\-\\_\\+\\=\\>\\<\\!\\?\\*][\\w\\.\\-\\_\\:\\+\\=\\>\\<\\!\\?\\*\\d]*)",
+              "name": "entity.global.opengoal"
+            },
+            {
+              "include": "$self"
+            }
+          ]
+        },
+        {
+          "include": "#keyfn"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#sexp"
+        },
+        {
+          "match": "(?<=\\()(.+?)(?=\\s|\\))",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.opengoal"
+            }
+          },
+          "patterns": [
+            {
+              "include": "$self"
+            }
+          ]
+        },
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "string": {
+      "begin": "(?<!\\\\)(\")",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.string.begin.opengoal"
+        }
+      },
+      "end": "(\")",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.string.end.opengoal"
+        }
+      },
+      "name": "string.quoted.double.opengoal",
+      "patterns": [
+        {
+          "match": "\\\\.",
+          "name": "constant.character.escape.opengoal"
+        }
+      ]
+    },
+    "symbol": {
+      "patterns": [
+        {
+          "match": "([\\p{L}\\.\\-\\_\\+\\=\\>\\<\\!\\?\\*][\\w\\.\\-\\_\\:\\+\\=\\>\\<\\!\\?\\*\\d]*)",
+          "name": "meta.symbol.opengoal"
+        }
+      ]
+    },
+    "var": {
+      "match": "(?<=(\\s|\\(|\\[|\\{)\\#)'[\\w\\.\\-\\_\\:\\+\\=\\>\\<\\/\\!\\?\\*]+(?=(\\s|\\)|\\]|\\}))",
+      "name": "meta.var.opengoal"
+    },
+    "readerMacros": {
+      "match": "('|,@|`|,)",
+      "name": "keyword.operator.opengoal"
     }
-  },
-  "scopeName": "source.opengoal"
+  }
 }

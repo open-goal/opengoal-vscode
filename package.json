@@ -17,6 +17,44 @@
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
+            "name": "OpenGOAL Globals",
+            "scope": [
+              "entity.global.opengoal"
+            ],
+            "settings": {
+              "foreground": "#36f9f6",
+              "fontStyle": "bold"
+            }
+          },
+          {
+            "name": "OpenGOAL Storage",
+            "scope": [
+              "storage.control.opengoal"
+            ],
+            "settings": {
+              "foreground": "#36f9f6",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "name": "OpenGOAL Macros, Quoted",
+            "scope": [
+              "meta.quoted-expression.opengoal"
+            ],
+            "settings": {
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "name": "OpenGOAL Symbols",
+            "scope": [
+              "meta.symbol.opengoal"
+            ],
+            "settings": {
+              "foreground": "#ff7edbff"
+            }
+          },
+          {
             "scope": "opengoal.ir.typeanalysis",
             "settings": {
               "foreground": "#fe4450E6"
