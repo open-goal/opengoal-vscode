@@ -203,7 +203,8 @@
           "opengoal-goos"
         ],
         "extensions": [
-          ".gs"
+          ".gs",
+          ".gp"
         ],
         "icon": {
           "light": "./icons/opengoal-goos.png",
