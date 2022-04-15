@@ -24,3 +24,10 @@ export function switchFile() {
     }
   }
 }
+
+export function openFile(filePath: string | undefined) {
+  if (filePath === undefined) {
+    return;
+  }
+  vscode.window.showTextDocument(vscode.Uri.file(filePath));
+}
