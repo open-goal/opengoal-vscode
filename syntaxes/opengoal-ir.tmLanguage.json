@@ -82,7 +82,7 @@
           "match": "(#t|#f)"
         },
         {
-          "match": "(?:\\s+)([\\-]?\\d+(?:\\.\\d+)?)(?:[\\s\\(\\>])",
+          "match": "(?:\\s+)([\\-]?\\d+(?:\\.\\d+)?)(?=[\\s\\(\\>])",
           "captures": {
             "1": {
               "name": "constant.numeric"
@@ -94,7 +94,7 @@
     "registers": {
       "patterns": [
         {
-          "match": "(?:\\s|\\(|\\[)(a0)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(a0(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.a0"
