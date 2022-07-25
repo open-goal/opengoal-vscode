@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import * as path from "path";
 
 export class RecentFiles {
   recentFiles: Array<string> = [];
@@ -11,11 +10,9 @@ export class RecentFiles {
   }
 
   addFile(filePath: string) {
-    console.log(`Adding - ${filePath}`);
     // dont add duplicates
     // if it exists, take it out and put it on the top
     const idx = this.indexOf(filePath);
-    console.log(idx);
     if (idx !== -1) {
       this.recentFiles.splice(idx, 1);
     }
