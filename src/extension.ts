@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 import { RecentFiles } from "./RecentFiles";
 import * as fileUtils from "./utils/FileUtils";
+import * as lsp from "./lsp/main";
 
 let recentFiles: RecentFiles;
 
@@ -34,4 +35,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  // Start the LSP
+  lsp.activate(context);
+}
+
+export function deactivate(): Promise<void> | undefined {
+  return lsp.deactivate();
 }
