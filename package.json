@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
-    "@types/node": "^12.12.0",
+    "@types/node": "^18.6.0",
     "@types/vscode": "^1.34.0",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
     "@typescript-eslint/parser": "^5.19.0",
