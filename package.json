@@ -21,7 +21,23 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "lint": "eslint . --ext .ts,.tsx",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check ."
+  },
+  "devDependencies": {
+    "@types/follow-redirects": "^1.14.1",
+    "@types/node": "^12.12.0",
+    "@types/vscode": "^1.34.0",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/parser": "^5.19.0",
+    "eslint": "^8.13.0",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "follow-redirects": "^1.15.1",
+    "open": "^8.4.0",
+    "vscode-languageclient": "^8.0.1"
   },
   "activationEvents": [
     "onLanguage:opengoal",
@@ -277,13 +293,5 @@
         "path": "./snippets/opengoal.json"
       }
     ]
-  },
-  "devDependencies": {
-    "@types/node": "^12.12.0",
-    "@types/vscode": "^1.34.0",
-    "@typescript-eslint/eslint-plugin": "^5.19.0",
-    "@typescript-eslint/parser": "^5.19.0",
-    "eslint": "^8.13.0",
-    "typescript": "^4.6.3"
   }
 }

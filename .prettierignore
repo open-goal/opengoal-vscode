@@ -1,0 +1,6 @@
+node_modules
+*.vsix
+out/
+*.log
+*.exe
+*.bin

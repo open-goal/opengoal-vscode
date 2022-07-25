@@ -16,9 +16,9 @@ export function switchFile() {
   for (const [key, value] of Object.entries(fileSwitchingAssoc)) {
     if (currName.endsWith(key)) {
       // Get everything before the suffix, check if a file with the associated suffix exists
-      let prefix = currName.slice(0, -key.length);
-      let switchFileName = prefix + value;
-      let switchFilePath = path.join(path.dirname(currPath), switchFileName);
+      const prefix = currName.slice(0, -key.length);
+      const switchFileName = prefix + value;
+      const switchFilePath = path.join(path.dirname(currPath), switchFileName);
       vscode.window.showTextDocument(vscode.Uri.file(switchFilePath));
       return;
     }
