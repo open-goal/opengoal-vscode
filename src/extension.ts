@@ -10,6 +10,58 @@ let recentFiles: RecentFiles;
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  // TODO - break this out into a separate file
+  // Setup users settings, merge with existing ones if they are there
+  const userConfig = vscode.workspace.getConfiguration();
+  // - https://github.com/vscode-icons/vscode-icons/issues/1363
+  // - NOTE this may break situations where a file type is being handled by another extension
+  const opengoalAssocs = [
+    {
+      extensions: ["gs", "gp"],
+      language: "opengoal-goos",
+    },
+    {
+      extensions: ["gc", "gd"],
+      language: "opengoal",
+    },
+    {
+      extensions: ["asm"],
+      language: "opengoal-ir",
+    },
+  ];
+  let currentIconAssociations: any = userConfig.get(
+    "vsicons.associations.files"
+  );
+  if (currentIconAssociations === undefined) {
+    currentIconAssociations = opengoalAssocs;
+  } else {
+    for (const assoc of opengoalAssocs) {
+      // Don't add duplicates
+      let unique = true;
+      for (const existingAssoc of currentIconAssociations) {
+        if (
+          "extensions" in existingAssoc &&
+          existingAssoc.extensions.every(
+            (v: string, i: number) => v === assoc.extensions[i]
+          ) &&
+          "language" in existingAssoc &&
+          existingAssoc.language === assoc.language
+        ) {
+          unique = false;
+          break;
+        }
+      }
+      if (unique) {
+        currentIconAssociations.push(assoc);
+      }
+    }
+  }
+  userConfig.update(
+    "vsicons.associations.files",
+    currentIconAssociations,
+    vscode.ConfigurationTarget.Global
+  );
+
   recentFiles = new RecentFiles(context);
   if (vscode.window.activeTextEditor?.document != undefined) {
     recentFiles.addFile(vscode.window.activeTextEditor?.document.fileName);
@@ -37,7 +89,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // Start the LSP
-  lsp.activate(context);
+  // lsp.activate(context);
 }
 
 export function deactivate(): Promise<void> | undefined {
