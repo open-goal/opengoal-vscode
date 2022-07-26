@@ -1,15 +1,20 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { RecentFiles } from "./RecentFiles";
 import * as fileUtils from "./utils/FileUtils";
 import * as lsp from "./lsp/main";
+import {
+  setTextmateColors,
+  setVSIconAssociations,
+} from "./config/user-settings";
 
 let recentFiles: RecentFiles;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  setVSIconAssociations();
+  setTextmateColors();
+
   recentFiles = new RecentFiles(context);
   if (vscode.window.activeTextEditor?.document != undefined) {
     recentFiles.addFile(vscode.window.activeTextEditor?.document.fileName);
