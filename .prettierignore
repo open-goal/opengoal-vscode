@@ -4,3 +4,4 @@ out/
 *.log
 *.exe
 *.bin
+lib/

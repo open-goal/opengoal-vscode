@@ -64,12 +64,18 @@
       "title": "OpenGOAL",
       "properties": {
         "opengoal.eeManPagePath": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": null,
           "description": "File path to the EE Man Page"
         },
         "opengoal.vuManPagePath": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": null,
           "description": "File path to the VU Man Page"
         }
