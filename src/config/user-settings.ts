@@ -27,7 +27,7 @@ const opengoalVSIconAssocs = [
   },
 ];
 
-export function setVSIconAssociations() {
+export async function setVSIconAssociations() {
   const userConfig = vscode.workspace.getConfiguration();
   // - https://github.com/vscode-icons/vscode-icons/issues/1363
   // - NOTE this may break situations where a file type is being handled by another extension
@@ -42,8 +42,7 @@ export function setVSIconAssociations() {
       const assoc = opengoalVSIconAssocs[i];
       // Don't add duplicates, update entries if the user has modified it
       let unique = true;
-      for (let j = 0; j < currentIconAssociations.lenth; j++) {
-        const existingAssoc = currentIconAssociations[j];
+      for (const existingAssoc of currentIconAssociations) {
         if (
           "language" in existingAssoc &&
           existingAssoc.language === assoc.language
@@ -58,7 +57,7 @@ export function setVSIconAssociations() {
       }
     }
   }
-  userConfig.update(
+  await userConfig.update(
     "vsicons.associations.files",
     currentIconAssociations,
     vscode.ConfigurationTarget.Global
@@ -233,7 +232,7 @@ const opengoalTextMateRules = [
 ];
 
 // TODO - expose these colors via configuration settings so the user can change them if they want to
-export function setTextmateColors() {
+export async function setTextmateColors() {
   // https://github.com/microsoft/vscode/issues/66729
   const userConfig = vscode.workspace.getConfiguration();
 
@@ -266,7 +265,7 @@ export function setTextmateColors() {
 
   currentTokenColorCustomizations.textMateRules = newRules;
 
-  userConfig.update(
+  await userConfig.update(
     "editor.tokenColorCustomizations",
     currentTokenColorCustomizations,
     vscode.ConfigurationTarget.Global

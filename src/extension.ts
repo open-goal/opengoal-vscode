@@ -12,12 +12,12 @@ import { open_in_pdf } from "./lib/decomp/man-page";
 let recentFiles: RecentFiles;
 let provider: PdfCustomProvider;
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   const extensionRoot = vscode.Uri.file(context.extensionPath);
 
   // Init settings that we unfortunately have to manually maintain
-  setVSIconAssociations();
-  setTextmateColors();
+  await setVSIconAssociations();
+  await setTextmateColors();
 
   recentFiles = new RecentFiles(context);
   if (vscode.window.activeTextEditor?.document != undefined) {
