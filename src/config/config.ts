@@ -6,5 +6,25 @@ export function getConfig() {
   return {
     opengoalLspVersion: configOptions.get<string>("opengoalLspVersion"),
     opengoalLspPath: configOptions.get<string>("opengoalLspPath"),
+    eeManPagePath: configOptions.get<string>("eeManPagePath"),
+    vuManPagePath: configOptions.get<string>("vuManPagePath"),
   };
+}
+
+export async function updateEeManPagePath(path: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.eeManPagePath",
+    path,
+    vscode.ConfigurationTarget.Global
+  );
+}
+
+export async function updateVuManPagePath(path: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.vuManPagePath",
+    path,
+    vscode.ConfigurationTarget.Global
+  );
 }

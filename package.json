@@ -54,12 +54,57 @@
       {
         "command": "opengoal.decomp.openMostRecentIRFile",
         "title": "OpenGOAL - Decomp - Open Recent IR2 File"
+      },
+      {
+        "command": "opengoal.decomp.openManPage",
+        "title": "OpenGOAL - Decomp - Man Page"
       }
     ],
+    "configuration": {
+      "title": "OpenGOAL",
+      "properties": {
+        "opengoal.eeManPagePath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "File path to the EE Man Page"
+        },
+        "opengoal.vuManPagePath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "File path to the VU Man Page"
+        }
+      }
+    },
     "configurationDefaults": {
       "[opengoal-ir]": {
         "editor.bracketPairColorization.enabled": false
       }
+    },
+    "customEditors": [
+      {
+        "viewType": "pdf.opengoal.manpage",
+        "displayName": "OpenGOAL Manpage Preview",
+        "selector": [
+          {
+            "filenamePattern": "*.pdf"
+          }
+        ]
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceLangId == opengoal-ir",
+          "command": "opengoal.decomp.openManPage",
+          "group": "z_commands"
+        }
+      ]
     },
     "languages": [
       {

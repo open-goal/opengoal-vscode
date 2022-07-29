@@ -1,0 +1,3031 @@
+[
+  { "page": 24, "type": "ee", "mnemonic": "ADD", "description": "Add Word" },
+  {
+    "page": 25,
+    "type": "ee",
+    "mnemonic": "ADDI",
+    "description": "Add Immediate Word"
+  },
+  {
+    "page": 26,
+    "type": "ee",
+    "mnemonic": "ADDIU",
+    "description": "Add Immediate Unsigned Word"
+  },
+  {
+    "page": 27,
+    "type": "ee",
+    "mnemonic": "ADDU",
+    "description": "Add Unsigned Word"
+  },
+  { "page": 28, "type": "ee", "mnemonic": "AND", "description": "And" },
+  {
+    "page": 29,
+    "type": "ee",
+    "mnemonic": "ANDI",
+    "description": "Add Immediate"
+  },
+  {
+    "page": 30,
+    "type": "ee",
+    "mnemonic": "BEQ",
+    "description": "Branch on Equal"
+  },
+  {
+    "page": 31,
+    "type": "ee",
+    "mnemonic": "BEQL",
+    "description": "Branch on Equal Likely"
+  },
+  {
+    "page": 32,
+    "type": "ee",
+    "mnemonic": "BGEZ",
+    "description": "Branch on Greater Than or Equal to Zero"
+  },
+  {
+    "page": 33,
+    "type": "ee",
+    "mnemonic": "BGEZAL",
+    "description": "Branch on Greater Than or Equal to Zero and Link"
+  },
+  {
+    "page": 34,
+    "type": "ee",
+    "mnemonic": "BGEZALL",
+    "description": "Branch on Greater Than or Equal to Zero and Link Likely"
+  },
+  {
+    "page": 35,
+    "type": "ee",
+    "mnemonic": "BGEZL",
+    "description": "Branch on Greater Than or Equal to Zero Likely"
+  },
+  {
+    "page": 36,
+    "type": "ee",
+    "mnemonic": "BGTZ",
+    "description": "Branch on Greater Than Zero"
+  },
+  {
+    "page": 37,
+    "type": "ee",
+    "mnemonic": "BGTZL",
+    "description": "Branch on Greater Than Zero Likely"
+  },
+  {
+    "page": 38,
+    "type": "ee",
+    "mnemonic": "BLEZ",
+    "description": "Branch on Less Than or Equal to Zero"
+  },
+  {
+    "page": 39,
+    "type": "ee",
+    "mnemonic": "BLEZL",
+    "description": "Branch on Less Than or Equal to Zero Likely"
+  },
+  {
+    "page": 40,
+    "type": "ee",
+    "mnemonic": "BLTZ",
+    "description": "Branch on Less Than Zero"
+  },
+  {
+    "page": 41,
+    "type": "ee",
+    "mnemonic": "BLTZAL",
+    "description": "Branch on Less Than Zero and Link"
+  },
+  {
+    "page": 42,
+    "type": "ee",
+    "mnemonic": "BLTZALL",
+    "description": "Branch on Less Than Zero and Link Likely"
+  },
+  {
+    "page": 43,
+    "type": "ee",
+    "mnemonic": "BLTZL",
+    "description": "Branch on Less Than Zero Likely"
+  },
+  {
+    "page": 44,
+    "type": "ee",
+    "mnemonic": "BNE",
+    "description": "Branch on Not Equal"
+  },
+  {
+    "page": 45,
+    "type": "ee",
+    "mnemonic": "BNEL",
+    "description": "Branch on Not Equal Likely"
+  },
+  {
+    "page": 46,
+    "type": "ee",
+    "mnemonic": "BREAK",
+    "description": "Breakpoint"
+  },
+  {
+    "page": 47,
+    "type": "ee",
+    "mnemonic": "DADD",
+    "description": "Doubleword Add"
+  },
+  {
+    "page": 48,
+    "type": "ee",
+    "mnemonic": "DADDI",
+    "description": "Doubleword Add Immediate"
+  },
+  {
+    "page": 49,
+    "type": "ee",
+    "mnemonic": "DADDIU",
+    "description": "Doubleword Add Immediate Unsigned"
+  },
+  {
+    "page": 50,
+    "type": "ee",
+    "mnemonic": "DADDU",
+    "description": "Doubleword Add Unsigned"
+  },
+  { "page": 51, "type": "ee", "mnemonic": "DIV", "description": "Divide Word" },
+  {
+    "page": 53,
+    "type": "ee",
+    "mnemonic": "DIVU",
+    "description": "Divide Unsigned Word"
+  },
+  {
+    "page": 54,
+    "type": "ee",
+    "mnemonic": "DSLL",
+    "description": "Doubleword Shift Left Logical"
+  },
+  {
+    "page": 55,
+    "type": "ee",
+    "mnemonic": "DSLL32",
+    "description": "Doubleword Shift Left Logical Plus 32"
+  },
+  {
+    "page": 56,
+    "type": "ee",
+    "mnemonic": "DSLLV",
+    "description": "Doubleword Shift Left Logical Variable"
+  },
+  {
+    "page": 57,
+    "type": "ee",
+    "mnemonic": "DSRA",
+    "description": "Doubleword Shift Right Arithmetic"
+  },
+  {
+    "page": 58,
+    "type": "ee",
+    "mnemonic": "DSRA32",
+    "description": "Doubleword Shift Right Arithmetic Plus 32"
+  },
+  {
+    "page": 59,
+    "type": "ee",
+    "mnemonic": "DSRAV",
+    "description": "Doubleword Shift Right Arithmetic Variable"
+  },
+  {
+    "page": 60,
+    "type": "ee",
+    "mnemonic": "DSRL",
+    "description": "Doubleword Shift Right Logical"
+  },
+  {
+    "page": 61,
+    "type": "ee",
+    "mnemonic": "DSRL32",
+    "description": "Doubleword Shift Right Logical Plus 32"
+  },
+  {
+    "page": 62,
+    "type": "ee",
+    "mnemonic": "DSRLV",
+    "description": "Doubleword Shift Right Logical Variable"
+  },
+  {
+    "page": 63,
+    "type": "ee",
+    "mnemonic": "DSUB",
+    "description": "Doubleword Subtract"
+  },
+  {
+    "page": 64,
+    "type": "ee",
+    "mnemonic": "DSUBU",
+    "description": "Doubleword Subtract Unsigned"
+  },
+  { "page": 65, "type": "ee", "mnemonic": "J", "description": "Jump" },
+  {
+    "page": 66,
+    "type": "ee",
+    "mnemonic": "JAL",
+    "description": "Jump and Link"
+  },
+  {
+    "page": 67,
+    "type": "ee",
+    "mnemonic": "JALR",
+    "description": "Jump and Link Register"
+  },
+  {
+    "page": 68,
+    "type": "ee",
+    "mnemonic": "JR",
+    "description": "Jump Register"
+  },
+  { "page": 69, "type": "ee", "mnemonic": "LB", "description": "Load Byte" },
+  {
+    "page": 70,
+    "type": "ee",
+    "mnemonic": "LBU",
+    "description": "Load Byte Unsigned"
+  },
+  {
+    "page": 71,
+    "type": "ee",
+    "mnemonic": "LD",
+    "description": "Load Doubleword"
+  },
+  {
+    "page": 72,
+    "type": "ee",
+    "mnemonic": "LDL",
+    "description": "Load Doubleword Left"
+  },
+  {
+    "page": 74,
+    "type": "ee",
+    "mnemonic": "LDR",
+    "description": "Load Doubleword Right"
+  },
+  {
+    "page": 76,
+    "type": "ee",
+    "mnemonic": "LH",
+    "description": "Load Halfword"
+  },
+  {
+    "page": 77,
+    "type": "ee",
+    "mnemonic": "LHU",
+    "description": "Load Halfword Unsigned"
+  },
+  {
+    "page": 78,
+    "type": "ee",
+    "mnemonic": "LUI",
+    "description": "Load Upper Immediate"
+  },
+  { "page": 79, "type": "ee", "mnemonic": "LW", "description": "Load Word" },
+  {
+    "page": 80,
+    "type": "ee",
+    "mnemonic": "LWL",
+    "description": "Load Word Left"
+  },
+  {
+    "page": 82,
+    "type": "ee",
+    "mnemonic": "LWR",
+    "description": "Load Word Right"
+  },
+  {
+    "page": 84,
+    "type": "ee",
+    "mnemonic": "LWU",
+    "description": "Load Word Unsigned"
+  },
+  {
+    "page": 85,
+    "type": "ee",
+    "mnemonic": "MFHI",
+    "description": "Move from HI Register"
+  },
+  {
+    "page": 86,
+    "type": "ee",
+    "mnemonic": "MFLO",
+    "description": "Move from LO Register"
+  },
+  {
+    "page": 87,
+    "type": "ee",
+    "mnemonic": "MOVN",
+    "description": "Move Conditional on Not Zero"
+  },
+  {
+    "page": 88,
+    "type": "ee",
+    "mnemonic": "MOVZ",
+    "description": "Move Conditional on Zero"
+  },
+  {
+    "page": 89,
+    "type": "ee",
+    "mnemonic": "MTHI",
+    "description": "Move to HI Register"
+  },
+  {
+    "page": 90,
+    "type": "ee",
+    "mnemonic": "MTLO",
+    "description": "Move to LO Register"
+  },
+  {
+    "page": 91,
+    "type": "ee",
+    "mnemonic": "MULT",
+    "description": "Multiply Word"
+  },
+  {
+    "page": 92,
+    "type": "ee",
+    "mnemonic": "MULTU",
+    "description": "Multiply Unsigned Word"
+  },
+  { "page": 93, "type": "ee", "mnemonic": "NOR", "description": "Not Or" },
+  { "page": 94, "type": "ee", "mnemonic": "OR", "description": "Or" },
+  {
+    "page": 95,
+    "type": "ee",
+    "mnemonic": "ORI",
+    "description": "Or immediate"
+  },
+  { "page": 96, "type": "ee", "mnemonic": "PREF", "description": "Prefetch" },
+  { "page": 97, "type": "ee", "mnemonic": "SB", "description": "Store Byte" },
+  {
+    "page": 98,
+    "type": "ee",
+    "mnemonic": "SD",
+    "description": "Store Doubleword"
+  },
+  {
+    "page": 99,
+    "type": "ee",
+    "mnemonic": "SDL",
+    "description": "Store Doubleword Left"
+  },
+  {
+    "page": 101,
+    "type": "ee",
+    "mnemonic": "SDR",
+    "description": "Store Doubleword Right"
+  },
+  {
+    "page": 103,
+    "type": "ee",
+    "mnemonic": "SH",
+    "description": "Store Halfword"
+  },
+  {
+    "page": 104,
+    "type": "ee",
+    "mnemonic": "SLL",
+    "description": "Shift Word Left Logical"
+  },
+  {
+    "page": 105,
+    "type": "ee",
+    "mnemonic": "SLLV",
+    "description": "Shift Word Left Logical Variable"
+  },
+  {
+    "page": 106,
+    "type": "ee",
+    "mnemonic": "SLT",
+    "description": "Set on Less Than"
+  },
+  {
+    "page": 107,
+    "type": "ee",
+    "mnemonic": "SLTI",
+    "description": "Set on Less Than Immediate"
+  },
+  {
+    "page": 108,
+    "type": "ee",
+    "mnemonic": "SLTIU",
+    "description": "Set on Less Than Immediate Unsigned"
+  },
+  {
+    "page": 109,
+    "type": "ee",
+    "mnemonic": "SLTU",
+    "description": "Set on Less Than Unsigned"
+  },
+  {
+    "page": 110,
+    "type": "ee",
+    "mnemonic": "SRA",
+    "description": "Shift Word Right Arithmetic"
+  },
+  {
+    "page": 111,
+    "type": "ee",
+    "mnemonic": "SRAV",
+    "description": "Shift Word Right Arithmetic Variable"
+  },
+  {
+    "page": 112,
+    "type": "ee",
+    "mnemonic": "SRL",
+    "description": "Shift Word Right Logical"
+  },
+  {
+    "page": 113,
+    "type": "ee",
+    "mnemonic": "SRLV",
+    "description": "Shift Word Right Logical Variable"
+  },
+  {
+    "page": 114,
+    "type": "ee",
+    "mnemonic": "SUB",
+    "description": "Subtract Word"
+  },
+  {
+    "page": 115,
+    "type": "ee",
+    "mnemonic": "SUBU",
+    "description": "Subtract Unsigned Word"
+  },
+  { "page": 116, "type": "ee", "mnemonic": "SW", "description": "Store Word" },
+  {
+    "page": 117,
+    "type": "ee",
+    "mnemonic": "SWL",
+    "description": "Store Word Left"
+  },
+  {
+    "page": 119,
+    "type": "ee",
+    "mnemonic": "SWR",
+    "description": "Store Word Right"
+  },
+  {
+    "page": 121,
+    "type": "ee",
+    "mnemonic": "SYNC",
+    "description": "Synchronize Shared Memory"
+  },
+  {
+    "page": 121,
+    "type": "ee",
+    "mnemonic": "SYNC.L",
+    "description": "Synchronize Shared Memory"
+  },
+  {
+    "page": 121,
+    "type": "ee",
+    "mnemonic": "SYNC.P",
+    "description": "Synchronize Shared Memory"
+  },
+  {
+    "page": 122,
+    "type": "ee",
+    "mnemonic": "SYSCALL",
+    "description": "System Call"
+  },
+  {
+    "page": 123,
+    "type": "ee",
+    "mnemonic": "TEQ",
+    "description": "Trap if Equal"
+  },
+  {
+    "page": 124,
+    "type": "ee",
+    "mnemonic": "TEQI",
+    "description": "Trap if Equal Immediate"
+  },
+  {
+    "page": 125,
+    "type": "ee",
+    "mnemonic": "TGE",
+    "description": "Trap if Greater or Equal"
+  },
+  {
+    "page": 126,
+    "type": "ee",
+    "mnemonic": "TGEI",
+    "description": "Trap if Greater or Equal Immediate"
+  },
+  {
+    "page": 127,
+    "type": "ee",
+    "mnemonic": "TGEIU",
+    "description": "Trap if Greater or Equal Immediate Unsigned"
+  },
+  {
+    "page": 128,
+    "type": "ee",
+    "mnemonic": "TGEU",
+    "description": "Trap if Greater or Equal Unsigned"
+  },
+  {
+    "page": 129,
+    "type": "ee",
+    "mnemonic": "TLT",
+    "description": "Trap if Less Than"
+  },
+  {
+    "page": 130,
+    "type": "ee",
+    "mnemonic": "TLTI",
+    "description": "Trap if Less Than Immediate"
+  },
+  {
+    "page": 131,
+    "type": "ee",
+    "mnemonic": "TLTIU",
+    "description": "Trap if Less Than Immediate Unsigned"
+  },
+  {
+    "page": 132,
+    "type": "ee",
+    "mnemonic": "TLTU",
+    "description": "Trap if Less Than Unsigned"
+  },
+  {
+    "page": 133,
+    "type": "ee",
+    "mnemonic": "TNE",
+    "description": "Trap if Not Equal"
+  },
+  {
+    "page": 134,
+    "type": "ee",
+    "mnemonic": "TNEI",
+    "description": "Trap if Not Equal Immediate"
+  },
+  {
+    "page": 135,
+    "type": "ee",
+    "mnemonic": "XOR",
+    "description": "Exclusive OR"
+  },
+  {
+    "page": 136,
+    "type": "ee",
+    "mnemonic": "XORI",
+    "description": "Exclusive OR Immediate"
+  },
+  {
+    "page": 138,
+    "type": "ee",
+    "mnemonic": "DIV1",
+    "description": "Divide Word Pipeline 1"
+  },
+  {
+    "page": 140,
+    "type": "ee",
+    "mnemonic": "DIVU1",
+    "description": "Divide Unsigned Word Pipeline 1"
+  },
+  {
+    "page": 141,
+    "type": "ee",
+    "mnemonic": "LQ",
+    "description": "Load Quadword"
+  },
+  {
+    "page": 142,
+    "type": "ee",
+    "mnemonic": "MADD",
+    "description": "Multiply-Add word"
+  },
+  {
+    "page": 143,
+    "type": "ee",
+    "mnemonic": "MADD1",
+    "description": "Multiply-Add word Pipeline"
+  },
+  {
+    "page": 144,
+    "type": "ee",
+    "mnemonic": "MADDU",
+    "description": "Multiply-Add Unsigned word"
+  },
+  {
+    "page": 145,
+    "type": "ee",
+    "mnemonic": "MADDU1",
+    "description": "Multiply-Add Unsigned word Pipeline"
+  },
+  {
+    "page": 146,
+    "type": "ee",
+    "mnemonic": "MFHI1",
+    "description": "Move From HI1 Register"
+  },
+  {
+    "page": 147,
+    "type": "ee",
+    "mnemonic": "MFLO1",
+    "description": "Move From LO1 Register"
+  },
+  {
+    "page": 148,
+    "type": "ee",
+    "mnemonic": "MFSA",
+    "description": "Move from Shift Amount Register"
+  },
+  {
+    "page": 149,
+    "type": "ee",
+    "mnemonic": "MTHI1",
+    "description": "Move To HI1 Register"
+  },
+  {
+    "page": 150,
+    "type": "ee",
+    "mnemonic": "MTLO1",
+    "description": "Move To LO1 Register"
+  },
+  {
+    "page": 151,
+    "type": "ee",
+    "mnemonic": "MTSA",
+    "description": "Move to Shift Amount Register"
+  },
+  {
+    "page": 152,
+    "type": "ee",
+    "mnemonic": "MTSAB",
+    "description": "Move Byte Count to Shift Amount Register"
+  },
+  {
+    "page": 153,
+    "type": "ee",
+    "mnemonic": "MTSAH",
+    "description": "Move Halfword Count to Shift Amount Register"
+  },
+  {
+    "page": 154,
+    "type": "ee",
+    "mnemonic": "MULT",
+    "description": "Multiply Word"
+  },
+  {
+    "page": 155,
+    "type": "ee",
+    "mnemonic": "MULT1",
+    "description": "Multiply Word Pipeline"
+  },
+  {
+    "page": 156,
+    "type": "ee",
+    "mnemonic": "MULTU",
+    "description": "Multiply Unsigned Word"
+  },
+  {
+    "page": 157,
+    "type": "ee",
+    "mnemonic": "MULTU1",
+    "description": "Multiply Unsigned Word Pipeline"
+  },
+  {
+    "page": 158,
+    "type": "ee",
+    "mnemonic": "PABSH",
+    "description": "Parallel Absolute Halfword"
+  },
+  {
+    "page": 159,
+    "type": "ee",
+    "mnemonic": "PABSW",
+    "description": "Parallel Absolute Word"
+  },
+  {
+    "page": 160,
+    "type": "ee",
+    "mnemonic": "PADDB",
+    "description": "Parallel Add Byte"
+  },
+  {
+    "page": 161,
+    "type": "ee",
+    "mnemonic": "PADDH",
+    "description": "Parallel Add Halfword"
+  },
+  {
+    "page": 162,
+    "type": "ee",
+    "mnemonic": "PADDSB",
+    "description": "Parallel Add with Signed Saturation Byte"
+  },
+  {
+    "page": 164,
+    "type": "ee",
+    "mnemonic": "PADDSH",
+    "description": "Parallel Add with Signed Saturation Halfword"
+  },
+  {
+    "page": 166,
+    "type": "ee",
+    "mnemonic": "PADDSW",
+    "description": "Parallel Add with Signed Saturation Word"
+  },
+  {
+    "page": 168,
+    "type": "ee",
+    "mnemonic": "PADDUB",
+    "description": "Parallel Add with Unsigned Saturation Byte"
+  },
+  {
+    "page": 170,
+    "type": "ee",
+    "mnemonic": "PADDUH",
+    "description": "Parallel Add with Unsigned Saturation Halfword"
+  },
+  {
+    "page": 172,
+    "type": "ee",
+    "mnemonic": "PADDUW",
+    "description": "Parallel Add with Unsigned Saturation Word"
+  },
+  {
+    "page": 174,
+    "type": "ee",
+    "mnemonic": "PADDW",
+    "description": "Parallel Add Word"
+  },
+  {
+    "page": 175,
+    "type": "ee",
+    "mnemonic": "PADSBH",
+    "description": "Parallel Add/Subtract Halfword"
+  },
+  {
+    "page": 176,
+    "type": "ee",
+    "mnemonic": "PAND",
+    "description": "Parallel And"
+  },
+  {
+    "page": 177,
+    "type": "ee",
+    "mnemonic": "PCEQB",
+    "description": "Parallel Compare for Equal Byte"
+  },
+  {
+    "page": 179,
+    "type": "ee",
+    "mnemonic": "PCEQH",
+    "description": "Parallel Compare for Equal Halfword"
+  },
+  {
+    "page": 181,
+    "type": "ee",
+    "mnemonic": "PCEQW",
+    "description": "Parallel Compare for Equal Word"
+  },
+  {
+    "page": 183,
+    "type": "ee",
+    "mnemonic": "PCGTB",
+    "description": "Parallel Compare for Greater Than Byte"
+  },
+  {
+    "page": 185,
+    "type": "ee",
+    "mnemonic": "PCGTH",
+    "description": "Parallel Compare for Greater Than Halfword"
+  },
+  {
+    "page": 187,
+    "type": "ee",
+    "mnemonic": "PCGTW",
+    "description": "Parallel Compare for Greater Than Word"
+  },
+  {
+    "page": 189,
+    "type": "ee",
+    "mnemonic": "PCPYH",
+    "description": "Parallel Copy Halfword"
+  },
+  {
+    "page": 190,
+    "type": "ee",
+    "mnemonic": "PCPYLD",
+    "description": "Parallel Copy Lower Doubleword"
+  },
+  {
+    "page": 191,
+    "type": "ee",
+    "mnemonic": "PCPYUD",
+    "description": "Parallel Copy Upper Doubleword"
+  },
+  {
+    "page": 192,
+    "type": "ee",
+    "mnemonic": "PDIVBW",
+    "description": "Parallel Divide Broadcast Word"
+  },
+  {
+    "page": 194,
+    "type": "ee",
+    "mnemonic": "PDIVUW",
+    "description": "Parallel Divide Unsigned Word"
+  },
+  {
+    "page": 196,
+    "type": "ee",
+    "mnemonic": "PDIVW",
+    "description": "Parallel Divide Word"
+  },
+  {
+    "page": 198,
+    "type": "ee",
+    "mnemonic": "PEXCH",
+    "description": "Parallel Exchange Center Halfword"
+  },
+  {
+    "page": 199,
+    "type": "ee",
+    "mnemonic": "PEXCW",
+    "description": "Parallel Exchange Center Word"
+  },
+  {
+    "page": 200,
+    "type": "ee",
+    "mnemonic": "PEXEH",
+    "description": "Parallel Exchange Even Halfword"
+  },
+  {
+    "page": 201,
+    "type": "ee",
+    "mnemonic": "PEXEW",
+    "description": "Parallel Exchange Even Word"
+  },
+  {
+    "page": 202,
+    "type": "ee",
+    "mnemonic": "PEXT5",
+    "description": "Parallel Extend from 5 bits"
+  },
+  {
+    "page": 203,
+    "type": "ee",
+    "mnemonic": "PEXTLB",
+    "description": "Parallel Extend Lower from Byte"
+  },
+  {
+    "page": 204,
+    "type": "ee",
+    "mnemonic": "PEXTLH",
+    "description": "Parallel Extend Lower from Halfword"
+  },
+  {
+    "page": 205,
+    "type": "ee",
+    "mnemonic": "PEXTLW",
+    "description": "Parallel Extend Lower from Word"
+  },
+  {
+    "page": 206,
+    "type": "ee",
+    "mnemonic": "PEXTUB",
+    "description": "Parallel Extend Upper from Byte"
+  },
+  {
+    "page": 207,
+    "type": "ee",
+    "mnemonic": "PEXTUH",
+    "description": "Parallel Extend Upper from Halfword"
+  },
+  {
+    "page": 208,
+    "type": "ee",
+    "mnemonic": "PEXTUW",
+    "description": "Parallel Extend Upper from Word"
+  },
+  {
+    "page": 209,
+    "type": "ee",
+    "mnemonic": "PHMADH",
+    "description": "Parallel Horizontal Multiply-Add Halfword"
+  },
+  {
+    "page": 211,
+    "type": "ee",
+    "mnemonic": "PHMSBH",
+    "description": "Parallel Horizontal Multiply-Subtract Halfword"
+  },
+  {
+    "page": 213,
+    "type": "ee",
+    "mnemonic": "PINTEH",
+    "description": "Parallel Interleave Even Halfword"
+  },
+  {
+    "page": 214,
+    "type": "ee",
+    "mnemonic": "PINTH",
+    "description": "Parallel Interleave Halfword"
+  },
+  {
+    "page": 215,
+    "type": "ee",
+    "mnemonic": "PLZCW",
+    "description": "Parallel Leading Zero or one Count Word"
+  },
+  {
+    "page": 216,
+    "type": "ee",
+    "mnemonic": "PMADDH",
+    "description": "Parallel Multiply-Add Halfword"
+  },
+  {
+    "page": 218,
+    "type": "ee",
+    "mnemonic": "PMADDUW",
+    "description": "Parallel Multiply-Add Unsigned Word"
+  },
+  {
+    "page": 220,
+    "type": "ee",
+    "mnemonic": "PMADDW",
+    "description": "Parallel Multiply-Add Word"
+  },
+  {
+    "page": 222,
+    "type": "ee",
+    "mnemonic": "PMAXH",
+    "description": "Parallel Maximize Halfword"
+  },
+  {
+    "page": 224,
+    "type": "ee",
+    "mnemonic": "PMAXW",
+    "description": "Parallel Maximize Word"
+  },
+  {
+    "page": 226,
+    "type": "ee",
+    "mnemonic": "PMFHI",
+    "description": "Parallel Move From HI Register"
+  },
+  {
+    "page": 227,
+    "type": "ee",
+    "mnemonic": "PMFHL",
+    "description": "Parallel Move From HI/LO Register"
+  },
+  {
+    "page": 228,
+    "type": "ee",
+    "mnemonic": "PMFHL",
+    "description": "Parallel Move From HI/LO Register"
+  },
+  {
+    "page": 229,
+    "type": "ee",
+    "mnemonic": "PMFHL",
+    "description": "Parallel Move From HI/LO Register"
+  },
+  {
+    "page": 231,
+    "type": "ee",
+    "mnemonic": "PMFHL",
+    "description": "Parallel Move From HI/LO Register"
+  },
+  {
+    "page": 233,
+    "type": "ee",
+    "mnemonic": "PMFHL",
+    "description": "Parallel Move From HI/LO Register"
+  },
+  {
+    "page": 234,
+    "type": "ee",
+    "mnemonic": "PMFLO",
+    "description": "Parallel Move From LO Register"
+  },
+  {
+    "page": 235,
+    "type": "ee",
+    "mnemonic": "PMINH",
+    "description": "Parallel Minimize Halfword"
+  },
+  {
+    "page": 237,
+    "type": "ee",
+    "mnemonic": "PMINW",
+    "description": "Parallel Minimize Word"
+  },
+  {
+    "page": 239,
+    "type": "ee",
+    "mnemonic": "PMSUBH",
+    "description": "Parallel Multiply-Subtract Halfword"
+  },
+  {
+    "page": 241,
+    "type": "ee",
+    "mnemonic": "PMSUBW",
+    "description": "Parallel Multiply-Subtract Word"
+  },
+  {
+    "page": 243,
+    "type": "ee",
+    "mnemonic": "PMTHI",
+    "description": "Parallel Move To HI Register"
+  },
+  {
+    "page": 244,
+    "type": "ee",
+    "mnemonic": "PMTHL",
+    "description": "Parallel Move To HI/LO Register"
+  },
+  {
+    "page": 245,
+    "type": "ee",
+    "mnemonic": "PMTLO",
+    "description": "Parallel Move To LO Register"
+  },
+  {
+    "page": 246,
+    "type": "ee",
+    "mnemonic": "PMULTH",
+    "description": "Parallel Multiply Halfword"
+  },
+  {
+    "page": 248,
+    "type": "ee",
+    "mnemonic": "PMULTUW",
+    "description": "Parallel Multiply Unsigned Word"
+  },
+  {
+    "page": 250,
+    "type": "ee",
+    "mnemonic": "PMULTW",
+    "description": "Parallel Multiply Word"
+  },
+  {
+    "page": 252,
+    "type": "ee",
+    "mnemonic": "PNOR",
+    "description": "Parallel Not Or"
+  },
+  {
+    "page": 253,
+    "type": "ee",
+    "mnemonic": "POR",
+    "description": "Parallel Or"
+  },
+  {
+    "page": 254,
+    "type": "ee",
+    "mnemonic": "PPAC5",
+    "description": "Parallel Pack to 5 bits"
+  },
+  {
+    "page": 256,
+    "type": "ee",
+    "mnemonic": "PPACB",
+    "description": "Parallel Pack to Byte"
+  },
+  {
+    "page": 257,
+    "type": "ee",
+    "mnemonic": "PPACH",
+    "description": "Parallel Pack to Halfword"
+  },
+  {
+    "page": 258,
+    "type": "ee",
+    "mnemonic": "PPACW",
+    "description": "Parallel Pack to Word"
+  },
+  {
+    "page": 259,
+    "type": "ee",
+    "mnemonic": "PREVH",
+    "description": "Parallel Reverse Halfword"
+  },
+  {
+    "page": 260,
+    "type": "ee",
+    "mnemonic": "PROT3W",
+    "description": "Parallel Rotate 3 Words Left"
+  },
+  {
+    "page": 261,
+    "type": "ee",
+    "mnemonic": "PSLLH",
+    "description": "Parallel Shift Left Logical Halfword"
+  },
+  {
+    "page": 262,
+    "type": "ee",
+    "mnemonic": "PSLLVW",
+    "description": "Parallel Shift Left Logical Variable Word"
+  },
+  {
+    "page": 263,
+    "type": "ee",
+    "mnemonic": "PSLLW",
+    "description": "Parallel Shift Left Logical Word"
+  },
+  {
+    "page": 264,
+    "type": "ee",
+    "mnemonic": "PSRAH",
+    "description": "Parallel Shift Right Arithmetic Halfword"
+  },
+  {
+    "page": 265,
+    "type": "ee",
+    "mnemonic": "PSRAVW",
+    "description": "Parallel Shift Right Arithmetic Variable Word"
+  },
+  {
+    "page": 266,
+    "type": "ee",
+    "mnemonic": "PSRAW",
+    "description": "Parallel Shift Right Arithmetic Word"
+  },
+  {
+    "page": 267,
+    "type": "ee",
+    "mnemonic": "PSRLH",
+    "description": "Parallel Shift Right Logical Halfword"
+  },
+  {
+    "page": 268,
+    "type": "ee",
+    "mnemonic": "PSRLVW",
+    "description": "Parallel Shift Right Logical Variable Word"
+  },
+  {
+    "page": 269,
+    "type": "ee",
+    "mnemonic": "PSRLW",
+    "description": "Parallel Shift Right Logical Word"
+  },
+  {
+    "page": 270,
+    "type": "ee",
+    "mnemonic": "PSUBB",
+    "description": "Parallel Subtract Byte"
+  },
+  {
+    "page": 271,
+    "type": "ee",
+    "mnemonic": "PSUBH",
+    "description": "Parallel Subtract Halfword"
+  },
+  {
+    "page": 272,
+    "type": "ee",
+    "mnemonic": "PSUBSB",
+    "description": "Parallel Subtract with Signed saturation Byte"
+  },
+  {
+    "page": 274,
+    "type": "ee",
+    "mnemonic": "PSUBSH",
+    "description": "Parallel Subtract with Signed Saturation Halfword"
+  },
+  {
+    "page": 276,
+    "type": "ee",
+    "mnemonic": "PSUBSW",
+    "description": "Parallel Subtract with Signed Saturation Word"
+  },
+  {
+    "page": 278,
+    "type": "ee",
+    "mnemonic": "PSUBUB",
+    "description": "Parallel Subtract with Unsigned Saturation Byte"
+  },
+  {
+    "page": 280,
+    "type": "ee",
+    "mnemonic": "PSUBUH",
+    "description": "Parallel Subtract with Unsigned Saturation Halfword"
+  },
+  {
+    "page": 282,
+    "type": "ee",
+    "mnemonic": "PSUBUW",
+    "description": "Parallel Subtract with Unsigned Saturation Word"
+  },
+  {
+    "page": 284,
+    "type": "ee",
+    "mnemonic": "PSUBW",
+    "description": "Parallel Subtract Word"
+  },
+  {
+    "page": 285,
+    "type": "ee",
+    "mnemonic": "PXOR",
+    "description": "Parallel Exclusive OR"
+  },
+  {
+    "page": 286,
+    "type": "ee",
+    "mnemonic": "QFSRV",
+    "description": "Quadword Funnel Shift Right Variable"
+  },
+  {
+    "page": 287,
+    "type": "ee",
+    "mnemonic": "SQ",
+    "description": "Store Quadword"
+  },
+  {
+    "page": 290,
+    "type": "ee",
+    "mnemonic": "BC0F",
+    "description": "Branch on Coprocessor 0 False"
+  },
+  {
+    "page": 291,
+    "type": "ee",
+    "mnemonic": "BC0FL",
+    "description": "Branch on Coprocessor 0 False Likely"
+  },
+  {
+    "page": 292,
+    "type": "ee",
+    "mnemonic": "BC0T",
+    "description": "Branch on Coprocessor 0 True"
+  },
+  {
+    "page": 293,
+    "type": "ee",
+    "mnemonic": "BC0TL",
+    "description": "Branch on Coprocessor 0 True Likely"
+  },
+  {
+    "page": 294,
+    "type": "ee",
+    "mnemonic": "cache bfh",
+    "description": "Cache Operation (BTAC Flush)"
+  },
+  {
+    "page": 295,
+    "type": "ee",
+    "mnemonic": "cache bhinbt",
+    "description": "Cache Operation (Hit Invalidate BTAC)"
+  },
+  {
+    "page": 296,
+    "type": "ee",
+    "mnemonic": "cache bxlbt",
+    "description": "Cache Operation (Index Load BTAC)"
+  },
+  {
+    "page": 297,
+    "type": "ee",
+    "mnemonic": "cache bxsbt",
+    "description": "Cache Operation (Index Store BTAC)"
+  },
+  {
+    "page": 298,
+    "type": "ee",
+    "mnemonic": "cache dhin",
+    "description": "Cache Operation (Hit Invalidate)"
+  },
+  {
+    "page": 299,
+    "type": "ee",
+    "mnemonic": "cache dhwbin",
+    "description": "Cache Operation (Hit Writeback Invalidate)"
+  },
+  {
+    "page": 300,
+    "type": "ee",
+    "mnemonic": "cache dhwoin",
+    "description": "Cache Operation (Hit Writeback Without Invalidate)"
+  },
+  {
+    "page": 301,
+    "type": "ee",
+    "mnemonic": "cache dxin",
+    "description": "Cache Operation (Index Invalidate)"
+  },
+  {
+    "page": 302,
+    "type": "ee",
+    "mnemonic": "cache dxldt",
+    "description": "Cache Operation (Index Load Data)"
+  },
+  {
+    "page": 303,
+    "type": "ee",
+    "mnemonic": "cache dxltg",
+    "description": "Cache Operation (Index Load Tag)"
+  },
+  {
+    "page": 304,
+    "type": "ee",
+    "mnemonic": "cache dxsdt",
+    "description": "Cache Operation (Index Store Data)"
+  },
+  {
+    "page": 305,
+    "type": "ee",
+    "mnemonic": "cache dxstg",
+    "description": "Cache Operation (Index Store Tag)"
+  },
+  {
+    "page": 306,
+    "type": "ee",
+    "mnemonic": "cache dxwbin",
+    "description": "Cache Operation (Index Writeback Invalidate)"
+  },
+  {
+    "page": 307,
+    "type": "ee",
+    "mnemonic": "cache ifl",
+    "description": "Cache Operation (Fill)"
+  },
+  {
+    "page": 308,
+    "type": "ee",
+    "mnemonic": "cache ihin",
+    "description": "Cache Operation (Hit Invalidate)"
+  },
+  {
+    "page": 309,
+    "type": "ee",
+    "mnemonic": "cache ixin",
+    "description": "Cache Operation (Index Invalidate)"
+  },
+  {
+    "page": 310,
+    "type": "ee",
+    "mnemonic": "cache ixldt",
+    "description": "Cache Operation (Index Load Data)"
+  },
+  {
+    "page": 311,
+    "type": "ee",
+    "mnemonic": "cache ixltg",
+    "description": "Cache Operation (Index Load Tag)"
+  },
+  {
+    "page": 312,
+    "type": "ee",
+    "mnemonic": "cache ixsdt",
+    "description": "Cache Operation (Index Store Data)"
+  },
+  {
+    "page": 313,
+    "type": "ee",
+    "mnemonic": "cache ixstg",
+    "description": "Cache Operation (Index Store Tag)"
+  },
+  {
+    "page": 314,
+    "type": "ee",
+    "mnemonic": "DI",
+    "description": "Disable Interrupt"
+  },
+  {
+    "page": 315,
+    "type": "ee",
+    "mnemonic": "EI",
+    "description": "Enable Interrupt"
+  },
+  {
+    "page": 316,
+    "type": "ee",
+    "mnemonic": "ERET",
+    "description": "Exception Return"
+  },
+  {
+    "page": 317,
+    "type": "ee",
+    "mnemonic": "MFBPC",
+    "description": "Move from Breakpoint Control Register"
+  },
+  {
+    "page": 318,
+    "type": "ee",
+    "mnemonic": "MFC0",
+    "description": "Move from System Control Coprocessor"
+  },
+  {
+    "page": 319,
+    "type": "ee",
+    "mnemonic": "MFDAB",
+    "description": "Move from Data Address Breakpoint Register"
+  },
+  {
+    "page": 320,
+    "type": "ee",
+    "mnemonic": "MFDABM",
+    "description": "Move from Data Address Breakpoint Mask Register"
+  },
+  {
+    "page": 321,
+    "type": "ee",
+    "mnemonic": "MFDVB",
+    "description": "Move from Data value Breakpoint Register"
+  },
+  {
+    "page": 322,
+    "type": "ee",
+    "mnemonic": "MFDVBM",
+    "description": "Move from Data Value Breakpoint Mask Register"
+  },
+  {
+    "page": 323,
+    "type": "ee",
+    "mnemonic": "MFIAB",
+    "description": "Move from Instruction Address Breakpoint Register"
+  },
+  {
+    "page": 324,
+    "type": "ee",
+    "mnemonic": "MFIABM",
+    "description": "Move from Instruction Address Breakpoint Mask Register"
+  },
+  {
+    "page": 325,
+    "type": "ee",
+    "mnemonic": "MFPC",
+    "description": "Move from Performance Counter"
+  },
+  {
+    "page": 326,
+    "type": "ee",
+    "mnemonic": "MFPS",
+    "description": "Move from Performance Event Specifier"
+  },
+  {
+    "page": 327,
+    "type": "ee",
+    "mnemonic": "MTBPC",
+    "description": "Move to Breakpoint Control Register"
+  },
+  {
+    "page": 328,
+    "type": "ee",
+    "mnemonic": "MTC0",
+    "description": "Move to System Control Coprocessor"
+  },
+  {
+    "page": 329,
+    "type": "ee",
+    "mnemonic": "MTDAB",
+    "description": "Move to Data Address Breakpoint Register"
+  },
+  {
+    "page": 330,
+    "type": "ee",
+    "mnemonic": "MTDABM",
+    "description": "Move to Data Address Breakpoint Mask Register"
+  },
+  {
+    "page": 331,
+    "type": "ee",
+    "mnemonic": "MTDVB",
+    "description": "Move to Data Value Breakpoint Register"
+  },
+  {
+    "page": 332,
+    "type": "ee",
+    "mnemonic": "MTDVBM",
+    "description": "Move to Data Value Breakpoint Mask Register"
+  },
+  {
+    "page": 333,
+    "type": "ee",
+    "mnemonic": "MTIAB",
+    "description": "Move to Instruction Address Breakpoint Register"
+  },
+  {
+    "page": 334,
+    "type": "ee",
+    "mnemonic": "MTIABM",
+    "description": "Move to Instruction Address Breakpoint Mask Register"
+  },
+  {
+    "page": 335,
+    "type": "ee",
+    "mnemonic": "MTPC",
+    "description": "Move to Performance Counter"
+  },
+  {
+    "page": 336,
+    "type": "ee",
+    "mnemonic": "MTPS",
+    "description": "Move to Performance Event Specifier"
+  },
+  {
+    "page": 337,
+    "type": "ee",
+    "mnemonic": "TLBP",
+    "description": "Probe TLB for Matching Entry"
+  },
+  {
+    "page": 338,
+    "type": "ee",
+    "mnemonic": "TLBR",
+    "description": "Read Indexed TLB Entry"
+  },
+  {
+    "page": 339,
+    "type": "ee",
+    "mnemonic": "TLBWI",
+    "description": "Write Index TLB Entry"
+  },
+  {
+    "page": 340,
+    "type": "ee",
+    "mnemonic": "TLBWR",
+    "description": "Write Random TLB Entry"
+  },
+  {
+    "page": 342,
+    "type": "ee",
+    "mnemonic": "ABS",
+    "description": "Floating Point Absolute Value"
+  },
+  {
+    "page": 343,
+    "type": "ee",
+    "mnemonic": "ADD",
+    "description": "Floating Point ADD"
+  },
+  {
+    "page": 344,
+    "type": "ee",
+    "mnemonic": "ADDA",
+    "description": "Floating Point Add to Accumulator"
+  },
+  {
+    "page": 345,
+    "type": "ee",
+    "mnemonic": "BC1F",
+    "description": "Branch on FP False"
+  },
+  {
+    "page": 346,
+    "type": "ee",
+    "mnemonic": "BC1FL",
+    "description": "Branch on FP False Likely"
+  },
+  {
+    "page": 347,
+    "type": "ee",
+    "mnemonic": "BC1T",
+    "description": "Branch on FP True"
+  },
+  {
+    "page": 348,
+    "type": "ee",
+    "mnemonic": "BC1TL",
+    "description": "Branch on FP True Likely"
+  },
+  {
+    "page": 349,
+    "type": "ee",
+    "mnemonic": "C.EQ.S",
+    "description": "Floating Point Compare"
+  },
+  {
+    "page": 350,
+    "type": "ee",
+    "mnemonic": "c.f.s",
+    "description": "Floating Point Compare"
+  },
+  {
+    "page": 351,
+    "type": "ee",
+    "mnemonic": "c.le.s",
+    "description": "Floating Point Compare"
+  },
+  {
+    "page": 352,
+    "type": "ee",
+    "mnemonic": "c.lt.s",
+    "description": "Floating Point Compare"
+  },
+  {
+    "page": 353,
+    "type": "ee",
+    "mnemonic": "CFC1",
+    "description": "Move Control Word from Floating Point"
+  },
+  {
+    "page": 354,
+    "type": "ee",
+    "mnemonic": "CTC1",
+    "description": "Move Control Word to Floating Point"
+  },
+  {
+    "page": 355,
+    "type": "ee",
+    "mnemonic": "CVT",
+    "description": "Fixed-point Convert to Single Floating Point"
+  },
+  {
+    "page": 356,
+    "type": "ee",
+    "mnemonic": "CVT",
+    "description": "Floating Point Convert to Word Fixed-point"
+  },
+  {
+    "page": 357,
+    "type": "ee",
+    "mnemonic": "DIV",
+    "description": "Floating Point Divide"
+  },
+  {
+    "page": 358,
+    "type": "ee",
+    "mnemonic": "LWC1",
+    "description": "Load Word to Floating Point"
+  },
+  {
+    "page": 359,
+    "type": "ee",
+    "mnemonic": "MADD",
+    "description": "Floating Point Multiply-ADD"
+  },
+  {
+    "page": 361,
+    "type": "ee",
+    "mnemonic": "MADDA",
+    "description": "Floating Point Multiply-Add"
+  },
+  {
+    "page": 363,
+    "type": "ee",
+    "mnemonic": "MAX",
+    "description": "Floating Point Maximum"
+  },
+  {
+    "page": 364,
+    "type": "ee",
+    "mnemonic": "MFC1",
+    "description": "Move Word from Floating Point"
+  },
+  {
+    "page": 365,
+    "type": "ee",
+    "mnemonic": "MIN",
+    "description": "Floating Point Minimum"
+  },
+  {
+    "page": 366,
+    "type": "ee",
+    "mnemonic": "MOV",
+    "description": "Floating Point Move"
+  },
+  {
+    "page": 367,
+    "type": "ee",
+    "mnemonic": "MSUB",
+    "description": "Floating Point Multiply and Subtract"
+  },
+  {
+    "page": 369,
+    "type": "ee",
+    "mnemonic": "MSUBA",
+    "description": "Floating Point Multiply and Subtract from Accumulator"
+  },
+  {
+    "page": 371,
+    "type": "ee",
+    "mnemonic": "MTC1",
+    "description": "Move Word to Floating Point"
+  },
+  {
+    "page": 372,
+    "type": "ee",
+    "mnemonic": "MUL",
+    "description": "Floating Point Multiply"
+  },
+  {
+    "page": 373,
+    "type": "ee",
+    "mnemonic": "MULA",
+    "description": "Floating Point Multiply to Accumulator"
+  },
+  {
+    "page": 374,
+    "type": "ee",
+    "mnemonic": "NEG",
+    "description": "Floating Point Negate"
+  },
+  {
+    "page": 375,
+    "type": "ee",
+    "mnemonic": "RSQRT",
+    "description": "Floating Point Reciprocal Square Root"
+  },
+  {
+    "page": 376,
+    "type": "ee",
+    "mnemonic": "SQRT",
+    "description": "Floating Point Square Root"
+  },
+  {
+    "page": 377,
+    "type": "ee",
+    "mnemonic": "SUB",
+    "description": "Floating Point Subtract"
+  },
+  {
+    "page": 378,
+    "type": "ee",
+    "mnemonic": "SUBA",
+    "description": "Floating Point Subtract to Accumulator"
+  },
+  {
+    "page": 379,
+    "type": "ee",
+    "mnemonic": "SWC1",
+    "description": "Store Word from Floating Point"
+  },
+  {
+    "page": 66,
+    "type": "vu",
+    "mnemonic": "ABS",
+    "description": "Absolute Value"
+  },
+  { "page": 67, "type": "vu", "mnemonic": "ADD", "description": "Add" },
+  {
+    "page": 68,
+    "type": "vu",
+    "mnemonic": "ADDi",
+    "description": "Add to I Register"
+  },
+  {
+    "page": 69,
+    "type": "vu",
+    "mnemonic": "ADDq",
+    "description": "Add to Q Register"
+  },
+  {
+    "page": 70,
+    "type": "vu",
+    "mnemonic": "ADDbc",
+    "description": "Broadcast Add"
+  },
+  {
+    "page": 71,
+    "type": "vu",
+    "mnemonic": "ADDA",
+    "description": "Add to Accumulator"
+  },
+  {
+    "page": 72,
+    "type": "vu",
+    "mnemonic": "ADDAi",
+    "description": "Add I Register to Accumulator"
+  },
+  {
+    "page": 73,
+    "type": "vu",
+    "mnemonic": "ADDAq",
+    "description": "Add Q Register to Accumulator"
+  },
+  {
+    "page": 74,
+    "type": "vu",
+    "mnemonic": "ADDAbc",
+    "description": "Broadcast Add to Accumulator"
+  },
+  {
+    "page": 75,
+    "type": "vu",
+    "mnemonic": "CLIP",
+    "description": "Clipping Judgment"
+  },
+  {
+    "page": 77,
+    "type": "vu",
+    "mnemonic": "FTOI0",
+    "description": "Convert to Fixed Point"
+  },
+  {
+    "page": 78,
+    "type": "vu",
+    "mnemonic": "FTOI4",
+    "description": "Convert to Fixed Point"
+  },
+  {
+    "page": 79,
+    "type": "vu",
+    "mnemonic": "FTOI12",
+    "description": "Convert to Fixed Point"
+  },
+  {
+    "page": 80,
+    "type": "vu",
+    "mnemonic": "FTOI15",
+    "description": "Convert to Fixed Point"
+  },
+  {
+    "page": 81,
+    "type": "vu",
+    "mnemonic": "ITOF0",
+    "description": "Convert to Floating-Point Number"
+  },
+  {
+    "page": 82,
+    "type": "vu",
+    "mnemonic": "ITOF4",
+    "description": "Convert to Floating-Point Number"
+  },
+  {
+    "page": 83,
+    "type": "vu",
+    "mnemonic": "ITOF12",
+    "description": "Convert to Floating-Point Number"
+  },
+  {
+    "page": 84,
+    "type": "vu",
+    "mnemonic": "ITOF15",
+    "description": "Convert to Floating-Point Number"
+  },
+  {
+    "page": 85,
+    "type": "vu",
+    "mnemonic": "MADD",
+    "description": "Product Sum"
+  },
+  {
+    "page": 86,
+    "type": "vu",
+    "mnemonic": "MADDi",
+    "description": "Product Sum with I Register"
+  },
+  {
+    "page": 87,
+    "type": "vu",
+    "mnemonic": "MADDq",
+    "description": "Product Sum by Q Register"
+  },
+  {
+    "page": 88,
+    "type": "vu",
+    "mnemonic": "MADDbc",
+    "description": "Broadcast Product Sum"
+  },
+  {
+    "page": 89,
+    "type": "vu",
+    "mnemonic": "MADDA",
+    "description": "Product Sum to Accumulator"
+  },
+  {
+    "page": 90,
+    "type": "vu",
+    "mnemonic": "MADDAi",
+    "description": "Product Sum by I register, to Accumulator"
+  },
+  {
+    "page": 91,
+    "type": "vu",
+    "mnemonic": "MADDAq",
+    "description": "Product Sum by Q Register, to Accumulator"
+  },
+  {
+    "page": 92,
+    "type": "vu",
+    "mnemonic": "MADDAbc",
+    "description": "Broadcast Product Sum to Accumulator"
+  },
+  {
+    "page": 93,
+    "type": "vu",
+    "mnemonic": "MAX",
+    "description": "Maximum Value"
+  },
+  {
+    "page": 94,
+    "type": "vu",
+    "mnemonic": "MAXi",
+    "description": "Maximum Value"
+  },
+  {
+    "page": 95,
+    "type": "vu",
+    "mnemonic": "MAXbc",
+    "description": "Maximum Value"
+  },
+  {
+    "page": 96,
+    "type": "vu",
+    "mnemonic": "MINI",
+    "description": "Minimum Value"
+  },
+  {
+    "page": 97,
+    "type": "vu",
+    "mnemonic": "MINIi",
+    "description": "Minimum Value"
+  },
+  {
+    "page": 98,
+    "type": "vu",
+    "mnemonic": "MINIbc",
+    "description": "Minimum Value"
+  },
+  {
+    "page": 99,
+    "type": "vu",
+    "mnemonic": "MSUB",
+    "description": "Multiply and Subtract"
+  },
+  {
+    "page": 100,
+    "type": "vu",
+    "mnemonic": "MSUBi",
+    "description": "Multiply and Subtract with I Register"
+  },
+  {
+    "page": 101,
+    "type": "vu",
+    "mnemonic": "MSUBq",
+    "description": "Multiply and Subtract by Q Register"
+  },
+  {
+    "page": 102,
+    "type": "vu",
+    "mnemonic": "MSUBbc",
+    "description": "Broadcast Multiply and Subtract"
+  },
+  {
+    "page": 103,
+    "type": "vu",
+    "mnemonic": "MSUBA",
+    "description": "Multiply and Subtract to Accumulator"
+  },
+  {
+    "page": 104,
+    "type": "vu",
+    "mnemonic": "MSUBAi",
+    "description": "Multiply and Subtract with I Register, to Accumulator"
+  },
+  {
+    "page": 105,
+    "type": "vu",
+    "mnemonic": "MSUBAq",
+    "description": "Multiply and Subtract by Q Register, to Accumulator"
+  },
+  {
+    "page": 106,
+    "type": "vu",
+    "mnemonic": "MSUBAbc",
+    "description": "Broadcast Multiply and Subtract to Accumulator"
+  },
+  { "page": 107, "type": "vu", "mnemonic": "MUL", "description": "Multiply" },
+  {
+    "page": 108,
+    "type": "vu",
+    "mnemonic": "MULi",
+    "description": "Multiply by I Register"
+  },
+  {
+    "page": 109,
+    "type": "vu",
+    "mnemonic": "MULq",
+    "description": "Multiply by Q Register"
+  },
+  {
+    "page": 110,
+    "type": "vu",
+    "mnemonic": "MULbc",
+    "description": "Multiply by Broadcast"
+  },
+  {
+    "page": 111,
+    "type": "vu",
+    "mnemonic": "MULA",
+    "description": "Multiply to Accumulator"
+  },
+  {
+    "page": 112,
+    "type": "vu",
+    "mnemonic": "MULAi",
+    "description": "Multiply by I Register, to Accumulator"
+  },
+  {
+    "page": 113,
+    "type": "vu",
+    "mnemonic": "MULAq",
+    "description": "Multiply by Q Register, to Accumulator"
+  },
+  {
+    "page": 114,
+    "type": "vu",
+    "mnemonic": "MULAbc",
+    "description": "Broadcast Multiply by broadcast, to Accumulator"
+  },
+  {
+    "page": 115,
+    "type": "vu",
+    "mnemonic": "NOP",
+    "description": "No Operation"
+  },
+  {
+    "page": 116,
+    "type": "vu",
+    "mnemonic": "OPMULA",
+    "description": "Vector Outer Product"
+  },
+  {
+    "page": 117,
+    "type": "vu",
+    "mnemonic": "OPMSUB",
+    "description": "Vector Outer Product"
+  },
+  { "page": 118, "type": "vu", "mnemonic": "SUB", "description": "Subtract" },
+  {
+    "page": 119,
+    "type": "vu",
+    "mnemonic": "SUBi",
+    "description": "Subtract I Register"
+  },
+  {
+    "page": 120,
+    "type": "vu",
+    "mnemonic": "SUBq",
+    "description": "Subtract Q Register"
+  },
+  {
+    "page": 121,
+    "type": "vu",
+    "mnemonic": "SUBbc",
+    "description": "Broadcast Subtract"
+  },
+  {
+    "page": 122,
+    "type": "vu",
+    "mnemonic": "SUBA",
+    "description": "Substract to Accumulator"
+  },
+  {
+    "page": 123,
+    "type": "vu",
+    "mnemonic": "SUBAi",
+    "description": "Subtract I Register to Accumulator"
+  },
+  {
+    "page": 124,
+    "type": "vu",
+    "mnemonic": "SUBAq",
+    "description": "Subtract Q Register to Accumulator"
+  },
+  {
+    "page": 125,
+    "type": "vu",
+    "mnemonic": "SUBAbc",
+    "description": "Broadcast Subtract to Accumulator"
+  },
+  {
+    "page": 127,
+    "type": "vu",
+    "mnemonic": "B",
+    "description": "Unconditional Branch"
+  },
+  {
+    "page": 128,
+    "type": "vu",
+    "mnemonic": "BAL",
+    "description": "Unconditional Branch with Saving Address"
+  },
+  { "page": 129, "type": "vu", "mnemonic": "DIV", "description": "Divide" },
+  {
+    "page": 130,
+    "type": "vu",
+    "mnemonic": "EATAN",
+    "description": "Arctangent"
+  },
+  {
+    "page": 132,
+    "type": "vu",
+    "mnemonic": "EATANxy",
+    "description": "Arctangent"
+  },
+  {
+    "page": 134,
+    "type": "vu",
+    "mnemonic": "EATANxz",
+    "description": "Arctangent"
+  },
+  { "page": 136, "type": "vu", "mnemonic": "EEXP", "description": "Exponent" },
+  { "page": 137, "type": "vu", "mnemonic": "ELENG", "description": "Length" },
+  {
+    "page": 138,
+    "type": "vu",
+    "mnemonic": "ERCPR",
+    "description": "Reciprocal Number"
+  },
+  {
+    "page": 139,
+    "type": "vu",
+    "mnemonic": "ERLENG",
+    "description": "Reciprocal Number of Length"
+  },
+  {
+    "page": 140,
+    "type": "vu",
+    "mnemonic": "ERSADD",
+    "description": "Reciprocal Number"
+  },
+  {
+    "page": 141,
+    "type": "vu",
+    "mnemonic": "ERSQRT",
+    "description": "Reciprocal Number of Square Root"
+  },
+  {
+    "page": 142,
+    "type": "vu",
+    "mnemonic": "ESADD",
+    "description": "Sum of Square Numbers"
+  },
+  { "page": 143, "type": "vu", "mnemonic": "ESIN", "description": "Sine" },
+  {
+    "page": 144,
+    "type": "vu",
+    "mnemonic": "ESQRT",
+    "description": "Square Root"
+  },
+  {
+    "page": 145,
+    "type": "vu",
+    "mnemonic": "ESUM",
+    "description": "Sum of Each Field"
+  },
+  {
+    "page": 146,
+    "type": "vu",
+    "mnemonic": "FCAND",
+    "description": "Test Clipping Flag"
+  },
+  {
+    "page": 147,
+    "type": "vu",
+    "mnemonic": "FCEQ",
+    "description": "Test Clipping Flag"
+  },
+  {
+    "page": 148,
+    "type": "vu",
+    "mnemonic": "FCGET",
+    "description": "Get Clipping Flag"
+  },
+  {
+    "page": 149,
+    "type": "vu",
+    "mnemonic": "FCOR",
+    "description": "Test Clipping Flag"
+  },
+  {
+    "page": 150,
+    "type": "vu",
+    "mnemonic": "FCSET",
+    "description": "Setting Clipping Flag"
+  },
+  {
+    "page": 151,
+    "type": "vu",
+    "mnemonic": "FMAND",
+    "description": "Test MAC Flag Check"
+  },
+  {
+    "page": 152,
+    "type": "vu",
+    "mnemonic": "FMEQ",
+    "description": "Test MAC Flag Check"
+  },
+  {
+    "page": 153,
+    "type": "vu",
+    "mnemonic": "FMOR",
+    "description": "Test MAC Flag Check"
+  },
+  {
+    "page": 154,
+    "type": "vu",
+    "mnemonic": "FSAND",
+    "description": "Test Status Flag Check"
+  },
+  {
+    "page": 155,
+    "type": "vu",
+    "mnemonic": "FSEQ",
+    "description": "Test Status Flag Check"
+  },
+  {
+    "page": 156,
+    "type": "vu",
+    "mnemonic": "FSOR",
+    "description": "Test Status Flag"
+  },
+  {
+    "page": 157,
+    "type": "vu",
+    "mnemonic": "FSSET",
+    "description": "Set Sticky Flags"
+  },
+  {
+    "page": 158,
+    "type": "vu",
+    "mnemonic": "IADD",
+    "description": "ADD Integer"
+  },
+  {
+    "page": 159,
+    "type": "vu",
+    "mnemonic": "IADDI",
+    "description": "Add Immediate Value Integer"
+  },
+  {
+    "page": 160,
+    "type": "vu",
+    "mnemonic": "IADDIU",
+    "description": "Add Immediate Integer"
+  },
+  {
+    "page": 161,
+    "type": "vu",
+    "mnemonic": "IAND",
+    "description": "Logical Product"
+  },
+  {
+    "page": 162,
+    "type": "vu",
+    "mnemonic": "IBEQ",
+    "description": "Conditional Branch"
+  },
+  {
+    "page": 163,
+    "type": "vu",
+    "mnemonic": "IBGEZ",
+    "description": "Conditional Branch"
+  },
+  {
+    "page": 164,
+    "type": "vu",
+    "mnemonic": "IBGTZ",
+    "description": "Conditional Branch"
+  },
+  {
+    "page": 165,
+    "type": "vu",
+    "mnemonic": "IBLEZ",
+    "description": "Conditional Branch"
+  },
+  {
+    "page": 166,
+    "type": "vu",
+    "mnemonic": "IBLTZ",
+    "description": "Conditional Branch"
+  },
+  {
+    "page": 167,
+    "type": "vu",
+    "mnemonic": "IBNE",
+    "description": "Conditional Branch"
+  },
+  {
+    "page": 168,
+    "type": "vu",
+    "mnemonic": "ILW",
+    "description": "Integer Load with Offset Specification"
+  },
+  {
+    "page": 169,
+    "type": "vu",
+    "mnemonic": "ILWR",
+    "description": "Integer Load"
+  },
+  {
+    "page": 170,
+    "type": "vu",
+    "mnemonic": "IOR",
+    "description": "Logical Sum"
+  },
+  {
+    "page": 171,
+    "type": "vu",
+    "mnemonic": "ISUB",
+    "description": "Integer Subtract"
+  },
+  {
+    "page": 172,
+    "type": "vu",
+    "mnemonic": "ISUBIU",
+    "description": "Immediate Value Integer Subtract"
+  },
+  {
+    "page": 173,
+    "type": "vu",
+    "mnemonic": "ISW",
+    "description": "Integer Store with Offset"
+  },
+  {
+    "page": 174,
+    "type": "vu",
+    "mnemonic": "ISWR",
+    "description": "Integer Store"
+  },
+  {
+    "page": 175,
+    "type": "vu",
+    "mnemonic": "JALR",
+    "description": "Unconditional Jump with Address Saving"
+  },
+  {
+    "page": 176,
+    "type": "vu",
+    "mnemonic": "JR",
+    "description": "Unconditional Jump"
+  },
+  { "page": 177, "type": "vu", "mnemonic": "LQ", "description": "Load Qword" },
+  {
+    "page": 178,
+    "type": "vu",
+    "mnemonic": "LQD",
+    "description": "Load Qword with Pre-Decrement"
+  },
+  {
+    "page": 179,
+    "type": "vu",
+    "mnemonic": "LQI",
+    "description": "Load with Post-Increment"
+  },
+  {
+    "page": 180,
+    "type": "vu",
+    "mnemonic": "MFIR",
+    "description": "Move from Integer Register to Floating-Point Register"
+  },
+  {
+    "page": 181,
+    "type": "vu",
+    "mnemonic": "MFP",
+    "description": "Move from P Register to Floating-Point Register"
+  },
+  {
+    "page": 182,
+    "type": "vu",
+    "mnemonic": "MOVE",
+    "description": "Transfer between Floating-Point Registers"
+  },
+  {
+    "page": 183,
+    "type": "vu",
+    "mnemonic": "MR32",
+    "description": "Move with Rotate"
+  },
+  {
+    "page": 184,
+    "type": "vu",
+    "mnemonic": "MTIR",
+    "description": "Move from Floating-Point Register to Integer Register"
+  },
+  {
+    "page": 185,
+    "type": "vu",
+    "mnemonic": "RGET",
+    "description": "Get Random Number"
+  },
+  {
+    "page": 186,
+    "type": "vu",
+    "mnemonic": "RINIT",
+    "description": "Random Number Intialize"
+  },
+  {
+    "page": 187,
+    "type": "vu",
+    "mnemonic": "RNEXT",
+    "description": "Next Random Number"
+  },
+  {
+    "page": 188,
+    "type": "vu",
+    "mnemonic": "RSQRT",
+    "description": "Square Root Division"
+  },
+  {
+    "page": 189,
+    "type": "vu",
+    "mnemonic": "RXOR",
+    "description": "Random Number Set"
+  },
+  {
+    "page": 190,
+    "type": "vu",
+    "mnemonic": "SQ",
+    "description": "Store Qword with Offset"
+  },
+  {
+    "page": 191,
+    "type": "vu",
+    "mnemonic": "SQD",
+    "description": "Store Qword with Pre-Decrement"
+  },
+  {
+    "page": 192,
+    "type": "vu",
+    "mnemonic": "SQI",
+    "description": "Store with Post-Increment"
+  },
+  {
+    "page": 193,
+    "type": "vu",
+    "mnemonic": "SQRT",
+    "description": "Square Root"
+  },
+  {
+    "page": 194,
+    "type": "vu",
+    "mnemonic": "WAITP",
+    "description": "P Register Syncronize"
+  },
+  {
+    "page": 195,
+    "type": "vu",
+    "mnemonic": "WAITQ",
+    "description": "Q Register Syncronize"
+  },
+  {
+    "page": 196,
+    "type": "vu",
+    "mnemonic": "XGKICK",
+    "description": "GIF Control"
+  },
+  {
+    "page": 196,
+    "type": "vu",
+    "mnemonic": "XITOP",
+    "description": "VIF Control"
+  },
+  {
+    "page": 198,
+    "type": "vu",
+    "mnemonic": "XTOP",
+    "description": "VIF Control"
+  },
+  {
+    "page": 230,
+    "type": "vu",
+    "mnemonic": "BC2F",
+    "description": "Branch on COP2 Conditional Signal"
+  },
+  {
+    "page": 231,
+    "type": "vu",
+    "mnemonic": "BC2FL",
+    "description": "Branch on COP2 Conditional Signal"
+  },
+  {
+    "page": 232,
+    "type": "vu",
+    "mnemonic": "BC2T",
+    "description": "Branch on COP2 Conditional Signal"
+  },
+  {
+    "page": 233,
+    "type": "vu",
+    "mnemonic": "BC2TL",
+    "description": "Branch on COP2 Conditional signal"
+  },
+  {
+    "page": 234,
+    "type": "vu",
+    "mnemonic": "CFC2",
+    "description": "Transfer Integer Data from VU to EE Core"
+  },
+  {
+    "page": 235,
+    "type": "vu",
+    "mnemonic": "CTC2",
+    "description": "Transfer Integer Data from EE Core to VU"
+  },
+  {
+    "page": 236,
+    "type": "vu",
+    "mnemonic": "LQC2",
+    "description": "Floating-Point Data Transfer from EE Core to VU"
+  },
+  {
+    "page": 237,
+    "type": "vu",
+    "mnemonic": "QMFC2",
+    "description": "Floating-Point Data Transfer from VU to EE Core"
+  },
+  {
+    "page": 238,
+    "type": "vu",
+    "mnemonic": "QMTC2",
+    "description": "Floating-Point Data Transfer from EE Core to VU"
+  },
+  {
+    "page": 239,
+    "type": "vu",
+    "mnemonic": "SQC2",
+    "description": "Floating-Point Data Transfer from VU to EE Core"
+  },
+  {
+    "page": 240,
+    "type": "vu",
+    "mnemonic": "VABS",
+    "description": "Absolute Value"
+  },
+  { "page": 241, "type": "vu", "mnemonic": "VADD", "description": "Add" },
+  {
+    "page": 242,
+    "type": "vu",
+    "mnemonic": "VADDi",
+    "description": "Add to I Register"
+  },
+  {
+    "page": 243,
+    "type": "vu",
+    "mnemonic": "VADDq",
+    "description": "Add to Q Register"
+  },
+  {
+    "page": 244,
+    "type": "vu",
+    "mnemonic": "VADDbc",
+    "description": "Broadcast Add"
+  },
+  {
+    "page": 245,
+    "type": "vu",
+    "mnemonic": "VADDA",
+    "description": "Add to Accumulator"
+  },
+  {
+    "page": 246,
+    "type": "vu",
+    "mnemonic": "VADDAi",
+    "description": "Add I Register to Accumulator"
+  },
+  {
+    "page": 247,
+    "type": "vu",
+    "mnemonic": "VADDAq",
+    "description": "Add Q Register to Accumulator"
+  },
+  {
+    "page": 248,
+    "type": "vu",
+    "mnemonic": "VADDAbc",
+    "description": "Broadcast Add to Accumulator"
+  },
+  {
+    "page": 249,
+    "type": "vu",
+    "mnemonic": "VCALLMS",
+    "description": "Start Micro Sub-Routine"
+  },
+  {
+    "page": 250,
+    "type": "vu",
+    "mnemonic": "VCALLMSR",
+    "description": "Start Micro Sub-Routine by Register"
+  },
+  {
+    "page": 251,
+    "type": "vu",
+    "mnemonic": "VCLIP",
+    "description": "Clipping Judgment"
+  },
+  { "page": 252, "type": "vu", "mnemonic": "VDIV", "description": "Divide" },
+  {
+    "page": 253,
+    "type": "vu",
+    "mnemonic": "VFTOI0",
+    "description": "Conversion to Fixed Point"
+  },
+  {
+    "page": 254,
+    "type": "vu",
+    "mnemonic": "VFTOI4",
+    "description": "Conversion to Fixed Point"
+  },
+  {
+    "page": 255,
+    "type": "vu",
+    "mnemonic": "VFTOI12",
+    "description": "Conversion to Fixed Point"
+  },
+  {
+    "page": 256,
+    "type": "vu",
+    "mnemonic": "VFTOI15",
+    "description": "Conversion to Fixed Point"
+  },
+  {
+    "page": 257,
+    "type": "vu",
+    "mnemonic": "VIADD",
+    "description": "Add Integer"
+  },
+  {
+    "page": 258,
+    "type": "vu",
+    "mnemonic": "VIADDI",
+    "description": "Add Immediate Value Integer"
+  },
+  {
+    "page": 259,
+    "type": "vu",
+    "mnemonic": "VIAND",
+    "description": "Logical Product"
+  },
+  {
+    "page": 260,
+    "type": "vu",
+    "mnemonic": "VILWR",
+    "description": "Integer Load"
+  },
+  {
+    "page": 261,
+    "type": "vu",
+    "mnemonic": "VIOR",
+    "description": "Logical Sum"
+  },
+  {
+    "page": 262,
+    "type": "vu",
+    "mnemonic": "VISUB",
+    "description": "Integer Subtract"
+  },
+  {
+    "page": 263,
+    "type": "vu",
+    "mnemonic": "VISWR",
+    "description": "Integer Store"
+  },
+  {
+    "page": 264,
+    "type": "vu",
+    "mnemonic": "VITOF0",
+    "description": "Conversion to Floating-Point Number"
+  },
+  {
+    "page": 265,
+    "type": "vu",
+    "mnemonic": "VITOF4",
+    "description": "Conversion to Floating-Point Number"
+  },
+  {
+    "page": 266,
+    "type": "vu",
+    "mnemonic": "VITOF12",
+    "description": "Conversion to Floating-Point Number"
+  },
+  {
+    "page": 267,
+    "type": "vu",
+    "mnemonic": "VITOF15",
+    "description": "Conversion to Floating-Point Number"
+  },
+  {
+    "page": 268,
+    "type": "vu",
+    "mnemonic": "VLQD",
+    "description": "Load with Pre-Decrement"
+  },
+  {
+    "page": 269,
+    "type": "vu",
+    "mnemonic": "VLQI",
+    "description": "Load with Post-Increment"
+  },
+  {
+    "page": 270,
+    "type": "vu",
+    "mnemonic": "VMADD",
+    "description": "Product Sum"
+  },
+  {
+    "page": 271,
+    "type": "vu",
+    "mnemonic": "VMADDi",
+    "description": "Product Sum with I Register"
+  },
+  {
+    "page": 272,
+    "type": "vu",
+    "mnemonic": "VMADDq",
+    "description": "Product Sum with Q Register"
+  },
+  {
+    "page": 273,
+    "type": "vu",
+    "mnemonic": "VMADDbc",
+    "description": "Broadcast Product Sum"
+  },
+  {
+    "page": 274,
+    "type": "vu",
+    "mnemonic": "VMADDA",
+    "description": "Product Sum to Accumulator"
+  },
+  {
+    "page": 275,
+    "type": "vu",
+    "mnemonic": "VMADDAi",
+    "description": "Product Sum with I Register, to Accumulator"
+  },
+  {
+    "page": 276,
+    "type": "vu",
+    "mnemonic": "VMADDAq",
+    "description": "Product Sum with Q Register, to Accumulator"
+  },
+  {
+    "page": 277,
+    "type": "vu",
+    "mnemonic": "VMADDAbc",
+    "description": "Broadcast Product Sum to Accumulator"
+  },
+  {
+    "page": 278,
+    "type": "vu",
+    "mnemonic": "VMAX",
+    "description": "Maximum Value"
+  },
+  {
+    "page": 279,
+    "type": "vu",
+    "mnemonic": "VMAXi",
+    "description": "Maximum Value"
+  },
+  {
+    "page": 280,
+    "type": "vu",
+    "mnemonic": "VMAXbc",
+    "description": "Maximum Value"
+  },
+  {
+    "page": 281,
+    "type": "vu",
+    "mnemonic": "VMFIR",
+    "description": "Transfer from Integer Register to Floating-Point Register"
+  },
+  {
+    "page": 282,
+    "type": "vu",
+    "mnemonic": "VMINI",
+    "description": "Minimum Value"
+  },
+  {
+    "page": 283,
+    "type": "vu",
+    "mnemonic": "VMINIi",
+    "description": "Minimum Value"
+  },
+  {
+    "page": 284,
+    "type": "vu",
+    "mnemonic": "VMINIbc",
+    "description": "Minimum Value"
+  },
+  {
+    "page": 285,
+    "type": "vu",
+    "mnemonic": "VMOVE",
+    "description": "Transfer between Floating-Point Registers"
+  },
+  {
+    "page": 286,
+    "type": "vu",
+    "mnemonic": "VMR32",
+    "description": "Vector Rotate"
+  },
+  {
+    "page": 287,
+    "type": "vu",
+    "mnemonic": "VMSUB",
+    "description": "Multiply and Subtract"
+  },
+  {
+    "page": 288,
+    "type": "vu",
+    "mnemonic": "VMSUBi",
+    "description": "Multiply and Subtract with I Register"
+  },
+  {
+    "page": 289,
+    "type": "vu",
+    "mnemonic": "VMSUBq",
+    "description": "Multiply and Subtract Q Register"
+  },
+  {
+    "page": 290,
+    "type": "vu",
+    "mnemonic": "VMSUBbc",
+    "description": "Broadcast Multiply and Subtract"
+  },
+  {
+    "page": 291,
+    "type": "vu",
+    "mnemonic": "VMSUBA",
+    "description": "Multiply and Subtract to Accumulator"
+  },
+  {
+    "page": 292,
+    "type": "vu",
+    "mnemonic": "VMSUBAi",
+    "description": "Multiply and Subtract with I Register, to Accumulator"
+  },
+  {
+    "page": 293,
+    "type": "vu",
+    "mnemonic": "VMSUBAq",
+    "description": "Multiply and Subtract with Q Register, to Accumulator"
+  },
+  {
+    "page": 294,
+    "type": "vu",
+    "mnemonic": "VMSUBAbc",
+    "description": "Broadcast Multiply and Subtract to Accumulator"
+  },
+  {
+    "page": 295,
+    "type": "vu",
+    "mnemonic": "VMTIR",
+    "description": "Transfer from Floating-Point Register to Integer Register"
+  },
+  { "page": 296, "type": "vu", "mnemonic": "VMUL", "description": "Multiply" },
+  {
+    "page": 297,
+    "type": "vu",
+    "mnemonic": "VMULi",
+    "description": "Multiply by I Register"
+  },
+  {
+    "page": 298,
+    "type": "vu",
+    "mnemonic": "VMULq",
+    "description": "Multiply by Q Register"
+  },
+  {
+    "page": 299,
+    "type": "vu",
+    "mnemonic": "VMULbc",
+    "description": "Broadcast Multiply"
+  },
+  {
+    "page": 300,
+    "type": "vu",
+    "mnemonic": "VMULA",
+    "description": "Multiply to Accumulator"
+  },
+  {
+    "page": 301,
+    "type": "vu",
+    "mnemonic": "VMULAi",
+    "description": "Multiply by I Register to Accumulator"
+  },
+  {
+    "page": 302,
+    "type": "vu",
+    "mnemonic": "VMULAq",
+    "description": "Multiply by Q Register to Accumulator"
+  },
+  {
+    "page": 303,
+    "type": "vu",
+    "mnemonic": "VMULAbc",
+    "description": "Broadcast Multiply to Accumulator"
+  },
+  {
+    "page": 304,
+    "type": "vu",
+    "mnemonic": "VNOP",
+    "description": "No Operation"
+  },
+  {
+    "page": 305,
+    "type": "vu",
+    "mnemonic": "VOPMULA",
+    "description": "Vector Outer Product"
+  },
+  {
+    "page": 306,
+    "type": "vu",
+    "mnemonic": "VOPMSUB",
+    "description": "Vector Outer Product"
+  },
+  {
+    "page": 307,
+    "type": "vu",
+    "mnemonic": "VRGET",
+    "description": "Get Random Numbers"
+  },
+  {
+    "page": 308,
+    "type": "vu",
+    "mnemonic": "VRINIT",
+    "description": "Random Number Initial Set"
+  },
+  {
+    "page": 309,
+    "type": "vu",
+    "mnemonic": "VRNEXT",
+    "description": "New Random Numbers"
+  },
+  {
+    "page": 310,
+    "type": "vu",
+    "mnemonic": "VRSQRT",
+    "description": "Square Root Division"
+  },
+  {
+    "page": 311,
+    "type": "vu",
+    "mnemonic": "VRXOR",
+    "description": "Random Number Set"
+  },
+  {
+    "page": 312,
+    "type": "vu",
+    "mnemonic": "VSQD",
+    "description": "Store with Pre-Decrement"
+  },
+  {
+    "page": 313,
+    "type": "vu",
+    "mnemonic": "VSQI",
+    "description": "Store with Post-Increment"
+  },
+  {
+    "page": 314,
+    "type": "vu",
+    "mnemonic": "VSQRT",
+    "description": "Square Root"
+  },
+  { "page": 315, "type": "vu", "mnemonic": "VSUB", "description": "Subtract" },
+  {
+    "page": 316,
+    "type": "vu",
+    "mnemonic": "VSUBi",
+    "description": "Subtract I Register"
+  },
+  {
+    "page": 317,
+    "type": "vu",
+    "mnemonic": "VSUBq",
+    "description": "Subtract Q Register"
+  },
+  {
+    "page": 318,
+    "type": "vu",
+    "mnemonic": "VSUBbc",
+    "description": "Broadcast Subtract"
+  },
+  {
+    "page": 319,
+    "type": "vu",
+    "mnemonic": "VSUBA",
+    "description": "Subtract to Accumulator"
+  },
+  {
+    "page": 320,
+    "type": "vu",
+    "mnemonic": "VSUBAi",
+    "description": "Subtract I Register to Accumulator"
+  },
+  {
+    "page": 321,
+    "type": "vu",
+    "mnemonic": "VSUBAq",
+    "description": "Subtract Q Register to Accumulator"
+  },
+  {
+    "page": 322,
+    "type": "vu",
+    "mnemonic": "VSUBAbc",
+    "description": "Broadcast Subtract to Accumulator"
+  },
+  {
+    "page": 323,
+    "type": "vu",
+    "mnemonic": "VWAITQ",
+    "description": "Q Register Synchronize"
+  }
+]
