@@ -7,7 +7,7 @@ import {
   setVSIconAssociations,
 } from "./config/user-settings";
 import { PdfCustomProvider } from "./vendor/vscode-pdfviewer/pdfProvider";
-import { open_in_pdf } from "./lib/decomp/man-page";
+import { open_in_pdf } from "./decomp/man-page";
 
 let recentFiles: RecentFiles;
 let provider: PdfCustomProvider;
