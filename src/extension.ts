@@ -6,12 +6,16 @@ import {
   setTextmateColors,
   setVSIconAssociations,
 } from "./config/user-settings";
+import { PdfCustomProvider } from "./vendor/vscode-pdfviewer/pdfProvider";
+import { open_in_pdf } from "./lib/decomp/man-page";
 
 let recentFiles: RecentFiles;
+let provider: PdfCustomProvider;
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  const extensionRoot = vscode.Uri.file(context.extensionPath);
+
+  // Init settings that we unfortunately have to manually maintain
   setVSIconAssociations();
   setTextmateColors();
 
@@ -30,6 +34,42 @@ export function activate(context: vscode.ExtensionContext) {
       "opengoal.decomp.openMostRecentIRFile",
       () => fileUtils.openFile(recentFiles.searchByPrefix("_ir2.asm"))
     )
+  );
+
+  provider = new PdfCustomProvider(extensionRoot);
+  context.subscriptions.push(
+    vscode.window.registerCustomEditorProvider(
+      PdfCustomProvider.viewType,
+      provider,
+      {
+        webviewOptions: {
+          enableFindWidget: false, // default
+          retainContextWhenHidden: true,
+        },
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("opengoal.decomp.openManPage", (evt) => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        return;
+      }
+      const document = editor.document;
+      const currPosition = editor.selection.anchor;
+
+      // Find the token splitting by word boundaries at the current position
+      const wordRange = document.getWordRangeAtPosition(
+        currPosition,
+        /[\w.]+/g
+      );
+      if (wordRange === undefined) {
+        return;
+      }
+      const word = document.getText(wordRange);
+      open_in_pdf(word);
+    })
   );
 
   // Events
