@@ -42,8 +42,7 @@
   "activationEvents": [
     "onLanguage:opengoal",
     "onLanguage:opengoal-goos",
-    "onLanguage:opengoal-ir",
-    "onCommand:extension.helloWorld"
+    "onLanguage:opengoal-ir"
   ],
   "contributes": {
     "commands": [
@@ -53,11 +52,19 @@
       },
       {
         "command": "opengoal.decomp.openMostRecentIRFile",
-        "title": "OpenGOAL - Decomp - Open Recent IR2 File"
+        "title": "OpenGOAL - Open Recent IR2 File"
       },
       {
         "command": "opengoal.decomp.openManPage",
-        "title": "OpenGOAL - Decomp - Man Page"
+        "title": "OpenGOAL - MIPS Man Page"
+      },
+      {
+        "command": "opengoal.decomp.decompileCurrentFile",
+        "title": "OpenGOAL - Decompile Current File"
+      },
+      {
+        "command": "opengoal.decomp.decompileFile",
+        "title": "OpenGOAL - Change Decompiler Config"
       }
     ],
     "configuration": {
@@ -78,6 +85,30 @@
           ],
           "default": null,
           "description": "File path to the VU Man Page"
+        },
+        "opengoal.decompilerPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "File path to the decompiler executable"
+        },
+        "opengoal.decompilerJak1Config": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Config to use for decompiling jak 1 related files"
+        },
+        "opengoal.decompilerJak2Config": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Config to use for decompiling jak 2 related files"
         }
       }
     },

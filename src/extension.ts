@@ -1,13 +1,13 @@
 import * as vscode from "vscode";
 import { RecentFiles } from "./RecentFiles";
-import * as fileUtils from "./utils/FileUtils";
 import * as lsp from "./lsp/main";
 import {
   setTextmateColors,
   setVSIconAssociations,
 } from "./config/user-settings";
 import { PdfCustomProvider } from "./vendor/vscode-pdfviewer/pdfProvider";
-import { open_in_pdf } from "./decomp/man-page";
+import { switchFile } from "./utils/FileUtils";
+import { activateDecompTools } from "./decomp/decomp-tools";
 
 let recentFiles: RecentFiles;
 let provider: PdfCustomProvider;
@@ -23,19 +23,14 @@ export async function activate(context: vscode.ExtensionContext) {
   if (vscode.window.activeTextEditor?.document != undefined) {
     recentFiles.addFile(vscode.window.activeTextEditor?.document.fileName);
   }
-  // Commands
-  // - All
+
   context.subscriptions.push(
-    vscode.commands.registerCommand("opengoal.switchFile", fileUtils.switchFile)
-  );
-  // - Decompiling
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "opengoal.decomp.openMostRecentIRFile",
-      () => fileUtils.openFile(recentFiles.searchByPrefix("_ir2.asm"))
-    )
+    vscode.commands.registerCommand("opengoal.switchFile", switchFile)
   );
 
+  activateDecompTools(context, recentFiles);
+
+  // Customized PDF Viewer
   provider = new PdfCustomProvider(extensionRoot);
   context.subscriptions.push(
     vscode.window.registerCustomEditorProvider(
@@ -48,28 +43,6 @@ export async function activate(context: vscode.ExtensionContext) {
         },
       }
     )
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("opengoal.decomp.openManPage", (evt) => {
-      const editor = vscode.window.activeTextEditor;
-      if (!editor) {
-        return;
-      }
-      const document = editor.document;
-      const currPosition = editor.selection.anchor;
-
-      // Find the token splitting by word boundaries at the current position
-      const wordRange = document.getWordRangeAtPosition(
-        currPosition,
-        /[\w.]+/g
-      );
-      if (wordRange === undefined) {
-        return;
-      }
-      const word = document.getText(wordRange);
-      open_in_pdf(word);
-    })
   );
 
   // Events

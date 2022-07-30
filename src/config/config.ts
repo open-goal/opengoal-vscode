@@ -8,6 +8,8 @@ export function getConfig() {
     opengoalLspPath: configOptions.get<string>("opengoalLspPath"),
     eeManPagePath: configOptions.get<string>("eeManPagePath"),
     vuManPagePath: configOptions.get<string>("vuManPagePath"),
+    jak1DecompConfig: configOptions.get<string>("decompilerJak1Config"),
+    jak2DecompConfig: configOptions.get<string>("decompilerJak2Config"),
   };
 }
 
