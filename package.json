@@ -5,7 +5,7 @@
   "publisher": "opengoal",
   "version": "0.0.2",
   "engines": {
-    "vscode": "^1.65.0"
+    "vscode": "^1.69.0"
   },
   "categories": [
     "Programming Languages"
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
     "@types/node": "^12.12.0",
-    "@types/vscode": "^1.34.0",
+    "@types/vscode": "^1.69.0",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
     "@typescript-eslint/parser": "^5.19.0",
     "eslint": "^8.13.0",
@@ -42,7 +42,13 @@
   "activationEvents": [
     "onLanguage:opengoal",
     "onLanguage:opengoal-goos",
-    "onLanguage:opengoal-ir"
+    "onLanguage:opengoal-ir",
+    "onCommand:opengoal.switchFile",
+    "onCommand:opengoal.decomp.openMostRecentIRFile",
+    "onCommand:opengoal.decomp.openManPage",
+    "onCommand:opengoal.decomp.decompileCurrentFile",
+    "onCommand:opengoal.decomp.toggleAutoDecompilation",
+    "onCommand:opengoal.decomp.decompileFile"
   ],
   "contributes": {
     "commands": [
@@ -61,6 +67,10 @@
       {
         "command": "opengoal.decomp.decompileCurrentFile",
         "title": "OpenGOAL - Decompile Current File"
+      },
+      {
+        "command": "opengoal.decomp.toggleAutoDecompilation",
+        "title": "OpenGOAL - Toggle Auto-Decompilation"
       },
       {
         "command": "opengoal.decomp.decompileFile",

@@ -1,5 +1,5 @@
-import { execFile, execFileSync } from "child_process";
-import { existsSync, fstatSync } from "fs";
+import { execFile } from "child_process";
+import { existsSync } from "fs";
 import * as vscode from "vscode";
 import { RecentFiles } from "../RecentFiles";
 import { openFile } from "../utils/FileUtils";
@@ -8,11 +8,59 @@ import * as util from "util";
 import { getConfig } from "../config/config";
 import * as path from "path";
 
+const execFileAsync = util.promisify(execFile);
+
 // Put some of this stuff into the context
 let recentFiles: RecentFiles;
 let decompilerPath: string | undefined = undefined;
 let folderRootPath: string | undefined = undefined;
 let channel: vscode.OutputChannel;
+let fsWatcher: vscode.FileSystemWatcher | undefined;
+
+const decompStatusItem = vscode.window.createStatusBarItem(
+  vscode.StatusBarAlignment.Left,
+  0
+);
+
+enum DecompStatus {
+  Idle,
+  Running,
+}
+
+function updateStatus(status: DecompStatus, metadata?: any) {
+  let subText = "";
+  switch (status) {
+    case DecompStatus.Idle:
+      decompStatusItem.tooltip = "Toggle Auto-Decompilation";
+      decompStatusItem.command = "opengoal.decomp.toggleAutoDecompilation";
+      if (fsWatcher === undefined) {
+        decompStatusItem.text =
+          "$(extensions-sync-ignored) Auto-Decompilation Disabled";
+      } else {
+        decompStatusItem.text =
+          "$(extensions-sync-enabled) Auto-Decompilation Enabled";
+      }
+      break;
+    case DecompStatus.Running:
+      if (metadata.objectNames.length > 0) {
+        if (metadata.objectNames.length <= 5) {
+          subText = metadata.objectNames.join(", ");
+        } else {
+          subText = `${metadata.objectNames.slice(0, 5).join(", ")}, and ${
+            metadata.objectNames.length - 5
+          } more`;
+        }
+      }
+
+      // TODO - should i put the config type / game here too?
+      decompStatusItem.text = `$(loading~spin) Decompiling - ${subText} - [ ${metadata.decompConfig} ]`;
+      decompStatusItem.tooltip = "Decompiling...";
+      decompStatusItem.command = undefined;
+      break;
+    default:
+      break;
+  }
+}
 
 function defaultDecompPath() {
   const platform = process.platform;
@@ -44,13 +92,19 @@ function openManPage() {
   open_in_pdf(word);
 }
 
-function decompFiles(decompConfig: string, fileNames: string[]) {
+async function decompFiles(decompConfig: string, fileNames: string[]) {
+  if (fileNames.length == 0) {
+    return;
+  }
   if (decompilerPath == undefined || folderRootPath == undefined) {
     return;
   }
   const allowed_objects = fileNames.map((name) => `"${name}"`).join(",");
-  // TODO - status update somewhere
-  const stdout = execFileSync(
+  updateStatus(DecompStatus.Running, {
+    objectNames: fileNames,
+    decompConfig: decompConfig,
+  });
+  const { stdout, stderr } = await execFileAsync(
     decompilerPath,
     [
       `./decompiler/config/${decompConfig}`,
@@ -60,12 +114,14 @@ function decompFiles(decompConfig: string, fileNames: string[]) {
       `{"allowed_objects": [${allowed_objects}]}`,
     ],
     {
+      encoding: "utf8",
       cwd: folderRootPath,
       timeout: 20000,
     }
   );
-  // TODO - finish status
+  updateStatus(DecompStatus.Idle);
   channel.append(stdout.toString());
+  channel.append(stderr.toString());
 }
 
 async function decompCurrentFile() {
@@ -126,9 +182,72 @@ async function decompCurrentFile() {
     tempTest = "jak2_ntsc_v1.jsonc";
   }
 
-  decompFiles(tempTest, [fileName]);
+  await decompFiles(tempTest, [fileName]);
 
   console.log(decompilerPath);
+}
+
+async function decompAllActiveFiles() {
+  const jak1Files = [];
+  const jak2Files = [];
+  let folderRoot;
+  for (const tabGroup of vscode.window.tabGroups.all) {
+    for (const tab of tabGroup.tabs) {
+      if (tab.input instanceof vscode.TabInputText) {
+        const uri = tab.input.uri;
+        const fileName = path.basename(uri.fsPath);
+        if (!fileName.match(/.*_ir2\.asm/)) {
+          continue;
+        }
+
+        // TODO - assumes everything is in the same workspace folder
+        if (folderRootPath === undefined) {
+          folderRoot = vscode.workspace.getWorkspaceFolder(uri);
+          if (folderRoot !== undefined) {
+            folderRootPath = folderRoot.uri.fsPath;
+          }
+        }
+
+        const objectName = fileName.split("_ir2.asm")[0];
+        if (uri.fsPath.includes("jak1")) {
+          jak1Files.push(objectName);
+        } else {
+          jak2Files.push(objectName);
+        }
+      }
+    }
+  }
+
+  // Duplication
+  // Look for the decompiler if the path isn't set.
+  if (decompilerPath !== undefined && !existsSync(decompilerPath)) {
+    // If the path is set, ensure it actually exists!
+    decompilerPath = undefined;
+  }
+
+  if (decompilerPath === undefined && folderRoot !== undefined) {
+    const potentialPath = vscode.Uri.joinPath(
+      folderRoot.uri,
+      defaultDecompPath()
+    );
+    if (existsSync(potentialPath.fsPath)) {
+      decompilerPath = potentialPath.fsPath;
+    } else {
+      // Ask the user to find it cause we have no idea
+      const path = await vscode.window.showOpenDialog({
+        canSelectMany: false,
+        openLabel: "Select Decompiler",
+        title: "Provide the decompiler executable's path",
+      });
+      if (path === undefined || path.length == 0) {
+        return;
+      }
+      decompilerPath = path[0].fsPath;
+    }
+  }
+
+  await decompFiles("jak1_ntsc_black_label.jsonc", jak1Files);
+  await decompFiles("jak2_ntsc_v1.jsonc", jak2Files);
 }
 
 export async function activateDecompTools(
@@ -142,6 +261,18 @@ export async function activateDecompTools(
   );
 
   recentFiles = _recentFiles;
+
+  // Watchers
+  // TODO - make this a toggle
+  fsWatcher = vscode.workspace.createFileSystemWatcher(
+    "**/decompiler/config/**/*.{jsonc,json,gc}"
+  );
+  fsWatcher.onDidChange(() => decompAllActiveFiles());
+  fsWatcher.onDidCreate(() => decompAllActiveFiles());
+  fsWatcher.onDidDelete(() => decompAllActiveFiles());
+
+  updateStatus(DecompStatus.Idle);
+  decompStatusItem.show();
 
   // Commands
   context.subscriptions.push(
