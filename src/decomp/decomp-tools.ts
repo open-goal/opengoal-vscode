@@ -51,8 +51,6 @@ function updateStatus(status: DecompStatus, metadata?: any) {
           } more`;
         }
       }
-
-      // TODO - should i put the config type / game here too?
       decompStatusItem.text = `$(loading~spin) Decompiling - ${subText} - [ ${metadata.decompConfig} ]`;
       decompStatusItem.tooltip = "Decompiling...";
       decompStatusItem.command = undefined;
@@ -90,6 +88,21 @@ function openManPage() {
   }
   const word = document.getText(wordRange);
   open_in_pdf(word);
+}
+
+function toggleAutoDecompilation() {
+  if (fsWatcher === undefined) {
+    fsWatcher = vscode.workspace.createFileSystemWatcher(
+      "**/decompiler/config/**/*.{jsonc,json,gc}"
+    );
+    fsWatcher.onDidChange(() => decompAllActiveFiles());
+    fsWatcher.onDidCreate(() => decompAllActiveFiles());
+    fsWatcher.onDidDelete(() => decompAllActiveFiles());
+  } else {
+    fsWatcher.dispose();
+    fsWatcher = undefined;
+  }
+  updateStatus(DecompStatus.Idle);
 }
 
 async function decompFiles(decompConfig: string, fileNames: string[]) {
@@ -262,14 +275,7 @@ export async function activateDecompTools(
 
   recentFiles = _recentFiles;
 
-  // Watchers
-  // TODO - make this a toggle
-  fsWatcher = vscode.workspace.createFileSystemWatcher(
-    "**/decompiler/config/**/*.{jsonc,json,gc}"
-  );
-  fsWatcher.onDidChange(() => decompAllActiveFiles());
-  fsWatcher.onDidCreate(() => decompAllActiveFiles());
-  fsWatcher.onDidDelete(() => decompAllActiveFiles());
+  toggleAutoDecompilation();
 
   updateStatus(DecompStatus.Idle);
   decompStatusItem.show();
@@ -288,6 +294,12 @@ export async function activateDecompTools(
     vscode.commands.registerCommand(
       "opengoal.decomp.decompileCurrentFile",
       decompCurrentFile
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.toggleAutoDecompilation",
+      toggleAutoDecompilation
     )
   );
 }
