@@ -48,6 +48,7 @@
     "onCommand:opengoal.switchFile",
     "onCommand:opengoal.decomp.openMostRecentIRFile",
     "onCommand:opengoal.decomp.openManPage",
+    "onCommand:opengoal.decomp.decompileSpecificFile",
     "onCommand:opengoal.decomp.decompileCurrentFile",
     "onCommand:opengoal.decomp.toggleAutoDecompilation",
     "onCommand:opengoal.decomp.decompileFile",
@@ -66,6 +67,10 @@
       {
         "command": "opengoal.decomp.openManPage",
         "title": "OpenGOAL - MIPS Man Page"
+      },
+      {
+        "command": "opengoal.decomp.decompileSpecificFile",
+        "title": "OpenGOAL - Decompile Specific File"
       },
       {
         "command": "opengoal.decomp.decompileCurrentFile",

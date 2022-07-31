@@ -295,6 +295,75 @@ async function decompFiles(decompConfig: string, fileNames: string[]) {
   channel.append(stderr.toString());
 }
 
+async function decompSpecificFile() {
+  const folders = vscode.workspace.workspaceFolders;
+  if (folders === undefined) {
+    return;
+  }
+  let folderRoot = undefined;
+  for (const workspace of folders) {
+    if (workspace.name.includes("jak-project")) {
+      folderRoot = workspace.uri;
+    }
+  }
+  if (!folderRoot) {
+    return;
+  }
+
+  if (folderRootPath === undefined) {
+    folderRootPath = folderRoot.fsPath;
+  }
+
+  // Look for the decompiler if the path isn't set.
+  if (decompilerPath !== undefined && !existsSync(decompilerPath)) {
+    // If the path is set, ensure it actually exists!
+    decompilerPath = undefined;
+  }
+
+  if (decompilerPath === undefined) {
+    const potentialPath = vscode.Uri.joinPath(folderRoot, defaultDecompPath());
+    if (existsSync(potentialPath.fsPath)) {
+      decompilerPath = potentialPath.fsPath;
+    } else {
+      // Ask the user to find it cause we have no idea
+      const path = await vscode.window.showOpenDialog({
+        canSelectMany: false,
+        openLabel: "Select Decompiler",
+        title: "Provide the decompiler executable's path",
+      });
+      if (path === undefined || path.length == 0) {
+        return;
+      }
+      decompilerPath = path[0].fsPath;
+    }
+  }
+
+  // Prompt the user for the game name
+  const gameName = await vscode.window.showQuickPick(["jak1", "jak2"], {
+    title: "Game?",
+  });
+  if (gameName === undefined) {
+    return;
+  }
+  // Prompt the user for the file name
+  const fileName = await vscode.window.showInputBox({ title: "Object Name?" });
+  if (fileName === undefined) {
+    return;
+  }
+
+  // Determine what decomp config to use
+  const config = getConfig();
+  let tempTest;
+  if (gameName == "jak1") {
+    // TODO - ask user for it if it doesn't exist!
+    tempTest = "something.jsonc";
+  } else {
+    tempTest = "jak2_ntsc_v1.jsonc";
+  }
+
+  await decompFiles(tempTest, [fileName]);
+}
+
 async function decompCurrentFile() {
   const editor = vscode.window.activeTextEditor;
   if (!editor || !editor.document === undefined) {
@@ -452,6 +521,12 @@ export async function activateDecompTools(
     vscode.commands.registerCommand(
       "opengoal.decomp.decompileCurrentFile",
       decompCurrentFile
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.decompileSpecificFile",
+      decompSpecificFile
     )
   );
   context.subscriptions.push(
