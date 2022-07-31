@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
+    "@types/glob": "^7.2.0",
     "@types/node": "^12.12.0",
     "@types/vscode": "^1.69.0",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
@@ -36,6 +37,7 @@
   },
   "dependencies": {
     "follow-redirects": "^1.15.1",
+    "glob": "^8.0.3",
     "open": "^8.4.0",
     "vscode-languageclient": "^8.0.1"
   },
@@ -48,7 +50,8 @@
     "onCommand:opengoal.decomp.openManPage",
     "onCommand:opengoal.decomp.decompileCurrentFile",
     "onCommand:opengoal.decomp.toggleAutoDecompilation",
-    "onCommand:opengoal.decomp.decompileFile"
+    "onCommand:opengoal.decomp.decompileFile",
+    "onCommand:opengoal.decomp.updateSourceFile"
   ],
   "contributes": {
     "commands": [
@@ -75,6 +78,14 @@
       {
         "command": "opengoal.decomp.decompileFile",
         "title": "OpenGOAL - Change Decompiler Config"
+      },
+      {
+        "command": "opengoal.decomp.updateSourceFile",
+        "title": "OpenGOAL - Copy Decompilation to Source File"
+      },
+      {
+        "command": "opengoal.decomp.updateReferenceTest",
+        "title": "OpenGOAL - Copy Decompilation to Reference Tests"
       }
     ],
     "configuration": {

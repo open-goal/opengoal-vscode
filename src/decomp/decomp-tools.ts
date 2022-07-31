@@ -1,5 +1,5 @@
 import { execFile } from "child_process";
-import { existsSync } from "fs";
+import { existsSync, promises as fs } from "fs";
 import * as vscode from "vscode";
 import { RecentFiles } from "../RecentFiles";
 import { openFile } from "../utils/FileUtils";
@@ -7,7 +7,9 @@ import { open_in_pdf } from "./man-page";
 import * as util from "util";
 import { getConfig } from "../config/config";
 import * as path from "path";
+import * as glob from "glob";
 
+const globAsync = util.promisify(glob);
 const execFileAsync = util.promisify(execFile);
 
 // Put some of this stuff into the context
@@ -103,6 +105,162 @@ function toggleAutoDecompilation() {
     fsWatcher = undefined;
   }
   updateStatus(DecompStatus.Idle);
+}
+
+async function updateSourceFile() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || !editor.document === undefined) {
+    // TODO - errors
+    return;
+  }
+  const folderRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+  if (!folderRoot) {
+    return;
+  }
+
+  let fileName = path.basename(editor.document.fileName);
+  let disasmFilePath = "";
+  if (fileName.match(/.*_ir2\.asm/)) {
+    disasmFilePath = editor.document.fileName.replace("_ir2.asm", "_disasm.gc");
+    fileName = fileName.split("_ir2.asm")[0];
+    if (!existsSync(disasmFilePath)) {
+      return;
+    }
+  } else if (fileName.match(/.*_disasm.gc/)) {
+    disasmFilePath = editor.document.fileName;
+    fileName = fileName.split("_disasm.gc")[0];
+  } else {
+    return;
+  }
+
+  let gameName = "jak1";
+  if (editor.document.uri.fsPath.includes("jak2")) {
+    gameName = "jak2";
+  }
+  const folderToSearch = vscode.Uri.joinPath(
+    folderRoot.uri,
+    `goal_src/${gameName}`
+  );
+  const files = await globAsync(`**/${fileName}.gc`, {
+    cwd: folderToSearch.fsPath,
+  });
+
+  if (files.length == 0 || files.length > 1) {
+    return;
+  }
+
+  const filePath = files[0];
+  // Read from the file until we've determined it's empty (add the decomp marker) or we find the decomp marker
+  const fileContents = await fs.readFile(
+    vscode.Uri.joinPath(folderRoot.uri, `goal_src/${gameName}/${filePath}`)
+      .fsPath,
+    { encoding: "utf-8" }
+  );
+  const fileContentsLines = fileContents.split(/\r?\n/);
+
+  // Check if the file is empty
+  const newLines = [];
+  for (const line of fileContentsLines) {
+    if (line.toLowerCase().includes("decomp begins")) {
+      break;
+    }
+    newLines.push(line);
+  }
+  newLines.push(";; DECOMP BEGINS");
+
+  // TODO - make these configurable
+  const linesToIgnore = [
+    ";;-*-Lisp-*-",
+    "(in-package goal)",
+    ";; definition",
+    ";; INFO:",
+    ";; failed to figure",
+    ";; Used lq/sq",
+  ];
+
+  const decompContents = await fs.readFile(disasmFilePath, {
+    encoding: "utf-8",
+  });
+  const decompContentsLines = decompContents.split(/\r?\n/);
+
+  for (const line of decompContentsLines) {
+    // Check we don't want to ignore it
+    let ignore = false;
+    for (const ignorePrefix of linesToIgnore) {
+      if (line.toLowerCase().startsWith(ignorePrefix.toLowerCase())) {
+        ignore = true;
+        break;
+      }
+    }
+    if (!ignore) {
+      newLines.push(line);
+    }
+  }
+
+  await fs.writeFile(
+    vscode.Uri.joinPath(folderRoot.uri, `goal_src/${gameName}/${filePath}`)
+      .fsPath,
+    newLines.join("\n"),
+    { encoding: "utf-8" }
+  );
+}
+
+async function updateReferenceTest() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || !editor.document === undefined) {
+    // TODO - errors
+    return;
+  }
+  const folderRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+  if (!folderRoot) {
+    return;
+  }
+
+  let fileName = path.basename(editor.document.fileName);
+  let disasmFilePath = "";
+  if (fileName.match(/.*_ir2\.asm/)) {
+    disasmFilePath = editor.document.fileName.replace("_ir2.asm", "_disasm.gc");
+    fileName = fileName.split("_ir2.asm")[0];
+    if (!existsSync(disasmFilePath)) {
+      return;
+    }
+  } else if (fileName.match(/.*_disasm.gc/)) {
+    disasmFilePath = editor.document.fileName;
+    fileName = fileName.split("_disasm.gc")[0];
+  } else {
+    return;
+  }
+
+  let gameName = "jak1";
+  if (editor.document.uri.fsPath.includes("jak2")) {
+    gameName = "jak2";
+  }
+  const folderToSearch = vscode.Uri.joinPath(
+    folderRoot.uri,
+    `goal_src/${gameName}`
+  );
+  const files = await globAsync(`**/${fileName}.gc`, {
+    cwd: folderToSearch.fsPath,
+  });
+
+  if (files.length == 0 || files.length > 1) {
+    return;
+  }
+
+  const refTestPath = vscode.Uri.joinPath(
+    folderRoot.uri,
+    `test/decompiler/reference/${gameName}/${files[0]}`
+  ).fsPath;
+
+  const decompContents = await fs.readFile(disasmFilePath, {
+    encoding: "utf-8",
+  });
+
+  await fs.mkdir(path.dirname(refTestPath), { recursive: true });
+  await fs.writeFile(refTestPath, decompContents, {
+    encoding: "utf-8",
+    flag: "w+",
+  });
 }
 
 async function decompFiles(decompConfig: string, fileNames: string[]) {
@@ -300,6 +458,18 @@ export async function activateDecompTools(
     vscode.commands.registerCommand(
       "opengoal.decomp.toggleAutoDecompilation",
       toggleAutoDecompilation
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.updateSourceFile",
+      updateSourceFile
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.updateReferenceTest",
+      updateReferenceTest
     )
   );
 }
