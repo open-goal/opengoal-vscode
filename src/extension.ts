@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { RecentFiles } from "./RecentFiles";
 import * as lsp from "./lsp/main";
 import {
   setTextmateColors,
@@ -8,30 +7,26 @@ import {
 import { PdfCustomProvider } from "./vendor/vscode-pdfviewer/pdfProvider";
 import { switchFile } from "./utils/FileUtils";
 import { activateDecompTools } from "./decomp/decomp-tools";
-
-let recentFiles: RecentFiles;
-let provider: PdfCustomProvider;
+import { initContext } from "./context";
 
 export async function activate(context: vscode.ExtensionContext) {
-  const extensionRoot = vscode.Uri.file(context.extensionPath);
+  // Init Context
+  initContext(context);
 
   // Init settings that we unfortunately have to manually maintain
   await setVSIconAssociations();
   await setTextmateColors();
 
-  recentFiles = new RecentFiles(context);
-  if (vscode.window.activeTextEditor?.document != undefined) {
-    recentFiles.addFile(vscode.window.activeTextEditor?.document.fileName);
-  }
-
   context.subscriptions.push(
     vscode.commands.registerCommand("opengoal.switchFile", switchFile)
   );
 
-  activateDecompTools(context, recentFiles);
+  activateDecompTools();
 
   // Customized PDF Viewer
-  provider = new PdfCustomProvider(extensionRoot);
+  const provider = new PdfCustomProvider(
+    vscode.Uri.file(context.extensionPath)
+  );
   context.subscriptions.push(
     vscode.window.registerCustomEditorProvider(
       PdfCustomProvider.viewType,
@@ -43,15 +38,6 @@ export async function activate(context: vscode.ExtensionContext) {
         },
       }
     )
-  );
-
-  // Events
-  context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor((editor) => {
-      if (editor?.document != undefined) {
-        recentFiles.addFile(editor?.document.fileName);
-      }
-    })
   );
 
   // Start the LSP

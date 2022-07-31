@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import * as path from "path";
 
+// TODO - remove "most recent ir2 file, and wire it up here when in an `all-types.gc` file"
+
 const fileSwitchingAssoc = {
   "_ir2.asm": "_disasm.gc",
   "_disasm.gc": "_ir2.asm",

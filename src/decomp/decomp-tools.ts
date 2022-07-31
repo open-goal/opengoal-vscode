@@ -1,21 +1,31 @@
 import { execFile } from "child_process";
 import { existsSync, promises as fs } from "fs";
 import * as vscode from "vscode";
-import { RecentFiles } from "../RecentFiles";
 import { openFile } from "../utils/FileUtils";
 import { open_in_pdf } from "./man-page";
 import * as util from "util";
-import { getConfig } from "../config/config";
+import {
+  getConfig,
+  updateDecompilerPath,
+  updateJak1DecompConfig,
+  updateJak2DecompConfig,
+} from "../config/config";
 import * as path from "path";
 import * as glob from "glob";
+import { getExtensionContext, getRecentFiles } from "../context";
+import {
+  getFileNamesFromUris,
+  getUrisFromTabs,
+  getWorkspaceFolderByName,
+  truncateFileNameEndings,
+} from "../utils/workspace";
 
 const globAsync = util.promisify(glob);
 const execFileAsync = util.promisify(execFile);
 
 // Put some of this stuff into the context
-let recentFiles: RecentFiles;
-let decompilerPath: string | undefined = undefined;
-let folderRootPath: string | undefined = undefined;
+let projectRoot: vscode.Uri | undefined = undefined;
+
 let channel: vscode.OutputChannel;
 let fsWatcher: vscode.FileSystemWatcher | undefined;
 
@@ -71,8 +81,283 @@ function defaultDecompPath() {
   }
 }
 
+enum GameName {
+  Jak1,
+  Jak2,
+}
+
+async function determineGameFromPath(
+  path: vscode.Uri
+): Promise<GameName | undefined> {
+  if (path.fsPath.includes("jak1")) {
+    return GameName.Jak1;
+  } else if (path.fsPath.includes("jak2")) {
+    return GameName.Jak2;
+  }
+  return undefined;
+}
+
+async function promptUserToSelectConfig(
+  projectRoot: vscode.Uri
+): Promise<string | undefined> {
+  // Get all `.jsonc` files in ./decompiler/config
+  const configs = await globAsync("decompiler/config/*.jsonc", {
+    cwd: projectRoot.fsPath,
+  });
+  const options = [];
+  for (const config of configs) {
+    options.push(path.basename(config));
+  }
+  return await vscode.window.showQuickPick(options, {
+    title: "Config?",
+  });
+}
+
+async function getDecompilerConfig(
+  gameName: GameName
+): Promise<string | undefined> {
+  if (projectRoot === undefined) {
+    projectRoot = getWorkspaceFolderByName("jak-project");
+    if (projectRoot === undefined) {
+      vscode.window.showErrorMessage(
+        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+      );
+      return undefined;
+    }
+  }
+
+  const config = getConfig();
+  if (gameName == GameName.Jak1) {
+    const decompConfig = config.jak1DecompConfig;
+    if (
+      decompConfig === undefined ||
+      !existsSync(
+        vscode.Uri.joinPath(projectRoot, `decompiler/config/${decompConfig}`)
+          .fsPath
+      )
+    ) {
+      const config = await promptUserToSelectConfig(projectRoot);
+      if (config === undefined) {
+        return;
+      } else {
+        updateJak1DecompConfig(config);
+        return config;
+      }
+    } else {
+      return decompConfig;
+    }
+  } else if (gameName == GameName.Jak2) {
+    const decompConfig = config.jak2DecompConfig;
+    if (
+      decompConfig === undefined ||
+      !existsSync(
+        vscode.Uri.joinPath(projectRoot, `decompiler/config/${decompConfig}`)
+          .fsPath
+      )
+    ) {
+      const config = await promptUserToSelectConfig(projectRoot);
+      if (config === undefined) {
+        return;
+      } else {
+        updateJak2DecompConfig(config);
+        return config;
+      }
+    } else {
+      return decompConfig;
+    }
+  }
+  return undefined;
+}
+
+async function checkDecompilerPath(): Promise<string | undefined> {
+  if (projectRoot === undefined) {
+    projectRoot = getWorkspaceFolderByName("jak-project");
+    if (projectRoot === undefined) {
+      vscode.window.showErrorMessage(
+        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+      );
+      return undefined;
+    }
+  }
+
+  let decompilerPath = getConfig().decompilerPath;
+
+  // Look for the decompiler if the path isn't set or the file is now missing
+  if (decompilerPath !== undefined && existsSync(decompilerPath)) {
+    return decompilerPath;
+  }
+
+  const potentialPath = vscode.Uri.joinPath(projectRoot, defaultDecompPath());
+  if (existsSync(potentialPath.fsPath)) {
+    decompilerPath = potentialPath.fsPath;
+  } else {
+    // Ask the user to find it cause we have no idea
+    const path = await vscode.window.showOpenDialog({
+      canSelectMany: false,
+      openLabel: "Select Decompiler",
+      title: "Provide the decompiler executable's path",
+    });
+    if (path === undefined || path.length == 0) {
+      vscode.window.showErrorMessage(
+        "OpenGOAL - Aborting decompilation, you didn't provide a path to the executable"
+      );
+      return undefined;
+    }
+    decompilerPath = path[0].fsPath;
+  }
+  updateDecompilerPath(decompilerPath);
+  return decompilerPath;
+}
+
+async function decompFiles(decompConfig: string, fileNames: string[]) {
+  if (fileNames.length == 0) {
+    return;
+  }
+  const decompilerPath = await checkDecompilerPath();
+  if (!decompilerPath) {
+    return;
+  }
+
+  const allowed_objects = fileNames.map((name) => `"${name}"`).join(",");
+  updateStatus(DecompStatus.Running, {
+    objectNames: fileNames,
+    decompConfig: decompConfig,
+  });
+  const { stdout, stderr } = await execFileAsync(
+    decompilerPath,
+    [
+      `./decompiler/config/${decompConfig}`,
+      "./iso_data",
+      "./decompiler_out",
+      "--config-override",
+      `{"allowed_objects": [${allowed_objects}]}`,
+    ],
+    {
+      encoding: "utf8",
+      cwd: projectRoot?.fsPath,
+      timeout: 20000,
+    }
+  );
+  updateStatus(DecompStatus.Idle);
+  channel.append(stdout.toString());
+  channel.append(stderr.toString());
+}
+
+async function decompSpecificFile() {
+  // Prompt the user for the game name
+  let gameName;
+  const gameNameSelection = await vscode.window.showQuickPick(
+    ["jak1", "jak2"],
+    {
+      title: "Game?",
+    }
+  );
+  if (gameNameSelection === undefined) {
+    await vscode.window.showErrorMessage(
+      "OpenGOAL - can't decompile, didn't provide a game name"
+    );
+    return;
+  } else {
+    if (gameNameSelection == "jak1") {
+      gameName = GameName.Jak1;
+    } else {
+      gameName = GameName.Jak2;
+    }
+  }
+  // Prompt the user for the file name
+  const fileName = await vscode.window.showInputBox({ title: "Object Name?" });
+  if (fileName === undefined) {
+    await vscode.window.showErrorMessage(
+      "OpenGOAL - can't decompile, didn't provide an object name"
+    );
+    return;
+  }
+
+  // Determine what decomp config to use
+  const decompConfig = await getDecompilerConfig(gameName);
+  if (decompConfig === undefined) {
+    await vscode.window.showErrorMessage(
+      `OpenGOAL - Can't decompile no ${gameName.toString} config selected`
+    );
+    return;
+  }
+
+  await decompFiles(decompConfig, [fileName]);
+}
+
+async function decompCurrentFile() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || !editor.document === undefined) {
+    await vscode.window.showErrorMessage(
+      "No active file open, can't decompile!"
+    );
+    return;
+  }
+
+  let fileName = path.basename(editor.document.fileName);
+  if (!fileName.match(/.*_ir2\.asm/)) {
+    await vscode.window.showErrorMessage(
+      "Current file is not a valid IR2 file, can't decompile!"
+    );
+    return;
+  } else {
+    fileName = fileName.split("_ir2.asm")[0];
+  }
+
+  // Determine what decomp config to use
+  const gameName = await determineGameFromPath(editor.document.uri);
+  if (gameName === undefined) {
+    await vscode.window.showErrorMessage(
+      "OpenGOAL - Can't decompile, couldn't determine game from file"
+    );
+    return;
+  }
+  const decompConfig = await getDecompilerConfig(gameName);
+  if (decompConfig === undefined) {
+    await vscode.window.showErrorMessage(
+      `OpenGOAL - Can't decompile no ${gameName.toString} config selected`
+    );
+    return;
+  }
+
+  await decompFiles(decompConfig, [fileName]);
+}
+
+async function decompAllActiveFiles() {
+  const jak1ObjectNames = truncateFileNameEndings(
+    getFileNamesFromUris(getUrisFromTabs(/.*jak1\/.*_ir2\.asm/)),
+    "_ir2.asm"
+  );
+  const jak2ObjectNames = truncateFileNameEndings(
+    getFileNamesFromUris(getUrisFromTabs(/.*jak2\/.*_ir2\.asm/)),
+    "_ir2.asm"
+  );
+
+  if (jak1ObjectNames.length > 0) {
+    const jak1Config = await getDecompilerConfig(GameName.Jak1);
+    if (jak1Config === undefined) {
+      await vscode.window.showErrorMessage(
+        "OpenGOAL - Can't decompile no Jak 1 config selected"
+      );
+      return;
+    }
+    await decompFiles(jak1Config, jak1ObjectNames);
+  }
+
+  if (jak2ObjectNames.length > 0) {
+    const jak2Config = await getDecompilerConfig(GameName.Jak2);
+    if (jak2Config === undefined) {
+      await vscode.window.showErrorMessage(
+        "OpenGOAL - Can't decompile no Jak 2 config selected"
+      );
+      return;
+    }
+    await decompFiles(jak2Config, jak2ObjectNames);
+  }
+}
+
 function openMostRecentIRFile() {
-  openFile(recentFiles.searchByPrefix("_ir2.asm"));
+  openFile(getRecentFiles().searchByPrefix("_ir2.asm"));
 }
 
 function openManPage() {
@@ -110,12 +395,20 @@ function toggleAutoDecompilation() {
 async function updateSourceFile() {
   const editor = vscode.window.activeTextEditor;
   if (!editor || !editor.document === undefined) {
-    // TODO - errors
+    await vscode.window.showErrorMessage(
+      "No active file open, can't decompile!"
+    );
     return;
   }
-  const folderRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-  if (!folderRoot) {
-    return;
+
+  if (projectRoot === undefined) {
+    projectRoot = getWorkspaceFolderByName("jak-project");
+    if (projectRoot === undefined) {
+      vscode.window.showErrorMessage(
+        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+      );
+      return undefined;
+    }
   }
 
   let fileName = path.basename(editor.document.fileName);
@@ -138,7 +431,7 @@ async function updateSourceFile() {
     gameName = "jak2";
   }
   const folderToSearch = vscode.Uri.joinPath(
-    folderRoot.uri,
+    projectRoot,
     `goal_src/${gameName}`
   );
   const files = await globAsync(`**/${fileName}.gc`, {
@@ -152,8 +445,7 @@ async function updateSourceFile() {
   const filePath = files[0];
   // Read from the file until we've determined it's empty (add the decomp marker) or we find the decomp marker
   const fileContents = await fs.readFile(
-    vscode.Uri.joinPath(folderRoot.uri, `goal_src/${gameName}/${filePath}`)
-      .fsPath,
+    vscode.Uri.joinPath(projectRoot, `goal_src/${gameName}/${filePath}`).fsPath,
     { encoding: "utf-8" }
   );
   const fileContentsLines = fileContents.split(/\r?\n/);
@@ -198,8 +490,7 @@ async function updateSourceFile() {
   }
 
   await fs.writeFile(
-    vscode.Uri.joinPath(folderRoot.uri, `goal_src/${gameName}/${filePath}`)
-      .fsPath,
+    vscode.Uri.joinPath(projectRoot, `goal_src/${gameName}/${filePath}`).fsPath,
     newLines.join("\n"),
     { encoding: "utf-8" }
   );
@@ -208,13 +499,23 @@ async function updateSourceFile() {
 async function updateReferenceTest() {
   const editor = vscode.window.activeTextEditor;
   if (!editor || !editor.document === undefined) {
-    // TODO - errors
+    await vscode.window.showErrorMessage(
+      "No active file open, can't decompile!"
+    );
     return;
   }
-  const folderRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-  if (!folderRoot) {
-    return;
+
+  if (projectRoot === undefined) {
+    projectRoot = getWorkspaceFolderByName("jak-project");
+    if (projectRoot === undefined) {
+      vscode.window.showErrorMessage(
+        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+      );
+      return undefined;
+    }
   }
+
+  // TODO - duplication with above
 
   let fileName = path.basename(editor.document.fileName);
   let disasmFilePath = "";
@@ -236,7 +537,7 @@ async function updateReferenceTest() {
     gameName = "jak2";
   }
   const folderToSearch = vscode.Uri.joinPath(
-    folderRoot.uri,
+    projectRoot,
     `goal_src/${gameName}`
   );
   const files = await globAsync(`**/${fileName}.gc`, {
@@ -248,7 +549,7 @@ async function updateReferenceTest() {
   }
 
   const refTestPath = vscode.Uri.joinPath(
-    folderRoot.uri,
+    projectRoot,
     `test/decompiler/reference/${gameName}/${files[0]}`
   ).fsPath;
 
@@ -263,244 +564,12 @@ async function updateReferenceTest() {
   });
 }
 
-async function decompFiles(decompConfig: string, fileNames: string[]) {
-  if (fileNames.length == 0) {
-    return;
-  }
-  if (decompilerPath == undefined || folderRootPath == undefined) {
-    return;
-  }
-  const allowed_objects = fileNames.map((name) => `"${name}"`).join(",");
-  updateStatus(DecompStatus.Running, {
-    objectNames: fileNames,
-    decompConfig: decompConfig,
-  });
-  const { stdout, stderr } = await execFileAsync(
-    decompilerPath,
-    [
-      `./decompiler/config/${decompConfig}`,
-      "./iso_data",
-      "./decompiler_out",
-      "--config-override",
-      `{"allowed_objects": [${allowed_objects}]}`,
-    ],
-    {
-      encoding: "utf8",
-      cwd: folderRootPath,
-      timeout: 20000,
-    }
-  );
-  updateStatus(DecompStatus.Idle);
-  channel.append(stdout.toString());
-  channel.append(stderr.toString());
-}
-
-async function decompSpecificFile() {
-  const folders = vscode.workspace.workspaceFolders;
-  if (folders === undefined) {
-    return;
-  }
-  let folderRoot = undefined;
-  for (const workspace of folders) {
-    if (workspace.name.includes("jak-project")) {
-      folderRoot = workspace.uri;
-    }
-  }
-  if (!folderRoot) {
-    return;
-  }
-
-  if (folderRootPath === undefined) {
-    folderRootPath = folderRoot.fsPath;
-  }
-
-  // Look for the decompiler if the path isn't set.
-  if (decompilerPath !== undefined && !existsSync(decompilerPath)) {
-    // If the path is set, ensure it actually exists!
-    decompilerPath = undefined;
-  }
-
-  if (decompilerPath === undefined) {
-    const potentialPath = vscode.Uri.joinPath(folderRoot, defaultDecompPath());
-    if (existsSync(potentialPath.fsPath)) {
-      decompilerPath = potentialPath.fsPath;
-    } else {
-      // Ask the user to find it cause we have no idea
-      const path = await vscode.window.showOpenDialog({
-        canSelectMany: false,
-        openLabel: "Select Decompiler",
-        title: "Provide the decompiler executable's path",
-      });
-      if (path === undefined || path.length == 0) {
-        return;
-      }
-      decompilerPath = path[0].fsPath;
-    }
-  }
-
-  // Prompt the user for the game name
-  const gameName = await vscode.window.showQuickPick(["jak1", "jak2"], {
-    title: "Game?",
-  });
-  if (gameName === undefined) {
-    return;
-  }
-  // Prompt the user for the file name
-  const fileName = await vscode.window.showInputBox({ title: "Object Name?" });
-  if (fileName === undefined) {
-    return;
-  }
-
-  // Determine what decomp config to use
-  const config = getConfig();
-  let tempTest;
-  if (gameName == "jak1") {
-    // TODO - ask user for it if it doesn't exist!
-    tempTest = "something.jsonc";
-  } else {
-    tempTest = "jak2_ntsc_v1.jsonc";
-  }
-
-  await decompFiles(tempTest, [fileName]);
-}
-
-async function decompCurrentFile() {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor || !editor.document === undefined) {
-    // TODO - errors
-    return;
-  }
-  const folderRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-  if (!folderRoot) {
-    return;
-  }
-
-  let fileName = path.basename(editor.document.fileName);
-  if (!fileName.match(/.*_ir2\.asm/)) {
-    return;
-  } else {
-    fileName = fileName.split("_ir2.asm")[0];
-  }
-
-  // Look for the decompiler if the path isn't set.
-  if (decompilerPath !== undefined && !existsSync(decompilerPath)) {
-    // If the path is set, ensure it actually exists!
-    decompilerPath = undefined;
-  }
-
-  if (decompilerPath === undefined) {
-    const potentialPath = vscode.Uri.joinPath(
-      folderRoot.uri,
-      defaultDecompPath()
-    );
-    if (existsSync(potentialPath.fsPath)) {
-      decompilerPath = potentialPath.fsPath;
-    } else {
-      // Ask the user to find it cause we have no idea
-      const path = await vscode.window.showOpenDialog({
-        canSelectMany: false,
-        openLabel: "Select Decompiler",
-        title: "Provide the decompiler executable's path",
-      });
-      if (path === undefined || path.length == 0) {
-        return;
-      }
-      decompilerPath = path[0].fsPath;
-    }
-  }
-
-  // Save path in settings!
-  folderRootPath = folderRoot.uri.fsPath;
-
-  // Determine what decomp config to use
-  const config = getConfig();
-  let tempTest;
-  if (editor.document.uri.fsPath.includes("jak1")) {
-    // TODO - ask user for it if it doesn't exist!
-    tempTest = "something.jsonc";
-  } else {
-    tempTest = "jak2_ntsc_v1.jsonc";
-  }
-
-  await decompFiles(tempTest, [fileName]);
-
-  console.log(decompilerPath);
-}
-
-async function decompAllActiveFiles() {
-  const jak1Files = [];
-  const jak2Files = [];
-  let folderRoot;
-  for (const tabGroup of vscode.window.tabGroups.all) {
-    for (const tab of tabGroup.tabs) {
-      if (tab.input instanceof vscode.TabInputText) {
-        const uri = tab.input.uri;
-        const fileName = path.basename(uri.fsPath);
-        if (!fileName.match(/.*_ir2\.asm/)) {
-          continue;
-        }
-
-        // TODO - assumes everything is in the same workspace folder
-        if (folderRootPath === undefined) {
-          folderRoot = vscode.workspace.getWorkspaceFolder(uri);
-          if (folderRoot !== undefined) {
-            folderRootPath = folderRoot.uri.fsPath;
-          }
-        }
-
-        const objectName = fileName.split("_ir2.asm")[0];
-        if (uri.fsPath.includes("jak1")) {
-          jak1Files.push(objectName);
-        } else {
-          jak2Files.push(objectName);
-        }
-      }
-    }
-  }
-
-  // Duplication
-  // Look for the decompiler if the path isn't set.
-  if (decompilerPath !== undefined && !existsSync(decompilerPath)) {
-    // If the path is set, ensure it actually exists!
-    decompilerPath = undefined;
-  }
-
-  if (decompilerPath === undefined && folderRoot !== undefined) {
-    const potentialPath = vscode.Uri.joinPath(
-      folderRoot.uri,
-      defaultDecompPath()
-    );
-    if (existsSync(potentialPath.fsPath)) {
-      decompilerPath = potentialPath.fsPath;
-    } else {
-      // Ask the user to find it cause we have no idea
-      const path = await vscode.window.showOpenDialog({
-        canSelectMany: false,
-        openLabel: "Select Decompiler",
-        title: "Provide the decompiler executable's path",
-      });
-      if (path === undefined || path.length == 0) {
-        return;
-      }
-      decompilerPath = path[0].fsPath;
-    }
-  }
-
-  await decompFiles("jak1_ntsc_black_label.jsonc", jak1Files);
-  await decompFiles("jak2_ntsc_v1.jsonc", jak2Files);
-}
-
-export async function activateDecompTools(
-  context: vscode.ExtensionContext,
-  _recentFiles: RecentFiles
-) {
+export async function activateDecompTools() {
   // no color support :( - https://github.com/microsoft/vscode/issues/571
   channel = vscode.window.createOutputChannel(
     "OpenGOAL Decompiler",
     "opengoal-ir"
   );
-
-  recentFiles = _recentFiles;
 
   toggleAutoDecompilation();
 
@@ -508,40 +577,40 @@ export async function activateDecompTools(
   decompStatusItem.show();
 
   // Commands
-  context.subscriptions.push(
+  getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.openMostRecentIRFile",
       openMostRecentIRFile
     )
   );
-  context.subscriptions.push(
+  getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand("opengoal.decomp.openManPage", openManPage)
   );
-  context.subscriptions.push(
+  getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.decompileCurrentFile",
       decompCurrentFile
     )
   );
-  context.subscriptions.push(
+  getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.decompileSpecificFile",
       decompSpecificFile
     )
   );
-  context.subscriptions.push(
+  getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.toggleAutoDecompilation",
       toggleAutoDecompilation
     )
   );
-  context.subscriptions.push(
+  getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.updateSourceFile",
       updateSourceFile
     )
   );
-  context.subscriptions.push(
+  getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.updateReferenceTest",
       updateReferenceTest

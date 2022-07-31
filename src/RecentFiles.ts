@@ -7,6 +7,14 @@ export class RecentFiles {
   constructor(context: vscode.ExtensionContext) {
     this.workspaceState = context.workspaceState;
     this.recentFiles = this.workspaceState.get("recents", []);
+
+    context.subscriptions.push(
+      vscode.window.onDidChangeActiveTextEditor((editor) => {
+        if (editor?.document != undefined) {
+          this.addFile(editor?.document.fileName);
+        }
+      })
+    );
   }
 
   addFile(filePath: string) {
