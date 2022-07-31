@@ -5,7 +5,7 @@
   "publisher": "opengoal",
   "version": "0.0.2",
   "engines": {
-    "vscode": "^1.65.0"
+    "vscode": "^1.69.0"
   },
   "categories": [
     "Programming Languages"
@@ -27,8 +27,9 @@
   },
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
+    "@types/glob": "^7.2.0",
     "@types/node": "^12.12.0",
-    "@types/vscode": "^1.34.0",
+    "@types/vscode": "^1.69.0",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
     "@typescript-eslint/parser": "^5.19.0",
     "eslint": "^8.13.0",
@@ -36,6 +37,7 @@
   },
   "dependencies": {
     "follow-redirects": "^1.15.1",
+    "glob": "^8.0.3",
     "open": "^8.4.0",
     "vscode-languageclient": "^8.0.1"
   },
@@ -43,7 +45,14 @@
     "onLanguage:opengoal",
     "onLanguage:opengoal-goos",
     "onLanguage:opengoal-ir",
-    "onCommand:extension.helloWorld"
+    "onCommand:opengoal.switchFile",
+    "onCommand:opengoal.decomp.openMostRecentIRFile",
+    "onCommand:opengoal.decomp.openManPage",
+    "onCommand:opengoal.decomp.decompileSpecificFile",
+    "onCommand:opengoal.decomp.decompileCurrentFile",
+    "onCommand:opengoal.decomp.toggleAutoDecompilation",
+    "onCommand:opengoal.decomp.decompileFile",
+    "onCommand:opengoal.decomp.updateSourceFile"
   ],
   "contributes": {
     "commands": [
@@ -53,11 +62,35 @@
       },
       {
         "command": "opengoal.decomp.openMostRecentIRFile",
-        "title": "OpenGOAL - Decomp - Open Recent IR2 File"
+        "title": "OpenGOAL - Open Recent IR2 File"
       },
       {
         "command": "opengoal.decomp.openManPage",
-        "title": "OpenGOAL - Decomp - Man Page"
+        "title": "OpenGOAL - MIPS Man Page"
+      },
+      {
+        "command": "opengoal.decomp.decompileSpecificFile",
+        "title": "OpenGOAL - Decompile Specific File"
+      },
+      {
+        "command": "opengoal.decomp.decompileCurrentFile",
+        "title": "OpenGOAL - Decompile Current File"
+      },
+      {
+        "command": "opengoal.decomp.toggleAutoDecompilation",
+        "title": "OpenGOAL - Toggle Auto-Decompilation"
+      },
+      {
+        "command": "opengoal.decomp.decompileFile",
+        "title": "OpenGOAL - Change Decompiler Config"
+      },
+      {
+        "command": "opengoal.decomp.updateSourceFile",
+        "title": "OpenGOAL - Copy Decompilation to Source File"
+      },
+      {
+        "command": "opengoal.decomp.updateReferenceTest",
+        "title": "OpenGOAL - Copy Decompilation to Reference Tests"
       }
     ],
     "configuration": {
@@ -78,6 +111,30 @@
           ],
           "default": null,
           "description": "File path to the VU Man Page"
+        },
+        "opengoal.decompilerPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "File path to the decompiler executable"
+        },
+        "opengoal.decompilerJak1Config": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Config to use for decompiling jak 1 related files"
+        },
+        "opengoal.decompilerJak2Config": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Config to use for decompiling jak 2 related files"
         }
       }
     },
