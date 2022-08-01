@@ -8,6 +8,7 @@ import { PdfCustomProvider } from "./vendor/vscode-pdfviewer/pdfProvider";
 import { switchFile } from "./utils/FileUtils";
 import { activateDecompTools } from "./decomp/decomp-tools";
 import { initContext } from "./context";
+import { IRFoldingRangeProvider } from "./languages/ir2-folder";
 
 export async function activate(context: vscode.ExtensionContext) {
   // Init Context
@@ -38,6 +39,12 @@ export async function activate(context: vscode.ExtensionContext) {
         },
       }
     )
+  );
+
+  // Language Customizations
+  vscode.languages.registerFoldingRangeProvider(
+    { scheme: "file", language: "opengoal-ir" },
+    new IRFoldingRangeProvider()
   );
 
   // Start the LSP
