@@ -7,7 +7,7 @@ export async function downloadLsp(
   extensionPath: string,
   version: string
 ): Promise<string | undefined> {
-  const assetName = getLspReleaseAssetName(extensionPath, version);
+  const assetName = getLspReleaseAssetName(version);
   if (assetName === undefined) {
     return undefined;
   }

@@ -51,8 +51,8 @@
     "onCommand:opengoal.decomp.decompileSpecificFile",
     "onCommand:opengoal.decomp.decompileCurrentFile",
     "onCommand:opengoal.decomp.toggleAutoDecompilation",
-    "onCommand:opengoal.decomp.decompileFile",
-    "onCommand:opengoal.decomp.updateSourceFile"
+    "onCommand:opengoal.decomp.updateSourceFile",
+    "onCommand:opengoal.decomp.updateReferenceTest"
   ],
   "contributes": {
     "commands": [
@@ -81,21 +81,36 @@
         "title": "OpenGOAL - Toggle Auto-Decompilation"
       },
       {
-        "command": "opengoal.decomp.decompileFile",
-        "title": "OpenGOAL - Change Decompiler Config"
-      },
-      {
         "command": "opengoal.decomp.updateSourceFile",
         "title": "OpenGOAL - Copy Decompilation to Source File"
       },
       {
         "command": "opengoal.decomp.updateReferenceTest",
         "title": "OpenGOAL - Copy Decompilation to Reference Tests"
+      },
+      {
+        "command": "opengoal.lsp.start",
+        "title": "OpenGOAL - LSP - Start"
+      },
+      {
+        "command": "opengoal.lsp.stop",
+        "title": "OpenGOAL - LSP - Stop"
+      },
+      {
+        "command": "opengoal.lsp.restart",
+        "title": "OpenGOAL - LSP - Restart"
       }
     ],
     "configuration": {
       "title": "OpenGOAL",
       "properties": {
+        "opengoal.launchLspOnStartup": {
+          "type": [
+            "boolean"
+          ],
+          "default": true,
+          "description": "Whether or not the LSP should be started automatically"
+        },
         "opengoal.eeManPagePath": {
           "type": [
             "string",

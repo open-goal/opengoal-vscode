@@ -12,7 +12,6 @@ const artifactNameTemplates: any = {
 const versionFileName = "lsp-metadata.json";
 
 export function getLspReleaseAssetName(
-  extensionPath: string,
   version: string,
   platform: string = process.platform
 ): string | undefined {
@@ -41,6 +40,21 @@ export async function getLatestVersion(): Promise<string> {
   }
 }
 
+export function getLspPath(
+  extensionPath: string,
+  version: string
+): string | undefined {
+  const lspName = getLspReleaseAssetName(version);
+  if (lspName === undefined) {
+    return undefined;
+  }
+  const filePath = path.join(extensionPath, lspName);
+  if (!fs.existsSync(filePath)) {
+    return undefined;
+  }
+  return filePath;
+}
+
 export function getVersionFromMetaFile(extensionPath: string): string {
   const filePath = path.join(extensionPath, versionFileName);
   try {
@@ -55,9 +69,12 @@ export function getVersionFromMetaFile(extensionPath: string): string {
 export function writeLspMetadata(extensionPath: string, version: string): void {
   const filePath = path.join(extensionPath, versionFileName);
   try {
-    fs.writeFileSync(filePath, {
-      version: version,
-    });
+    fs.writeFileSync(
+      filePath,
+      JSON.stringify({
+        version: version,
+      })
+    );
   } catch (e: any) {
     console.log("Could not write lsp metadata file.", e.message);
   }

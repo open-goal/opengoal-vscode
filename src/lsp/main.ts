@@ -8,7 +8,7 @@ import {
 } from "vscode-languageclient/node";
 import { getConfig } from "../config/config";
 import { downloadLsp } from "./download";
-import { getLatestVersion, getVersionFromMetaFile } from "./util";
+import { getLatestVersion, getLspPath, getVersionFromMetaFile } from "./util";
 
 let extensionContext: vscode.ExtensionContext;
 let opengoalLspPath: string | undefined;
@@ -31,30 +31,29 @@ function updateStatus(status: LspStatus, extraInfo?: string) {
   lspStatus = status;
   switch (status) {
     case "stopped":
-      lspStatusItem.text = "$(circle-outline) opengoal-lsp";
-      lspStatusItem.tooltip = "opengoal-lsp is not active, click to get a menu";
-      lspStatusItem.command = "opengoal.lsp.showLspStoppedMenu";
+      lspStatusItem.text = "$(circle-outline) OpenGOAL LSP Stopped";
+      lspStatusItem.tooltip = "Launch LSP";
+      lspStatusItem.command = "opengoal.lsp.start";
       break;
     case "starting":
-      lspStatusItem.text = "$(rocket) opengoal-lsp";
-      lspStatusItem.tooltip = "opengoal-lsp is starting";
+      lspStatusItem.text = "$(loading~spin) OpenGOAL LSP Starting";
+      lspStatusItem.tooltip = "LSP Starting";
       lspStatusItem.command = undefined;
       break;
     case "started":
-      lspStatusItem.text = "$(circle-filled) opengoal-lsp";
-      lspStatusItem.tooltip = "opengoal-lsp is active";
+      lspStatusItem.text = "$(circle-filled) OpenGOAL LSP Ready";
+      lspStatusItem.tooltip = "LSP Active";
       lspStatusItem.command = "opengoal.lsp.showLspStartedMenu";
       break;
     case "downloading":
-      lspStatusItem.text = "$(sync~spin) opengoal-lsp downloading";
-      lspStatusItem.tooltip = `OpenGOAL is downloading opengoal-lsp version: ${extraInfo}`;
+      lspStatusItem.text = `$(sync~spin) OpenGOAL LSP Downloading - ${extraInfo}`;
+      lspStatusItem.tooltip = `Downloading version - ${extraInfo}`;
       lspStatusItem.command = undefined;
       break;
     case "error":
-      lspStatusItem.text = "$(error) opengoal-lsp";
-      lspStatusItem.tooltip =
-        "opengoal-lsp is not running because of some error";
-      lspStatusItem.command = "opengoal.lsp.showLspStoppedMenu";
+      lspStatusItem.text = "$(error) OpenGOAL LSP Error";
+      lspStatusItem.tooltip = "LSP not running due to an error";
+      lspStatusItem.command = undefined;
       break;
     default:
       break;
@@ -70,24 +69,28 @@ async function ensureServerDownloaded(): Promise<string | undefined> {
   // See if we have the right version
   // - either its the latest
   // - or we have the one that's configured
-  let needDownload = false;
   let versionToDownload = "";
   if (
     configuredVersion !== undefined &&
     configuredVersion !== installedVersion
   ) {
-    needDownload = true;
     versionToDownload = configuredVersion;
   } else {
     const latestVersion = await getLatestVersion();
     if (latestVersion !== installedVersion) {
-      needDownload = true;
       versionToDownload = latestVersion;
+    } else {
+      // Check that the file wasn't unexpectedly removed
+      const lspPath = getLspPath(
+        extensionContext.extensionPath,
+        installedVersion
+      );
+      if (lspPath === undefined) {
+        versionToDownload = latestVersion;
+      } else {
+        return lspPath;
+      }
     }
-  }
-
-  if (!needDownload) {
-    return;
   }
 
   // Install the LSP and update the version metadata file
@@ -220,26 +223,12 @@ function showMenu(
   commands: Record<string, string>
 ) {
   void vscode.window
-    .showQuickPick(items, { title: "clojure-lsp" })
+    .showQuickPick(items, { title: "OpenGOAL LSP" })
     .then((v) => {
       if (v !== undefined && commands[v.label]) {
         void vscode.commands.executeCommand(commands[v.label]);
       }
     });
-}
-
-function stoppedMenuCommand() {
-  const START_OPTION = "Start";
-  const START_COMMAND = "opengoal.lsp.start";
-  const commands: any = {};
-  commands[START_OPTION] = START_COMMAND;
-  const items: vscode.QuickPickItem[] = [
-    {
-      label: START_OPTION,
-      description: "Start the clojure-lsp server",
-    },
-  ];
-  showMenu(items, commands);
 }
 
 function startedMenuCommand() {
@@ -255,11 +244,11 @@ function startedMenuCommand() {
   const items: vscode.QuickPickItem[] = [
     {
       label: STOP_OPTION,
-      description: "Stop the clojure-lsp server",
+      description: "Stop the OpenGOAL LSP",
     },
     {
       label: RESTART_OPTION,
-      description: "Restart the clojure-lsp server",
+      description: "Restart the OpenGOAL LSP",
     },
   ];
   showMenu(items, commands);
@@ -274,12 +263,6 @@ function registerLifeCycleCommands(context: vscode.ExtensionContext): void {
   );
   context.subscriptions.push(
     vscode.commands.registerCommand("opengoal.lsp.restart", restartClient)
-  );
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "opengoal.lsp.showLspStoppedMenu",
-      stoppedMenuCommand
-    )
   );
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -298,7 +281,10 @@ export async function activate(
   // registerDiagnosticsCommands(context);
   updateStatus("stopped");
   lspStatusItem.show();
-  await startClientCommand();
+  const config = getConfig();
+  if (config.launchLspOnStartup) {
+    await startClientCommand();
+  }
 }
 
 export function deactivate(): Promise<void> {
