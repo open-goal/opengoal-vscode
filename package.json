@@ -209,7 +209,7 @@
           "light": "./icons/opengoal-goos.png",
           "dark": "./icons/opengoal-goos.png"
         },
-        "configuration": "./language-configuration.json"
+        "configuration": "./syntaxes/configs/opengoal-goos.jsonc"
       },
       {
         "id": "opengoal-ir",
@@ -224,7 +224,7 @@
           "light": "./icons/opengoal-ir.png",
           "dark": "./icons/opengoal-ir.png"
         },
-        "configuration": "./syntaxes/configs/ir.jsonc"
+        "configuration": "./syntaxes/configs/opengoal-ir.jsonc"
       }
     ],
     "grammars": [

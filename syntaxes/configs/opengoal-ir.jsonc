@@ -14,5 +14,6 @@
       "start": "^; \\.function.*",
       "end": "^;; \\.endfunction\\b"
     }
-  }
+  },
+  "wordPattern": "[^\\s,\\(\\)]+"
 }
