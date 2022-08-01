@@ -4,6 +4,7 @@ export function getConfig() {
   const configOptions = vscode.workspace.getConfiguration("opengoal");
 
   return {
+    launchLspOnStartup: configOptions.get<boolean>("launchLspOnStartup"),
     opengoalLspVersion: configOptions.get<string>("opengoalLspVersion"),
     opengoalLspPath: configOptions.get<string>("opengoalLspPath"),
     eeManPagePath: configOptions.get<string>("eeManPagePath"),

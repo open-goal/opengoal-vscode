@@ -4,3 +4,4 @@ out/
 *.log
 *.exe
 *.bin
+lsp-metadata.json
