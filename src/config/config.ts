@@ -18,6 +18,27 @@ export function getConfig() {
     decompilerJak2ConfigDirectory: configOptions.get<string>(
       "decompilerJak2ConfigDirectory"
     ),
+    colorsGoalGlobals: configOptions.get<string>("colors.goal.entity.global"),
+    colorsGoalStorageControl: configOptions.get<string>(
+      "colors.goal.storage.control"
+    ),
+    colorsGoalSymbols: configOptions.get<string>("colors.goal.symbol"),
+    colorsIRTypeAnalysis: configOptions.get<string>("colors.ir.typeanalysis"),
+    colorsIRError: configOptions.get<string>("colors.ir.error"),
+    colorsIRWarning: configOptions.get<string>("colors.ir.warn"),
+    colorsIROpNumber: configOptions.get<string>("colors.ir.opnumber"),
+    colorsIRRegA0: configOptions.get<string>("colors.ir.reg.a0"),
+    colorsIRRegA1: configOptions.get<string>("colors.ir.reg.a1"),
+    colorsIRRegA2: configOptions.get<string>("colors.ir.reg.a2"),
+    colorsIRRegA3: configOptions.get<string>("colors.ir.reg.a3"),
+    colorsIRRegT0: configOptions.get<string>("colors.ir.reg.t0"),
+    colorsIRRegT1: configOptions.get<string>("colors.ir.reg.t1"),
+    colorsIRRegT2: configOptions.get<string>("colors.ir.reg.t2"),
+    colorsIRRegT3: configOptions.get<string>("colors.ir.reg.t3"),
+    colorsIRRegFloat: configOptions.get<string>("colors.ir.reg.float"),
+    colorsIRRegReturn: configOptions.get<string>("colors.ir.reg.return"),
+    colorsIRRegStack: configOptions.get<string>("colors.ir.reg.stack"),
+    colorsIRRegGeneral: configOptions.get<string>("colors.ir.reg.general"),
   };
 }
 

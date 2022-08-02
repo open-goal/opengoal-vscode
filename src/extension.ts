@@ -19,6 +19,10 @@ export async function activate(context: vscode.ExtensionContext) {
   await setVSIconAssociations();
   await setTextmateColors();
 
+  vscode.workspace.onDidChangeConfiguration(async (event) => {
+    await setTextmateColors();
+  });
+
   context.subscriptions.push(
     vscode.commands.registerCommand("opengoal.switchFile", switchFile)
   );
