@@ -3,7 +3,7 @@
   "displayName": "OpenGOAL",
   "description": "OpenGOAL Support for VSCode",
   "publisher": "opengoal",
-  "version": "0.0.2",
+  "version": "0.1.1",
   "engines": {
     "vscode": "^1.69.0"
   },
@@ -28,12 +28,13 @@
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
     "@types/glob": "^7.2.0",
-    "@types/node": "^12.12.0",
+    "@types/node": "^16.0.0",
     "@types/vscode": "^1.69.0",
-    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.19.0",
-    "eslint": "^8.13.0",
-    "typescript": "^4.6.3"
+    "eslint": "^8.21.0",
+    "typescript": "^4.7.4",
+    "vsce": "^2.10.0"
   },
   "dependencies": {
     "comment-json": "^4.2.2",
@@ -53,10 +54,13 @@
     "onCommand:opengoal.decomp.toggleAutoDecompilation",
     "onCommand:opengoal.decomp.updateSourceFile",
     "onCommand:opengoal.decomp.updateReferenceTest",
-    "opengoal.decomp.casts.repeatLast",
-    "opengoal.decomp.casts.labelCastSelection",
-    "opengoal.decomp.casts.stackCastSelection",
-    "opengoal.decomp.casts.typeCastSelection"
+    "onCommand:opengoal.decomp.casts.repeatLast",
+    "onCommand:opengoal.decomp.casts.labelCastSelection",
+    "onCommand:opengoal.decomp.casts.stackCastSelection",
+    "onCommand:opengoal.decomp.casts.typeCastSelection",
+    "onCommand:opengoal.lsp.start",
+    "onCommand:opengoal.lsp.stop",
+    "onCommand:opengoal.lsp.restart"
   ],
   "contributes": {
     "commands": [
@@ -125,74 +129,184 @@
         "title": "OpenGOAL - LSP - Restart"
       }
     ],
-    "configuration": {
-      "title": "OpenGOAL",
-      "properties": {
-        "opengoal.launchLspOnStartup": {
-          "type": [
-            "boolean"
-          ],
-          "default": true,
-          "description": "Whether or not the LSP should be started automatically"
-        },
-        "opengoal.eeManPagePath": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "File path to the EE Man Page"
-        },
-        "opengoal.vuManPagePath": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "File path to the VU Man Page"
-        },
-        "opengoal.decompilerPath": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "File path to the decompiler executable"
-        },
-        "opengoal.decompilerJak1Config": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "Config to use for decompiling jak 1 related files"
-        },
-        "opengoal.decompilerJak2Config": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "Config to use for decompiling jak 2 related files"
-        },
-        "opengoal.decompilerJak1ConfigDirectory": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "Directory containing cast files to use for decompiling jak 1 related files"
-        },
-        "opengoal.decompilerJak2ConfigDirectory": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "Directory containing cast files to use for decompiling jak 2 related files"
+    "configuration": [
+      {
+        "id": "opengoal-decomp",
+        "title": "Decompilation",
+        "properties": {
+          "opengoal.eeManPagePath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "File path to the EE Man Page"
+          },
+          "opengoal.vuManPagePath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "File path to the VU Man Page"
+          },
+          "opengoal.decompilerPath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "File path to the decompiler executable"
+          },
+          "opengoal.decompilerJak1Config": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "Config to use for decompiling jak 1 related files"
+          },
+          "opengoal.decompilerJak2Config": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "Config to use for decompiling jak 2 related files"
+          },
+          "opengoal.decompilerJak1ConfigDirectory": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "Directory containing cast files to use for decompiling jak 1 related files"
+          },
+          "opengoal.decompilerJak2ConfigDirectory": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "Directory containing cast files to use for decompiling jak 2 related files"
+          }
+        }
+      },
+      {
+        "id": "opengoal-lsp",
+        "title": "LSP",
+        "properties": {
+          "opengoal.launchLspOnStartup": {
+            "type": [
+              "boolean"
+            ],
+            "default": true,
+            "description": "Whether or not the LSP should be started automatically"
+          }
+        }
+      },
+      {
+        "id": "opengoal-colors",
+        "title": "Colors",
+        "properties": {
+          "opengoal.colors.goal.entity.global": {
+            "description": "Colors - Global Entity",
+            "type": "string",
+            "default": "#36f9f6"
+          },
+          "opengoal.colors.goal.storage.control": {
+            "description": "Colors - Storage Control",
+            "type": "string",
+            "default": "#36f9f6"
+          },
+          "opengoal.colors.goal.symbol": {
+            "description": "Colors - Symbols",
+            "type": "string",
+            "default": "#ff7edbff"
+          },
+          "opengoal.colors.ir.typeanalysis": {
+            "description": "Colors - Type Analysis",
+            "type": "string",
+            "default": "#fe4450E6"
+          },
+          "opengoal.colors.ir.error": {
+            "description": "Colors - Error",
+            "type": "string",
+            "default": "#fe4450E6"
+          },
+          "opengoal.colors.ir.warn": {
+            "description": "Colors - Warning",
+            "type": "string",
+            "default": "#feeb44e6"
+          },
+          "opengoal.colors.ir.opnumber": {
+            "description": "Colors - OP Number",
+            "type": "string",
+            "default": "#EC407A"
+          },
+          "opengoal.colors.ir.reg.a0": {
+            "description": "Colors - Register A0",
+            "type": "string",
+            "default": "#EF9A9A"
+          },
+          "opengoal.colors.ir.reg.a1": {
+            "description": "Colors - Register A1",
+            "type": "string",
+            "default": "#F48FB1"
+          },
+          "opengoal.colors.ir.reg.a2": {
+            "description": "Colors - Register A2",
+            "type": "string",
+            "default": "#CE93D8"
+          },
+          "opengoal.colors.ir.reg.a3": {
+            "description": "Colors - Register A3",
+            "type": "string",
+            "default": "#90CAF9"
+          },
+          "opengoal.colors.ir.reg.t0": {
+            "description": "Colors - Register T0",
+            "type": "string",
+            "default": "#80DEEA"
+          },
+          "opengoal.colors.ir.reg.t1": {
+            "description": "Colors - Register T1",
+            "type": "string",
+            "default": "#80CBC4"
+          },
+          "opengoal.colors.ir.reg.t2": {
+            "description": "Colors - Register T2",
+            "type": "string",
+            "default": "#A5D6A7"
+          },
+          "opengoal.colors.ir.reg.t3": {
+            "description": "Colors - Register T3",
+            "type": "string",
+            "default": "#E6EE9C"
+          },
+          "opengoal.colors.ir.reg.float": {
+            "description": "Colors - Register Float",
+            "type": "string",
+            "default": "#BCAAA4"
+          },
+          "opengoal.colors.ir.reg.return": {
+            "description": "Colors - Register V0 (return)",
+            "type": "string",
+            "default": "#FF9100"
+          },
+          "opengoal.colors.ir.reg.stack": {
+            "description": "Colors - Register SP (stack)",
+            "type": "string",
+            "default": "#76FF03"
+          },
+          "opengoal.colors.ir.reg.general": {
+            "description": "Colors - Register General",
+            "type": "string",
+            "default": "#B0BEC5"
+          }
         }
       }
-    },
+    ],
     "configurationDefaults": {
       "[opengoal-ir]": {
         "editor.bracketPairColorization.enabled": false

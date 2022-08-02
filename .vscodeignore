@@ -1,4 +1,18 @@
-.vscode/**
-.vscode-test/**
-.gitignore
-vsc-extension-quickstart.md
+# Put everything on the blacklist by default
+*
+*/**
+**/.DS_Store
+*/**/.DS_Store
+
+# Whitelist
+!img/**
+!icons/**
+!out/**
+!lib/**
+!snippets/**
+!syntaxes/**
+!package.json
+!README.md
+!LICENSE
+!src/vendor/**/LICENSE
+!node_modules/**
