@@ -31,9 +31,9 @@ jobs:
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
-          npm install -g vsce
-          vsce package
-          vsce publish ${{ github.event.inputs.bump }}
+          npm ci
+          npx vsce package
+          npx vsce publish ${{ github.event.inputs.bump }}
 
       - name: Commit Version Bump
         uses: EndBug/add-and-commit@v9
