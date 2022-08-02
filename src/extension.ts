@@ -11,52 +11,58 @@ import { initContext } from "./context";
 import { IRFoldingRangeProvider } from "./languages/ir2-folder";
 import { activateTypeCastTools } from "./decomp/type-caster";
 
+const channel = vscode.window.createOutputChannel("OpenGOAL");
+
 export async function activate(context: vscode.ExtensionContext) {
-  // Init Context
-  initContext(context);
+  try {
+    // Init Context
+    initContext(context);
 
-  // Init settings that we unfortunately have to manually maintain
-  await setVSIconAssociations();
-  await setTextmateColors();
-
-  vscode.workspace.onDidChangeConfiguration(async (event) => {
+    // Init settings that we unfortunately have to manually maintain
+    await setVSIconAssociations();
     await setTextmateColors();
-  });
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand("opengoal.switchFile", switchFile)
-  );
+    vscode.workspace.onDidChangeConfiguration(async (event) => {
+      await setTextmateColors();
+    });
 
-  activateDecompTools();
-  activateTypeCastTools();
+    context.subscriptions.push(
+      vscode.commands.registerCommand("opengoal.switchFile", switchFile)
+    );
 
-  // Customized PDF Viewer
-  const provider = new PdfCustomProvider(
-    vscode.Uri.file(context.extensionPath)
-  );
-  context.subscriptions.push(
-    vscode.window.registerCustomEditorProvider(
-      PdfCustomProvider.viewType,
-      provider,
-      {
-        webviewOptions: {
-          enableFindWidget: false, // default
-          retainContextWhenHidden: true,
-        },
-      }
-    )
-  );
+    activateDecompTools();
+    activateTypeCastTools();
 
-  // TODO - disposable stuff?
+    // Customized PDF Viewer
+    const provider = new PdfCustomProvider(
+      vscode.Uri.file(context.extensionPath)
+    );
+    context.subscriptions.push(
+      vscode.window.registerCustomEditorProvider(
+        PdfCustomProvider.viewType,
+        provider,
+        {
+          webviewOptions: {
+            enableFindWidget: false, // default
+            retainContextWhenHidden: true,
+          },
+        }
+      )
+    );
 
-  // Language Customizations
-  vscode.languages.registerFoldingRangeProvider(
-    { scheme: "file", language: "opengoal-ir" },
-    new IRFoldingRangeProvider()
-  );
+    // TODO - disposable stuff?
 
-  // Start the LSP
-  lsp.activate(context);
+    // Language Customizations
+    vscode.languages.registerFoldingRangeProvider(
+      { scheme: "file", language: "opengoal-ir" },
+      new IRFoldingRangeProvider()
+    );
+
+    // Start the LSP
+    lsp.activate(context);
+  } catch (err) {
+    channel.append(`Failed to activate extension - ${err}`);
+  }
 }
 
 export function deactivate(): Promise<void> | undefined {

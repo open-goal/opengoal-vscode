@@ -41,4 +41,4 @@ jobs:
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
-        run: gh release create --generate-notes --repo open-goal/opengoal-vscode
+        run: gh release create --generate-notes --repo open-goal/opengoal-vscode ./*.vsix
