@@ -1,3 +1,12 @@
 # Set default behavior to automatically normalize line endings.
 * text=auto
 
+lib/**/* linguist-vendored
+lib/**/* linguist-generated
+samples/* linguist-vendored
+samples/* linguist-generated
+
+*.gc linguist-language=lisp
+*.gd linguist-language=lisp
+*.gs linguist-language=Scheme
+*.gp linguist-language=Scheme

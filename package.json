@@ -5,7 +5,7 @@
   "publisher": "opengoal",
   "version": "0.0.2",
   "engines": {
-    "vscode": "^1.65.0"
+    "vscode": "^1.69.0"
   },
   "categories": [
     "Programming Languages"
@@ -21,13 +21,42 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "lint": "eslint . --ext .ts,.tsx",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check ."
+  },
+  "devDependencies": {
+    "@types/follow-redirects": "^1.14.1",
+    "@types/glob": "^7.2.0",
+    "@types/node": "^12.12.0",
+    "@types/vscode": "^1.69.0",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/parser": "^5.19.0",
+    "eslint": "^8.13.0",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "comment-json": "^4.2.2",
+    "follow-redirects": "^1.15.1",
+    "glob": "^8.0.3",
+    "vscode-languageclient": "^8.0.1"
   },
   "activationEvents": [
     "onLanguage:opengoal",
     "onLanguage:opengoal-goos",
     "onLanguage:opengoal-ir",
-    "onCommand:extension.helloWorld"
+    "onCommand:opengoal.switchFile",
+    "onCommand:opengoal.decomp.openMostRecentIRFile",
+    "onCommand:opengoal.decomp.openManPage",
+    "onCommand:opengoal.decomp.decompileSpecificFile",
+    "onCommand:opengoal.decomp.decompileCurrentFile",
+    "onCommand:opengoal.decomp.toggleAutoDecompilation",
+    "onCommand:opengoal.decomp.updateSourceFile",
+    "onCommand:opengoal.decomp.updateReferenceTest",
+    "opengoal.decomp.casts.repeatLast",
+    "opengoal.decomp.casts.labelCastSelection",
+    "opengoal.decomp.casts.stackCastSelection",
+    "opengoal.decomp.casts.typeCastSelection"
   ],
   "contributes": {
     "commands": [
@@ -37,170 +66,157 @@
       },
       {
         "command": "opengoal.decomp.openMostRecentIRFile",
-        "title": "OpenGOAL - Decomp - Open Recent IR2 File"
+        "title": "OpenGOAL - Open Recent IR2 File"
+      },
+      {
+        "command": "opengoal.decomp.openManPage",
+        "title": "OpenGOAL - MIPS Man Page"
+      },
+      {
+        "command": "opengoal.decomp.decompileSpecificFile",
+        "title": "OpenGOAL - Decompile Specific File"
+      },
+      {
+        "command": "opengoal.decomp.decompileCurrentFile",
+        "title": "OpenGOAL - Decompile Current File"
+      },
+      {
+        "command": "opengoal.decomp.toggleAutoDecompilation",
+        "title": "OpenGOAL - Toggle Auto-Decompilation"
+      },
+      {
+        "command": "opengoal.decomp.updateSourceFile",
+        "title": "OpenGOAL - Copy Decompilation to Source File"
+      },
+      {
+        "command": "opengoal.decomp.updateReferenceTest",
+        "title": "OpenGOAL - Copy Decompilation to Reference Tests"
+      },
+      {
+        "command": "opengoal.decomp.casts.repeatLast",
+        "title": "OpenGOAL - Casts - Repeat Last"
+      },
+      {
+        "command": "opengoal.decomp.casts.castSelection",
+        "title": "OpenGOAL - Casts - Add Cast to Selection"
+      },
+      {
+        "command": "opengoal.decomp.casts.labelCastSelection",
+        "title": "OpenGOAL - Casts - Add Label Cast to Selection"
+      },
+      {
+        "command": "opengoal.decomp.casts.stackCastSelection",
+        "title": "OpenGOAL - Casts - Add Stack Cast to Selection"
+      },
+      {
+        "command": "opengoal.decomp.casts.typeCastSelection",
+        "title": "OpenGOAL - Casts - Add Type Cast to Selection"
+      },
+      {
+        "command": "opengoal.lsp.start",
+        "title": "OpenGOAL - LSP - Start"
+      },
+      {
+        "command": "opengoal.lsp.stop",
+        "title": "OpenGOAL - LSP - Stop"
+      },
+      {
+        "command": "opengoal.lsp.restart",
+        "title": "OpenGOAL - LSP - Restart"
       }
     ],
+    "configuration": {
+      "title": "OpenGOAL",
+      "properties": {
+        "opengoal.launchLspOnStartup": {
+          "type": [
+            "boolean"
+          ],
+          "default": true,
+          "description": "Whether or not the LSP should be started automatically"
+        },
+        "opengoal.eeManPagePath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "File path to the EE Man Page"
+        },
+        "opengoal.vuManPagePath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "File path to the VU Man Page"
+        },
+        "opengoal.decompilerPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "File path to the decompiler executable"
+        },
+        "opengoal.decompilerJak1Config": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Config to use for decompiling jak 1 related files"
+        },
+        "opengoal.decompilerJak2Config": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Config to use for decompiling jak 2 related files"
+        },
+        "opengoal.decompilerJak1ConfigDirectory": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Directory containing cast files to use for decompiling jak 1 related files"
+        },
+        "opengoal.decompilerJak2ConfigDirectory": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Directory containing cast files to use for decompiling jak 2 related files"
+        }
+      }
+    },
     "configurationDefaults": {
       "[opengoal-ir]": {
         "editor.bracketPairColorization.enabled": false
-      },
-      "editor.tokenColorCustomizations": {
-        "textMateRules": [
+      }
+    },
+    "customEditors": [
+      {
+        "viewType": "pdf.opengoal.manpage",
+        "displayName": "OpenGOAL Manpage Preview",
+        "selector": [
           {
-            "name": "OpenGOAL Globals",
-            "scope": [
-              "entity.global.opengoal"
-            ],
-            "settings": {
-              "foreground": "#36f9f6",
-              "fontStyle": "bold"
-            }
-          },
-          {
-            "name": "OpenGOAL Storage",
-            "scope": [
-              "storage.control.opengoal"
-            ],
-            "settings": {
-              "foreground": "#36f9f6",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "name": "OpenGOAL Macros, Quoted",
-            "scope": [
-              "meta.quoted-expression.opengoal"
-            ],
-            "settings": {
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "name": "OpenGOAL Symbols",
-            "scope": [
-              "meta.symbol.opengoal"
-            ],
-            "settings": {
-              "foreground": "#ff7edbff"
-            }
-          },
-          {
-            "scope": "opengoal.ir.typeanalysis",
-            "settings": {
-              "foreground": "#fe4450E6"
-            }
-          },
-          {
-            "scope": "opengoal.ir.error",
-            "settings": {
-              "foreground": "#fe4450E6"
-            }
-          },
-          {
-            "scope": "opengoal.ir.warn",
-            "settings": {
-              "foreground": "#feeb44e6"
-            }
-          },
-          {
-            "scope": "opengoal.ir.op-num",
-            "settings": {
-              "foreground": "#EC407A",
-              "fontStyle": "bold"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.a0",
-            "settings": {
-              "foreground": "#EF9A9A"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.a1",
-            "settings": {
-              "foreground": "#F48FB1"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.a2",
-            "settings": {
-              "foreground": "#CE93D8"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.a3",
-            "settings": {
-              "foreground": "#90CAF9"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.t0",
-            "settings": {
-              "foreground": "#80DEEA"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.t1",
-            "settings": {
-              "foreground": "#80CBC4"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.t2",
-            "settings": {
-              "foreground": "#A5D6A7"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.t3",
-            "settings": {
-              "foreground": "#E6EE9C"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.float",
-            "settings": {
-              "foreground": "#BCAAA4"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.return",
-            "settings": {
-              "foreground": "#FF9100"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs.stack",
-            "settings": {
-              "foreground": "#76FF03"
-            }
-          },
-          {
-            "scope": "variable.language.opengoal.ir.regs",
-            "settings": {
-              "foreground": "#B0BEC5"
-            }
-          },
-          {
-            "scope": "entity.name.function.opengoal.ir.regs.function",
-            "settings": {
-              "fontStyle": "bold"
-            }
-          },
-          {
-            "scope": "entity.name.function.opengoal.ir.regs.symbol-table",
-            "settings": {
-              "fontStyle": "bold"
-            }
-          },
-          {
-            "scope": "entity.name.function.opengoal.ir.function.call",
-            "settings": {
-              "fontStyle": "bold"
-            }
+            "filenamePattern": "*.pdf"
           }
         ]
       }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceLangId == opengoal-ir",
+          "command": "opengoal.decomp.openManPage",
+          "group": "z_commands"
+        }
+      ]
     },
     "languages": [
       {
@@ -233,7 +249,7 @@
           "light": "./icons/opengoal-goos.png",
           "dark": "./icons/opengoal-goos.png"
         },
-        "configuration": "./language-configuration.json"
+        "configuration": "./syntaxes/configs/opengoal-goos.jsonc"
       },
       {
         "id": "opengoal-ir",
@@ -248,7 +264,7 @@
           "light": "./icons/opengoal-ir.png",
           "dark": "./icons/opengoal-ir.png"
         },
-        "configuration": "./syntaxes/configs/ir.jsonc"
+        "configuration": "./syntaxes/configs/opengoal-ir.jsonc"
       }
     ],
     "grammars": [
@@ -277,13 +293,5 @@
         "path": "./snippets/opengoal.json"
       }
     ]
-  },
-  "devDependencies": {
-    "@types/node": "^12.12.0",
-    "@types/vscode": "^1.34.0",
-    "@typescript-eslint/eslint-plugin": "^5.19.0",
-    "@typescript-eslint/parser": "^5.19.0",
-    "eslint": "^8.13.0",
-    "typescript": "^4.6.3"
   }
 }

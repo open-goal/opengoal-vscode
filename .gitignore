@@ -1,3 +1,7 @@
 node_modules
 *.vsix
 out/
+*.log
+*.exe
+*.bin
+lsp-metadata.json

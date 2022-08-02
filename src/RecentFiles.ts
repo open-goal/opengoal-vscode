@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import * as path from "path";
 
 export class RecentFiles {
   recentFiles: Array<string> = [];
@@ -8,14 +7,20 @@ export class RecentFiles {
   constructor(context: vscode.ExtensionContext) {
     this.workspaceState = context.workspaceState;
     this.recentFiles = this.workspaceState.get("recents", []);
+
+    context.subscriptions.push(
+      vscode.window.onDidChangeActiveTextEditor((editor) => {
+        if (editor?.document != undefined) {
+          this.addFile(editor?.document.fileName);
+        }
+      })
+    );
   }
 
   addFile(filePath: string) {
-    console.log(`Adding - ${filePath}`);
     // dont add duplicates
     // if it exists, take it out and put it on the top
     const idx = this.indexOf(filePath);
-    console.log(idx);
     if (idx !== -1) {
       this.recentFiles.splice(idx, 1);
     }
