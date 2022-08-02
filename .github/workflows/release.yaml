@@ -31,15 +31,12 @@ jobs:
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
+          git config --global user.name "OpenGOALBot"
+          git config --global user.email "OpenGOALBot@users.noreply.github.com"
           npm ci
           npx vsce package
           npx vsce publish ${{ github.event.inputs.bump }}
-
-      - name: Commit Version Bump
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: "OpenGOALBot"
-          author_email: "OpenGOALBot@users.noreply.github.com"
+          git push
 
       - name: Create Release
         env:
