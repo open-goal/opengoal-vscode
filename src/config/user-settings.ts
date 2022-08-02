@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { getConfig } from "./config";
 
 // Settings defined in `configurationDefaults` are not merged with user settings
 // user settings win and replace them.
@@ -64,172 +65,176 @@ export async function setVSIconAssociations() {
   );
 }
 
-const opengoalTextMateRules = [
-  {
-    name: "OpenGOAL Globals",
-    scope: ["entity.global.opengoal"],
-    settings: {
-      foreground: "#36f9f6",
-      fontStyle: "bold",
+// Could not use colors because of - https://github.com/Microsoft/vscode/issues/32813
+function getTextMateRules() {
+  const config = getConfig();
+  return [
+    {
+      name: "OpenGOAL Globals",
+      scope: ["entity.global.opengoal"],
+      settings: {
+        foreground: config.colorsGoalGlobals,
+        fontStyle: "bold",
+      },
     },
-  },
-  {
-    name: "OpenGOAL Storage",
-    scope: ["storage.control.opengoal"],
-    settings: {
-      foreground: "#36f9f6",
-      fontStyle: "italic",
+    {
+      name: "OpenGOAL Storage",
+      scope: ["storage.control.opengoal"],
+      settings: {
+        foreground: config.colorsGoalStorageControl,
+        fontStyle: "italic",
+      },
     },
-  },
-  {
-    name: "OpenGOAL Macros, Quoted",
-    scope: ["meta.quoted-expression.opengoal"],
-    settings: {
-      fontStyle: "italic",
+    {
+      name: "OpenGOAL Macros, Quoted",
+      scope: ["meta.quoted-expression.opengoal"],
+      settings: {
+        fontStyle: "italic",
+      },
     },
-  },
-  {
-    name: "OpenGOAL Symbols",
-    scope: ["meta.symbol.opengoal"],
-    settings: {
-      foreground: "#ff7edbff",
+    {
+      name: "OpenGOAL Symbols",
+      scope: ["meta.symbol.opengoal"],
+      settings: {
+        foreground: config.colorsGoalSymbols,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR TypeAnalysis",
-    scope: "opengoal.ir.typeanalysis",
-    settings: {
-      foreground: "#fe4450E6",
+    {
+      name: "OpenGOAL-IR TypeAnalysis",
+      scope: "opengoal.ir.typeanalysis",
+      settings: {
+        foreground: config.colorsIRTypeAnalysis,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Error",
-    scope: "opengoal.ir.error",
-    settings: {
-      foreground: "#fe4450E6",
+    {
+      name: "OpenGOAL-IR Error",
+      scope: "opengoal.ir.error",
+      settings: {
+        foreground: config.colorsIRError,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Warn",
-    scope: "opengoal.ir.warn",
-    settings: {
-      foreground: "#feeb44e6",
+    {
+      name: "OpenGOAL-IR Warn",
+      scope: "opengoal.ir.warn",
+      settings: {
+        foreground: config.colorsIRWarning,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Op Number",
-    scope: "opengoal.ir.op-num",
-    settings: {
-      foreground: "#EC407A",
-      fontStyle: "bold",
+    {
+      name: "OpenGOAL-IR Op Number",
+      scope: "opengoal.ir.op-num",
+      settings: {
+        foreground: config.colorsIROpNumber,
+        fontStyle: "bold",
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-A0",
-    scope: "variable.language.opengoal.ir.regs.a0",
-    settings: {
-      foreground: "#EF9A9A",
+    {
+      name: "OpenGOAL-IR Reg-A0",
+      scope: "variable.language.opengoal.ir.regs.a0",
+      settings: {
+        foreground: config.colorsIRRegA0,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-A1",
-    scope: "variable.language.opengoal.ir.regs.a1",
-    settings: {
-      foreground: "#F48FB1",
+    {
+      name: "OpenGOAL-IR Reg-A1",
+      scope: "variable.language.opengoal.ir.regs.a1",
+      settings: {
+        foreground: config.colorsIRRegA1,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-A2",
-    scope: "variable.language.opengoal.ir.regs.a2",
-    settings: {
-      foreground: "#CE93D8",
+    {
+      name: "OpenGOAL-IR Reg-A2",
+      scope: "variable.language.opengoal.ir.regs.a2",
+      settings: {
+        foreground: config.colorsIRRegA2,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-A3",
-    scope: "variable.language.opengoal.ir.regs.a3",
-    settings: {
-      foreground: "#90CAF9",
+    {
+      name: "OpenGOAL-IR Reg-A3",
+      scope: "variable.language.opengoal.ir.regs.a3",
+      settings: {
+        foreground: config.colorsIRRegA3,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-T0",
-    scope: "variable.language.opengoal.ir.regs.t0",
-    settings: {
-      foreground: "#80DEEA",
+    {
+      name: "OpenGOAL-IR Reg-T0",
+      scope: "variable.language.opengoal.ir.regs.t0",
+      settings: {
+        foreground: config.colorsIRRegT0,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-T1",
-    scope: "variable.language.opengoal.ir.regs.t1",
-    settings: {
-      foreground: "#80CBC4",
+    {
+      name: "OpenGOAL-IR Reg-T1",
+      scope: "variable.language.opengoal.ir.regs.t1",
+      settings: {
+        foreground: config.colorsIRRegT1,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-T2",
-    scope: "variable.language.opengoal.ir.regs.t2",
-    settings: {
-      foreground: "#A5D6A7",
+    {
+      name: "OpenGOAL-IR Reg-T2",
+      scope: "variable.language.opengoal.ir.regs.t2",
+      settings: {
+        foreground: config.colorsIRRegT2,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-T3",
-    scope: "variable.language.opengoal.ir.regs.t3",
-    settings: {
-      foreground: "#E6EE9C",
+    {
+      name: "OpenGOAL-IR Reg-T3",
+      scope: "variable.language.opengoal.ir.regs.t3",
+      settings: {
+        foreground: config.colorsIRRegT3,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-Float",
-    scope: "variable.language.opengoal.ir.regs.float",
-    settings: {
-      foreground: "#BCAAA4",
+    {
+      name: "OpenGOAL-IR Reg-Float",
+      scope: "variable.language.opengoal.ir.regs.float",
+      settings: {
+        foreground: config.colorsIRRegFloat,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-V0-Return",
-    scope: "variable.language.opengoal.ir.regs.return",
-    settings: {
-      foreground: "#FF9100",
+    {
+      name: "OpenGOAL-IR Reg-V0-Return",
+      scope: "variable.language.opengoal.ir.regs.return",
+      settings: {
+        foreground: config.colorsIRRegReturn,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-SP",
-    scope: "variable.language.opengoal.ir.regs.stack",
-    settings: {
-      foreground: "#76FF03",
+    {
+      name: "OpenGOAL-IR Reg-SP",
+      scope: "variable.language.opengoal.ir.regs.stack",
+      settings: {
+        foreground: config.colorsIRRegStack,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-General",
-    scope: "variable.language.opengoal.ir.regs",
-    settings: {
-      foreground: "#B0BEC5",
+    {
+      name: "OpenGOAL-IR Reg-General",
+      scope: "variable.language.opengoal.ir.regs",
+      settings: {
+        foreground: config.colorsIRRegGeneral,
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-Function",
-    scope: "entity.name.function.opengoal.ir.regs.function",
-    settings: {
-      fontStyle: "bold",
+    {
+      name: "OpenGOAL-IR Reg-Function",
+      scope: "entity.name.function.opengoal.ir.regs.function",
+      settings: {
+        fontStyle: "bold",
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Reg-SymbolTable",
-    scope: "entity.name.function.opengoal.ir.regs.symbol-table",
-    settings: {
-      fontStyle: "bold",
+    {
+      name: "OpenGOAL-IR Reg-SymbolTable",
+      scope: "entity.name.function.opengoal.ir.regs.symbol-table",
+      settings: {
+        fontStyle: "bold",
+      },
     },
-  },
-  {
-    name: "OpenGOAL-IR Function-Call",
-    scope: "entity.name.function.opengoal.ir.function.call",
-    settings: {
-      fontStyle: "bold",
+    {
+      name: "OpenGOAL-IR Function-Call",
+      scope: "entity.name.function.opengoal.ir.function.call",
+      settings: {
+        fontStyle: "bold",
+      },
     },
-  },
-];
+  ];
+}
 
 // TODO - expose these colors via configuration settings so the user can change them if they want to
 export async function setTextmateColors() {
@@ -239,6 +244,8 @@ export async function setTextmateColors() {
   const currentTokenColorCustomizations: any = userConfig.get(
     "editor.tokenColorCustomizations"
   );
+
+  const opengoalTextMateRules = getTextMateRules();
 
   if (!("textMateRules" in currentTokenColorCustomizations)) {
     currentTokenColorCustomizations.textMateRules = opengoalTextMateRules;
