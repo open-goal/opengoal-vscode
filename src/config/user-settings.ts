@@ -71,7 +71,7 @@ function getTextMateRules() {
   return [
     {
       name: "OpenGOAL Globals",
-      scope: ["entity.global.opengoal"],
+      scope: ["entity.global.opengoal", "entity.global.opengoal-ir"],
       settings: {
         foreground: config.colorsGoalGlobals,
         fontStyle: "bold",
@@ -79,7 +79,7 @@ function getTextMateRules() {
     },
     {
       name: "OpenGOAL Storage",
-      scope: ["storage.control.opengoal"],
+      scope: ["storage.control.opengoal", "storage.control.opengoal-ir"],
       settings: {
         foreground: config.colorsGoalStorageControl,
         fontStyle: "italic",
@@ -87,14 +87,17 @@ function getTextMateRules() {
     },
     {
       name: "OpenGOAL Macros, Quoted",
-      scope: ["meta.quoted-expression.opengoal"],
+      scope: [
+        "meta.quoted-expression.opengoal",
+        "meta.quoted-expression.opengoal-ir",
+      ],
       settings: {
         fontStyle: "italic",
       },
     },
     {
       name: "OpenGOAL Symbols",
-      scope: ["meta.symbol.opengoal"],
+      scope: ["meta.symbol.opengoal", "meta.symbol.opengoal-ir"],
       settings: {
         foreground: config.colorsGoalSymbols,
       },
