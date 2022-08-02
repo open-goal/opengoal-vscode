@@ -1,6 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "name": "OpenGOAL",
+  "name": "OpenGOAL-IR",
+  "scopeName": "source.opengoal-ir",
   "patterns": [
     {
       "include": "#goalCode"
@@ -286,6 +287,5 @@
         }
       ]
     }
-  },
-  "scopeName": "source.opengoal-ir"
+  }
 }
