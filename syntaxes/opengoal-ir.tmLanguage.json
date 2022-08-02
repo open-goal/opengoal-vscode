@@ -105,7 +105,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(a1)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(a1(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.a1"
@@ -116,7 +116,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(a2)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(a2(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.a2"
@@ -127,7 +127,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(a3)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(a3(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.a3"
@@ -138,7 +138,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(t0)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(t0(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.t0"
@@ -149,7 +149,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(t1)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(t1(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.t1"
@@ -160,7 +160,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(t2)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(t2(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.t2"
@@ -171,7 +171,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(t3)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(t3(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.t3"
@@ -182,7 +182,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(t9)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(t9(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "entity.name.function.opengoal.ir.regs.function"
@@ -193,7 +193,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(f\\d{1,2})(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(f\\d{1,2}(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.float"
@@ -204,7 +204,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(sp)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(sp(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.stack"
@@ -215,7 +215,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(v0)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(v0(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs.return"
@@ -226,7 +226,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(s7)(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(s7(?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "entity.name.function.opengoal.ir.regs.symbol-table"
@@ -237,7 +237,7 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(gp|fp|at|v1|ra|r0|k0|k1|t8|s[0-6]|t[4-7])(-[\\d]+)?",
+          "match": "(?:\\s|\\(|\\[)(gp|fp|at|v1|ra|r0|k0|k1|t8|s[0-6]|t[4-7](?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs"
