@@ -1,0 +1,47 @@
+name: 🏭 New Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Semver Bump Type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  cut-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.BOT_PAT }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+
+      - name: Bump Version
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          npm install -g vsce
+          vsce package
+          vsce publish ${{ github.event.inputs.bump }}
+
+      - name: Commit Version Bump
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: "OpenGOALBot"
+          author_email: "OpenGOALBot@users.noreply.github.com"
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
+        run: gh release create --generate-notes --repo open-goal/opengoal-vscode
