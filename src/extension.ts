@@ -5,10 +5,11 @@ import {
   setVSIconAssociations,
 } from "./config/user-settings";
 import { PdfCustomProvider } from "./vendor/vscode-pdfviewer/pdfProvider";
-import { switchFile } from "./utils/FileUtils";
+import { switchFile } from "./utils/file-utils";
 import { activateDecompTools } from "./decomp/decomp-tools";
 import { initContext } from "./context";
 import { IRFoldingRangeProvider } from "./languages/ir2-folder";
+import { activateTypeCastTools } from "./decomp/type-caster";
 
 export async function activate(context: vscode.ExtensionContext) {
   // Init Context
@@ -23,6 +24,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   activateDecompTools();
+  activateTypeCastTools();
 
   // Customized PDF Viewer
   const provider = new PdfCustomProvider(
@@ -40,6 +42,8 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     )
   );
+
+  // TODO - disposable stuff?
 
   // Language Customizations
   vscode.languages.registerFoldingRangeProvider(

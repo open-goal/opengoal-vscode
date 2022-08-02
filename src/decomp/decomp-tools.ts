@@ -1,7 +1,7 @@
 import { execFile } from "child_process";
 import { existsSync, promises as fs } from "fs";
 import * as vscode from "vscode";
-import { openFile } from "../utils/FileUtils";
+import { determineGameFromPath, GameName, openFile } from "../utils/file-utils";
 import { open_in_pdf } from "./man-page";
 import * as util from "util";
 import {
@@ -79,22 +79,6 @@ function defaultDecompPath() {
   } else {
     return "build/decompiler/decompiler";
   }
-}
-
-enum GameName {
-  Jak1,
-  Jak2,
-}
-
-async function determineGameFromPath(
-  path: vscode.Uri
-): Promise<GameName | undefined> {
-  if (path.fsPath.includes("jak1")) {
-    return GameName.Jak1;
-  } else if (path.fsPath.includes("jak2")) {
-    return GameName.Jak2;
-  }
-  return undefined;
 }
 
 async function promptUserToSelectConfig(

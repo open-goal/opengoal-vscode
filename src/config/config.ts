@@ -12,6 +12,12 @@ export function getConfig() {
     decompilerPath: configOptions.get<string>("decompilerPath"),
     jak1DecompConfig: configOptions.get<string>("decompilerJak1Config"),
     jak2DecompConfig: configOptions.get<string>("decompilerJak2Config"),
+    decompilerJak1ConfigDirectory: configOptions.get<string>(
+      "decompilerJak1ConfigDirectory"
+    ),
+    decompilerJak2ConfigDirectory: configOptions.get<string>(
+      "decompilerJak2ConfigDirectory"
+    ),
   };
 }
 
@@ -56,6 +62,24 @@ export async function updateJak2DecompConfig(config: string) {
   await userConfig.update(
     "opengoal.decompilerJak2Config",
     config,
+    vscode.ConfigurationTarget.Global
+  );
+}
+
+export async function updateJak1DecompConfigDirectory(dir: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.decompilerJak1ConfigDirectory",
+    dir,
+    vscode.ConfigurationTarget.Global
+  );
+}
+
+export async function updateJak2DecompConfigDirectory(dir: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.decompilerJak2ConfigDirectory",
+    dir,
     vscode.ConfigurationTarget.Global
   );
 }
