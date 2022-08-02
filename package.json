@@ -36,9 +36,9 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
+    "comment-json": "^4.2.2",
     "follow-redirects": "^1.15.1",
     "glob": "^8.0.3",
-    "open": "^8.4.0",
     "vscode-languageclient": "^8.0.1"
   },
   "activationEvents": [
@@ -52,7 +52,11 @@
     "onCommand:opengoal.decomp.decompileCurrentFile",
     "onCommand:opengoal.decomp.toggleAutoDecompilation",
     "onCommand:opengoal.decomp.updateSourceFile",
-    "onCommand:opengoal.decomp.updateReferenceTest"
+    "onCommand:opengoal.decomp.updateReferenceTest",
+    "opengoal.decomp.casts.repeatLast",
+    "opengoal.decomp.casts.labelCastSelection",
+    "opengoal.decomp.casts.stackCastSelection",
+    "opengoal.decomp.casts.typeCastSelection"
   ],
   "contributes": {
     "commands": [
@@ -87,6 +91,26 @@
       {
         "command": "opengoal.decomp.updateReferenceTest",
         "title": "OpenGOAL - Copy Decompilation to Reference Tests"
+      },
+      {
+        "command": "opengoal.decomp.casts.repeatLast",
+        "title": "OpenGOAL - Casts - Repeat Last"
+      },
+      {
+        "command": "opengoal.decomp.casts.castSelection",
+        "title": "OpenGOAL - Casts - Add Cast to Selection"
+      },
+      {
+        "command": "opengoal.decomp.casts.labelCastSelection",
+        "title": "OpenGOAL - Casts - Add Label Cast to Selection"
+      },
+      {
+        "command": "opengoal.decomp.casts.stackCastSelection",
+        "title": "OpenGOAL - Casts - Add Stack Cast to Selection"
+      },
+      {
+        "command": "opengoal.decomp.casts.typeCastSelection",
+        "title": "OpenGOAL - Casts - Add Type Cast to Selection"
       },
       {
         "command": "opengoal.lsp.start",
@@ -150,6 +174,22 @@
           ],
           "default": null,
           "description": "Config to use for decompiling jak 2 related files"
+        },
+        "opengoal.decompilerJak1ConfigDirectory": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Directory containing cast files to use for decompiling jak 1 related files"
+        },
+        "opengoal.decompilerJak2ConfigDirectory": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Directory containing cast files to use for decompiling jak 2 related files"
         }
       }
     },
