@@ -1,5 +1,9 @@
+import { parse } from "comment-json";
 import { existsSync, readFileSync } from "fs";
+import path = require("path");
 import * as vscode from "vscode";
+import { getConfig } from "../config/config";
+import { determineGameFromPath, GameName } from "../utils/file-utils";
 import { getWorkspaceFolderByName } from "../utils/workspace";
 
 class HintCacheEntry {
@@ -12,7 +16,28 @@ class HintCacheEntry {
   }
 }
 
-export class InlayHintsProvider implements vscode.InlayHintsProvider {
+const opNumRegex = /.*;; \[\s*(\d+)\]/g;
+const funcNameRegex = /; \.function (.*).*/g;
+
+async function getOpNumber(line: string): Promise<number | undefined> {
+  const matches = [...line.matchAll(opNumRegex)];
+  if (matches.length == 1) {
+    return parseInt(matches[0][1].toString());
+  }
+  return undefined;
+}
+
+// NOTE - this is not in the LSP because i want to eventually tie commands to the hint
+// to either jump to them or remove them (removing them is probably better)
+
+// Though, if i end up never doing this, this SHOULD be in the LSP, probably
+// The LSP already knows the all-types file used for the file.  But what would probably
+// be better is if it knew the location of the config file
+//
+// The config file points to everything (all-types / configs / etc)
+//
+// If this was the cast, the LSP could trivially watch over the cast files to provide these hints
+export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
   public onDidChangeInlayHintsEvent = new vscode.EventEmitter<void>();
   public onDidChangeInlayHints?: vscode.Event<void>;
 
@@ -44,23 +69,273 @@ export class InlayHintsProvider implements vscode.InlayHintsProvider {
   ): Promise<vscode.InlayHint[] | undefined> {
     // Check if the file has already been computed in the cache
     // We store the entire files hints in the cache and just return the ones that the range wants here
-    if (this.fileCache.has(document.fileName)) {
-      const entry = this.fileCache.get(document.fileName);
+    const entry = this.fileCache.get(document.fileName);
+    if (entry !== undefined) {
       if (entry?.version !== document.version) {
-        // Update it!
+        const newHints = await this.computeHintsForDocument(document);
+        if (newHints !== undefined) {
+          this.fileCache.set(document.fileName, {
+            version: document.version,
+            hints: newHints,
+          });
+          return newHints;
+        }
+        return undefined;
       }
       // Return the results
+      return entry?.hints;
     } else {
       // Update it!
+      const newHints = await this.computeHintsForDocument(document);
+      if (newHints !== undefined) {
+        this.fileCache.set(document.fileName, {
+          version: document.version,
+          hints: newHints,
+        });
+        return newHints;
+      }
+      return undefined;
+    }
+  }
+
+  private async getCastFileData(
+    projectRoot: vscode.Uri,
+    document: vscode.TextDocument,
+    fileName: string
+  ): Promise<any | undefined> {
+    const gameName = await determineGameFromPath(document.uri);
+    if (gameName === undefined) {
+      return undefined;
+    }
+    const config = getConfig();
+    let decompConfigPath = "";
+    if (gameName == GameName.Jak1) {
+      const path = config.decompilerJak1ConfigDirectory;
+      if (path === undefined) {
+        return undefined;
+      }
+      decompConfigPath = path;
+    } else if (gameName == GameName.Jak2) {
+      const path = config.decompilerJak2ConfigDirectory;
+      if (path === undefined) {
+        return undefined;
+      }
+      decompConfigPath = path;
+    }
+    const path = vscode.Uri.joinPath(
+      projectRoot,
+      `decompiler/config/${decompConfigPath}/${fileName}`
+    ).fsPath;
+    if (!existsSync(path)) {
+      return undefined;
     }
 
-    // Return the results
-    return undefined;
+    // TODO - would be performant to cache these files, requires listening to them as well though
+    return parse(readFileSync(path).toString(), undefined, true);
+  }
+
+  private async getAllPotentialStackValues(
+    stackCastData: any,
+    stackOffset: number
+  ): Promise<string[]> {
+    // Consistently sort the values
+    const values = [];
+    for (const cast of stackCastData) {
+      if (cast[0] == stackOffset) {
+        values.push(cast[1]);
+      }
+    }
+    return values;
+  }
+
+  private async generateStackCastHints(
+    stackCastData: any,
+    lineNumber: number,
+    line: string
+  ): Promise<vscode.InlayHint[]> {
+    const hints = [];
+    // If the line has an op number, we will care about it
+    const opNumber = await getOpNumber(line);
+    if (opNumber === undefined) {
+      return [];
+    }
+
+    const handledOffsets: number[] = [];
+
+    for (const cast of stackCastData) {
+      const stackOffset = cast[0];
+      if (handledOffsets.includes(stackOffset)) {
+        continue;
+      }
+      const indexes = [
+        ...line.matchAll(new RegExp(`sp, ${stackOffset}`, "gi")),
+      ].map((a) => a.index);
+      const hintLabel = await this.getAllPotentialStackValues(
+        stackCastData,
+        stackOffset
+      );
+      for (const index of indexes) {
+        if (index === undefined) {
+          continue;
+        }
+        const newHint = new vscode.InlayHint(
+          new vscode.Position(lineNumber, index + `sp, ${stackOffset}`.length),
+          `: ${hintLabel.join(" | ")}`
+        );
+        newHint.paddingLeft = true;
+        newHint.kind = vscode.InlayHintKind.Type;
+        newHint.tooltip = `Found in Stack Casts`;
+        hints.push(newHint);
+      }
+      handledOffsets.push(stackOffset);
+    }
+    return hints;
+  }
+
+  private async getAllPotentialLabelValues(
+    labelCastData: any,
+    labelRef: string
+  ): Promise<string[]> {
+    // Consistently sort the values
+    const values = [];
+    for (const cast of labelCastData) {
+      if (cast[0] == labelRef) {
+        if (cast.length == 3) {
+          values.push(`${cast[1]}[${cast[2]}]`);
+        } else {
+          values.push(cast[1]);
+        }
+      }
+    }
+    return values;
+  }
+
+  private async generateLabelCastHints(
+    labelCastData: any,
+    lineNumber: number,
+    line: string
+  ): Promise<vscode.InlayHint[]> {
+    const hints = [];
+    // If the line has an op number, we will care about it
+    const opNumber = await getOpNumber(line);
+    if (opNumber === undefined) {
+      return [];
+    }
+
+    const handledRefs: string[] = [];
+
+    for (const cast of labelCastData) {
+      const labelRef = cast[0];
+      if (handledRefs.includes(labelRef)) {
+        continue;
+      }
+      const indexes = [...line.matchAll(new RegExp(labelRef, "gi"))].map(
+        (a) => a.index
+      );
+      const hintLabel = await this.getAllPotentialLabelValues(
+        labelCastData,
+        labelRef
+      );
+      for (const index of indexes) {
+        if (index === undefined) {
+          continue;
+        }
+        const newHint = new vscode.InlayHint(
+          new vscode.Position(lineNumber, index + `L${labelRef}`.length),
+          `: ${hintLabel.join(" | ")}`
+        );
+        newHint.paddingLeft = true;
+        newHint.kind = vscode.InlayHintKind.Type;
+        newHint.tooltip = `Found in Label Casts`;
+        hints.push(newHint);
+      }
+      handledRefs.push(labelRef);
+    }
+    return hints;
+  }
+
+  private async getAllPotentialTypeValues(
+    typeCastData: any,
+    opNumber: number,
+    register: string
+  ): Promise<string[]> {
+    // Consistently sort the values
+    const values = [];
+    for (const cast of typeCastData) {
+      if (cast[0] instanceof Array) {
+        if (
+          register == cast[1] &&
+          opNumber >= cast[0][0] &&
+          opNumber < cast[0][1]
+        ) {
+          values.push(cast[2]);
+        }
+      } else if (register == cast[1] && cast[0] == opNumber) {
+        values.push(cast[2]);
+      }
+    }
+    return values;
+  }
+
+  private async generateTypeCastHints(
+    typeCastData: any,
+    lineNumber: number,
+    line: string
+  ): Promise<vscode.InlayHint[]> {
+    const hints = [];
+    // If the line has an op number, we will care about it
+    const opNumber = await getOpNumber(line);
+    if (opNumber === undefined) {
+      return [];
+    }
+
+    const handledRegisters: string[] = [];
+
+    for (const cast of typeCastData) {
+      let makeHint = false;
+      const register = cast[1];
+      if (cast[0] instanceof Array) {
+        if (opNumber >= cast[0][0] && opNumber < cast[0][1]) {
+          makeHint = true;
+        }
+      } else if (cast[0] == opNumber) {
+        makeHint = true;
+      }
+
+      if (makeHint) {
+        if (handledRegisters.includes(register)) {
+          continue;
+        }
+        const indexes = [...line.matchAll(new RegExp(register, "gi"))].map(
+          (a) => a.index
+        );
+        const hintLabel = await this.getAllPotentialTypeValues(
+          typeCastData,
+          opNumber,
+          register
+        );
+        for (const index of indexes) {
+          if (index === undefined) {
+            continue;
+          }
+          const newHint = new vscode.InlayHint(
+            new vscode.Position(lineNumber, index + register.length),
+            `: ${hintLabel.join(" | ")}`
+          );
+          newHint.paddingLeft = true;
+          newHint.kind = vscode.InlayHintKind.Type;
+          newHint.tooltip = `Found in Type Casts`;
+          hints.push(newHint);
+        }
+        handledRegisters.push(register);
+      }
+    }
+    return hints;
   }
 
   private async computeHintsForDocument(
     document: vscode.TextDocument
-  ): Promise<void> {
+  ): Promise<vscode.InlayHint[] | undefined> {
     const projectRoot = getWorkspaceFolderByName("jak-project");
     if (projectRoot === undefined) {
       vscode.window.showErrorMessage(
@@ -68,20 +343,59 @@ export class InlayHintsProvider implements vscode.InlayHintsProvider {
       );
       return undefined;
     }
-    // TODO - prompt for cast dir, assuming jak 2 right now
-    const path = vscode.Uri.joinPath(
-      projectRoot,
-      "decompiler/config/jak2/type_casts.jsonc"
-    ).fsPath;
-    if (!existsSync(path)) {
-      return; // TODO - error
-    }
 
-    // TODO - gotta get more files than this
-    // TODO - would be performant to cache these files, requires listening to them as well though
-    const castData = JSON.parse(readFileSync(path).toString());
-    // Approach idea:
-    // - pass through the file, when hitting a function line grab any relevant casts from the cast files
-    // - flatten, sanitize and sort this data so we can apply it.
+    const labelCastData = await this.getCastFileData(
+      projectRoot,
+      document,
+      "label_types.jsonc"
+    );
+
+    const stackCastData = await this.getCastFileData(
+      projectRoot,
+      document,
+      "stack_structures.jsonc"
+    );
+
+    const typeCastData = await this.getCastFileData(
+      projectRoot,
+      document,
+      "type_casts.jsonc"
+    );
+
+    let funcName = undefined;
+    let hints: vscode.InlayHint[] = [];
+    const fileName = path.basename(document.fileName).split("_ir2.asm")[0];
+    for (let i = 0; i < document.lineCount; i++) {
+      const line = document.lineAt(i).text;
+      // Label casts are file-level, so the func name doesn't matter
+      if (labelCastData !== undefined && fileName in labelCastData) {
+        hints = hints.concat(
+          await this.generateLabelCastHints(labelCastData[fileName], i, line)
+        );
+      }
+
+      // See if this is a new function
+      const matches = [...line.matchAll(funcNameRegex)];
+      if (matches.length == 1) {
+        funcName = matches[0][1].toString();
+      }
+
+      if (funcName === undefined) {
+        continue;
+      }
+
+      // Collect any potential hints for this line
+      if (typeCastData !== undefined && funcName in typeCastData) {
+        hints = hints.concat(
+          await this.generateTypeCastHints(typeCastData[funcName], i, line)
+        );
+      }
+      if (stackCastData !== undefined && funcName in stackCastData) {
+        hints = hints.concat(
+          await this.generateStackCastHints(stackCastData[funcName], i, line)
+        );
+      }
+    }
+    return hints;
   }
 }
