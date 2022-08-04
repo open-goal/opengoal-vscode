@@ -10,6 +10,7 @@ import { activateDecompTools } from "./decomp/decomp-tools";
 import { initContext } from "./context";
 import { IRFoldingRangeProvider } from "./languages/ir2-folder";
 import { activateTypeCastTools } from "./decomp/type-caster";
+import { IRInlayHintsProvider } from "./languages/ir2-inlay-hinter";
 
 const channel = vscode.window.createOutputChannel("OpenGOAL");
 
@@ -56,6 +57,10 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerFoldingRangeProvider(
       { scheme: "file", language: "opengoal-ir" },
       new IRFoldingRangeProvider()
+    );
+    vscode.languages.registerInlayHintsProvider(
+      { scheme: "file", language: "opengoal-ir" },
+      new IRInlayHintsProvider()
     );
 
     // Start the LSP

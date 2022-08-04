@@ -309,7 +309,8 @@
     ],
     "configurationDefaults": {
       "[opengoal-ir]": {
-        "editor.bracketPairColorization.enabled": false
+        "editor.bracketPairColorization.enabled": false,
+        "editor.inlayHints.enabled": "offUnlessPressed"
       }
     },
     "customEditors": [

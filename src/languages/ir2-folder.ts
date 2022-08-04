@@ -1,5 +1,8 @@
 import * as vscode from "vscode";
 
+// TODO - move this to the lsp eventually as this doesn't add any interaction
+// - other things like inlay hints have to be done client side because i want to tie actions to them, not just info
+
 export class IRFoldingRangeProvider implements vscode.FoldingRangeProvider {
   provideFoldingRanges(document: vscode.TextDocument): vscode.FoldingRange[] {
     const ranges: vscode.FoldingRange[] = [];
