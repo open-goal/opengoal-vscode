@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { getMainChannel } from "../context";
 import { getConfig } from "./config";
 
 // Settings defined in `configurationDefaults` are not merged with user settings
@@ -58,11 +59,18 @@ export async function setVSIconAssociations() {
       }
     }
   }
-  await userConfig.update(
-    "vsicons.associations.files",
-    currentIconAssociations,
-    vscode.ConfigurationTarget.Global
-  );
+  // Throws error if the user doesn't have these settings
+  try {
+    await userConfig.update(
+      "vsicons.associations.files",
+      currentIconAssociations,
+      vscode.ConfigurationTarget.Global
+    );
+  } catch (err) {
+    getMainChannel().append(
+      `Failed to write icon configuration override - ${err}`
+    );
+  }
 }
 
 // Could not use colors because of - https://github.com/Microsoft/vscode/issues/32813
@@ -275,9 +283,14 @@ export async function setTextmateColors() {
 
   currentTokenColorCustomizations.textMateRules = newRules;
 
-  await userConfig.update(
-    "editor.tokenColorCustomizations",
-    currentTokenColorCustomizations,
-    vscode.ConfigurationTarget.Global
-  );
+  // Throws error if the user doesn't have these settings
+  try {
+    await userConfig.update(
+      "editor.tokenColorCustomizations",
+      currentTokenColorCustomizations,
+      vscode.ConfigurationTarget.Global
+    );
+  } catch (err) {
+    getMainChannel().append(`Failed to write textmate rule override - ${err}`);
+  }
 }

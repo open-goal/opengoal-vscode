@@ -7,12 +7,10 @@ import {
 import { PdfCustomProvider } from "./vendor/vscode-pdfviewer/pdfProvider";
 import { switchFile } from "./utils/file-utils";
 import { activateDecompTools } from "./decomp/decomp-tools";
-import { initContext } from "./context";
+import { getMainChannel, initContext } from "./context";
 import { IRFoldingRangeProvider } from "./languages/ir2-folder";
 import { activateTypeCastTools } from "./decomp/type-caster";
 import { IRInlayHintsProvider } from "./languages/ir2-inlay-hinter";
-
-const channel = vscode.window.createOutputChannel("OpenGOAL");
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
@@ -66,7 +64,10 @@ export async function activate(context: vscode.ExtensionContext) {
     // Start the LSP
     lsp.activate(context);
   } catch (err) {
-    channel.append(`Failed to activate extension - ${err}`);
+    vscode.window.showErrorMessage(
+      "Failed to activate OpenGOAL extension, see logs for details"
+    );
+    getMainChannel().append(`Failed to activate extension - ${err}`);
   }
 }
 
