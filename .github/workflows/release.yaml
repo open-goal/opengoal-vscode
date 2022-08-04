@@ -37,7 +37,7 @@ jobs:
           npx vsce package
           npx vsce publish ${{ github.event.inputs.bump }}
           git push
-          git push tag $(git tag --points-at HEAD)
+          git push origin $(git tag --points-at HEAD)
 
       - name: Create Release
         env:
