@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 import { RecentFiles } from "./RecentFiles";
 
+const channel = vscode.window.createOutputChannel("OpenGOAL");
 let extensionContext: vscode.ExtensionContext;
 let recentFiles: RecentFiles;
 
@@ -21,4 +22,8 @@ export function getRecentFiles() {
 
 export function getExtensionContext() {
   return extensionContext;
+}
+
+export function getMainChannel() {
+  return channel;
 }
