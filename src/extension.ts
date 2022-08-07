@@ -8,9 +8,10 @@ import { PdfCustomProvider } from "./vendor/vscode-pdfviewer/pdfProvider";
 import { switchFile } from "./utils/file-utils";
 import { activateDecompTools } from "./decomp/decomp-tools";
 import { getMainChannel, initContext } from "./context";
-import { IRFoldingRangeProvider } from "./languages/ir2-folder";
+import { IRFoldingRangeProvider } from "./languages/ir2/ir2-folder";
 import { activateTypeCastTools } from "./decomp/type-caster";
-import { IRInlayHintsProvider } from "./languages/ir2-inlay-hinter";
+import { IRInlayHintsProvider } from "./languages/ir2/ir2-inlay-hinter";
+import { OpenGOALDisasmRenameProvider } from "./languages/opengoal/disasm/opengoal-disasm-renamer";
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
@@ -59,6 +60,10 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerInlayHintsProvider(
       { scheme: "file", language: "opengoal-ir" },
       new IRInlayHintsProvider()
+    );
+    vscode.languages.registerRenameProvider(
+      { scheme: "file", language: "opengoal", pattern: "**/*_disasm.gc" },
+      new OpenGOALDisasmRenameProvider()
     );
 
     // Start the LSP

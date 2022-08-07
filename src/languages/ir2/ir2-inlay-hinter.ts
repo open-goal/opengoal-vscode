@@ -1,10 +1,7 @@
-import { parse } from "comment-json";
-import { existsSync, readFileSync } from "fs";
 import path = require("path");
 import * as vscode from "vscode";
-import { getConfig } from "../config/config";
-import { determineGameFromPath, GameName } from "../utils/file-utils";
-import { getWorkspaceFolderByName } from "../utils/workspace";
+import { getCastFileData } from "../../utils/decomp-tools";
+import { getWorkspaceFolderByName } from "../../utils/workspace";
 
 class HintCacheEntry {
   version: number;
@@ -28,7 +25,7 @@ async function getOpNumber(line: string): Promise<number | undefined> {
 }
 
 // NOTE - this is not in the LSP because i want to eventually tie commands to the hint
-// to either jump to them or remove them (removing them is probably better)
+// to either jump to them or remove them (removing them is probably more useful)
 
 // Though, if i end up never doing this, this SHOULD be in the LSP, probably
 // The LSP already knows the all-types file used for the file.  But what would probably
@@ -96,42 +93,6 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
       }
       return undefined;
     }
-  }
-
-  private async getCastFileData(
-    projectRoot: vscode.Uri,
-    document: vscode.TextDocument,
-    fileName: string
-  ): Promise<any | undefined> {
-    const gameName = await determineGameFromPath(document.uri);
-    if (gameName === undefined) {
-      return undefined;
-    }
-    const config = getConfig();
-    let decompConfigPath = "";
-    if (gameName == GameName.Jak1) {
-      const path = config.decompilerJak1ConfigDirectory;
-      if (path === undefined) {
-        return undefined;
-      }
-      decompConfigPath = path;
-    } else if (gameName == GameName.Jak2) {
-      const path = config.decompilerJak2ConfigDirectory;
-      if (path === undefined) {
-        return undefined;
-      }
-      decompConfigPath = path;
-    }
-    const path = vscode.Uri.joinPath(
-      projectRoot,
-      `decompiler/config/${decompConfigPath}/${fileName}`
-    ).fsPath;
-    if (!existsSync(path)) {
-      return undefined;
-    }
-
-    // TODO - would be performant to cache these files, requires listening to them as well though
-    return parse(readFileSync(path).toString(), undefined, true);
   }
 
   private async getAllPotentialStackValues(
@@ -344,19 +305,19 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
       return undefined;
     }
 
-    const labelCastData = await this.getCastFileData(
+    const labelCastData = getCastFileData(
       projectRoot,
       document,
       "label_types.jsonc"
     );
 
-    const stackCastData = await this.getCastFileData(
+    const stackCastData = getCastFileData(
       projectRoot,
       document,
       "stack_structures.jsonc"
     );
 
-    const typeCastData = await this.getCastFileData(
+    const typeCastData = getCastFileData(
       projectRoot,
       document,
       "type_casts.jsonc"

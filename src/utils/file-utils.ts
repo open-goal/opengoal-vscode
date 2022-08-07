@@ -39,9 +39,7 @@ export function openFile(filePath: string | undefined) {
   vscode.window.showTextDocument(vscode.Uri.file(filePath));
 }
 
-export async function determineGameFromPath(
-  path: vscode.Uri
-): Promise<GameName | undefined> {
+export function determineGameFromPath(path: vscode.Uri): GameName | undefined {
   if (path.fsPath.includes("jak1")) {
     return GameName.Jak1;
   } else if (path.fsPath.includes("jak2")) {
