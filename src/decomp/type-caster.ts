@@ -16,6 +16,7 @@ import {
   GameName,
   getDirectoriesInDir,
 } from "../utils/file-utils";
+import { getDecompilerConfigDirectory } from "../utils/decomp-tools";
 
 enum CastKind {
   Label,
@@ -42,78 +43,6 @@ class CastContext {
   constructor(start: number, end?: number) {
     this.startOp = start;
     this.endOp = end;
-  }
-}
-
-async function promptUserToSelectConfigDirectory(
-  projectRoot: vscode.Uri
-): Promise<string | undefined> {
-  // Get all `.jsonc` files in ./decompiler/config
-  const dirs = await getDirectoriesInDir(
-    vscode.Uri.joinPath(projectRoot, "decompiler/config").fsPath
-  );
-  return await vscode.window.showQuickPick(dirs, {
-    title: "Config?",
-  });
-}
-
-async function getDecompilerConfigDirectory(
-  activeFile: vscode.Uri
-): Promise<string | undefined> {
-  const projectRoot = getWorkspaceFolderByName("jak-project");
-  if (projectRoot === undefined) {
-    vscode.window.showErrorMessage(
-      "OpenGOAL - Unable to locate 'jak-project' workspace folder"
-    );
-    return undefined;
-  }
-
-  const config = getConfig();
-  const gameName = await determineGameFromPath(activeFile);
-  if (gameName == GameName.Jak1) {
-    if (
-      config.decompilerJak1ConfigDirectory === undefined ||
-      !existsSync(config.decompilerJak1ConfigDirectory)
-    ) {
-      const selection = await promptUserToSelectConfigDirectory(projectRoot);
-      if (selection === undefined) {
-        vscode.window.showErrorMessage(
-          "OpenGOAL - Can't cast without knowing where to store them!"
-        );
-        return undefined;
-      }
-      await updateJak1DecompConfigDirectory(selection);
-      return vscode.Uri.joinPath(projectRoot, "decompiler/config/", selection)
-        .fsPath;
-    } else {
-      return vscode.Uri.joinPath(
-        projectRoot,
-        "decompiler/config/",
-        config.decompilerJak1ConfigDirectory
-      ).fsPath;
-    }
-  } else if (gameName == GameName.Jak2) {
-    if (
-      config.decompilerJak2ConfigDirectory === undefined ||
-      !existsSync(config.decompilerJak2ConfigDirectory)
-    ) {
-      const selection = await promptUserToSelectConfigDirectory(projectRoot);
-      if (selection === undefined) {
-        vscode.window.showErrorMessage(
-          "OpenGOAL - Can't cast without knowing where to store them!"
-        );
-        return undefined;
-      }
-      await updateJak2DecompConfigDirectory(selection);
-      return vscode.Uri.joinPath(projectRoot, "decompiler/config/", selection)
-        .fsPath;
-    } else {
-      return vscode.Uri.joinPath(
-        projectRoot,
-        "decompiler/config/",
-        config.decompilerJak2ConfigDirectory
-      ).fsPath;
-    }
   }
 }
 
