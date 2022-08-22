@@ -203,6 +203,9 @@
           ]
         },
         {
+          "include": "#comment"
+        },
+        {
           "include": "#keyfn"
         },
         {
@@ -263,7 +266,7 @@
       "name": "meta.var.opengoal"
     },
     "readerMacros": {
-      "match": "('|,@|`|,)",
+      "match": "('|,@|`|,|&->)",
       "name": "keyword.operator.opengoal"
     }
   }
