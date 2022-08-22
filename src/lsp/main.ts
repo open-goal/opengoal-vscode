@@ -42,7 +42,7 @@ function updateStatus(status: LspStatus, extraInfo?: string) {
       break;
     case "started":
       lspStatusItem.text = "$(circle-filled) OpenGOAL LSP Ready";
-      lspStatusItem.tooltip = "LSP Active";
+      lspStatusItem.tooltip = `LSP Active - ${extraInfo}`;
       lspStatusItem.command = "opengoal.lsp.showLspStartedMenu";
       break;
     case "downloading":
@@ -196,7 +196,7 @@ async function startClient(): Promise<void> {
     updateStatus("starting");
     await client.start();
     activeClient = client;
-    updateStatus("started");
+    updateStatus("started", path.basename(opengoalLspPath));
   } catch (error) {
     console.error("opengoal-lsp:", error);
     updateStatus("error");
