@@ -3,7 +3,7 @@
   "displayName": "OpenGOAL",
   "description": "OpenGOAL Support for VSCode",
   "publisher": "opengoal",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "engines": {
     "vscode": "^1.69.0"
   },
@@ -31,7 +31,7 @@
     "@types/node": "^16.0.0",
     "@types/vscode": "^1.69.0",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
-    "@typescript-eslint/parser": "^5.19.0",
+    "@typescript-eslint/parser": "^5.35.1",
     "eslint": "^8.21.0",
     "typescript": "^4.7.4",
     "vsce": "^2.10.0"
@@ -298,6 +298,11 @@
             "description": "Colors - Register SP (stack)",
             "type": "string",
             "default": "#76FF03"
+          },
+          "opengoal.colors.ir.reg.process": {
+            "description": "Colors - Register S6 (process)",
+            "type": "string",
+            "default": "#aaff63"
           },
           "opengoal.colors.ir.reg.general": {
             "description": "Colors - Register General",
