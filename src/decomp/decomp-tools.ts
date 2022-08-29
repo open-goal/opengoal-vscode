@@ -534,7 +534,10 @@ async function updateReferenceTest() {
 
   const refTestPath = vscode.Uri.joinPath(
     projectRoot,
-    `test/decompiler/reference/${gameName}/${files[0]}`
+    `test/decompiler/reference/${gameName}/${files[0].replace(
+      ".gc",
+      "_REF.gc"
+    )}`
   ).fsPath;
 
   const decompContents = await fs.readFile(disasmFilePath, {
