@@ -299,6 +299,11 @@
             "type": "string",
             "default": "#76FF03"
           },
+          "opengoal.colors.ir.reg.process": {
+            "description": "Colors - Register S6 (process)",
+            "type": "string",
+            "default": "#aaff63"
+          },
           "opengoal.colors.ir.reg.general": {
             "description": "Colors - Register General",
             "type": "string",

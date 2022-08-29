@@ -238,7 +238,18 @@
           }
         },
         {
-          "match": "(?:\\s|\\(|\\[)(gp|fp|at|v1|ra|r0|k0|k1|t8|s[0-6]|t[4-7](?:-[\\d]+)?)",
+          "match": "(?:\\s|\\(|\\[)(s6(?:-[\\d]+)?)",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.opengoal.ir.regs.process"
+            },
+            "2": {
+              "name": "entity.name.function.opengoal.ir.regs.process"
+            }
+          }
+        },
+        {
+          "match": "(?:\\s|\\(|\\[)(gp|fp|at|v1|ra|r0|k0|k1|t8|s[0-5]|t[4-7](?:-[\\d]+)?)",
           "captures": {
             "1": {
               "name": "variable.language.opengoal.ir.regs"

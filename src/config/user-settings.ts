@@ -238,6 +238,13 @@ function getTextMateRules() {
       },
     },
     {
+      name: "OpenGOAL-IR Reg-SymbolTable",
+      scope: "entity.name.function.opengoal.ir.regs.process",
+      settings: {
+        foreground: config.colorsIRRegProcess,
+      },
+    },
+    {
       name: "OpenGOAL-IR Function-Call",
       scope: "entity.name.function.opengoal.ir.function.call",
       settings: {
