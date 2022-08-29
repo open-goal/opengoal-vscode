@@ -38,6 +38,7 @@ export function getConfig() {
     colorsIRRegFloat: configOptions.get<string>("colors.ir.reg.float"),
     colorsIRRegReturn: configOptions.get<string>("colors.ir.reg.return"),
     colorsIRRegStack: configOptions.get<string>("colors.ir.reg.stack"),
+    colorsIRRegProcess: configOptions.get<string>("colors.ir.reg.process"),
     colorsIRRegGeneral: configOptions.get<string>("colors.ir.reg.general"),
   };
 }
