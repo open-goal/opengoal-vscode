@@ -207,24 +207,33 @@ async function decompFiles(decompConfig: string, fileNames: string[]) {
     objectNames: fileNames,
     decompConfig: decompConfig,
   });
-  const { stdout, stderr } = await execFileAsync(
-    decompilerPath,
-    [
-      `./decompiler/config/${decompConfig}`,
-      "./iso_data",
-      "./decompiler_out",
-      "--config-override",
-      `{"allowed_objects": [${allowed_objects}]}`,
-    ],
-    {
-      encoding: "utf8",
-      cwd: projectRoot?.fsPath,
-      timeout: 20000,
-    }
-  );
+  try {
+    const { stdout, stderr } = await execFileAsync(
+      decompilerPath,
+      [
+        `./decompiler/config/${decompConfig}`,
+        "./iso_data",
+        "./decompiler_out",
+        "--config-override",
+        `{"allowed_objects": [${allowed_objects}]}`,
+      ],
+      {
+        encoding: "utf8",
+        cwd: projectRoot?.fsPath,
+        timeout: 20000,
+      }
+    );
+    channel.append(stdout.toString());
+    channel.append(stderr.toString());
+  } catch (error: any) {
+    vscode.window.showErrorMessage(
+      "Decompilation Failed, see OpenGOAL Decompiler logs for details"
+    );
+    channel.append(
+      `DECOMP ERROR:\nSTDOUT:\n${error.stdout}\nSTDERR:\n${error.stderr}`
+    );
+  }
   updateStatus(DecompStatus.Idle);
-  channel.append(stdout.toString());
-  channel.append(stderr.toString());
 }
 
 async function decompSpecificFile() {
