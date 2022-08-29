@@ -1,4 +1,4 @@
-import { execFile } from "child_process";
+import { exec, execFile } from "child_process";
 import { existsSync, promises as fs } from "fs";
 import * as vscode from "vscode";
 import { determineGameFromPath, GameName, openFile } from "../utils/file-utils";
@@ -22,6 +22,7 @@ import {
 
 const globAsync = util.promisify(glob);
 const execFileAsync = util.promisify(execFile);
+const execAsync = util.promisify(exec);
 
 // Put some of this stuff into the context
 let projectRoot: vscode.Uri | undefined = undefined;
@@ -414,70 +415,18 @@ async function updateSourceFile() {
   if (editor.document.uri.fsPath.includes("jak2")) {
     gameName = "jak2";
   }
-  const folderToSearch = vscode.Uri.joinPath(
-    projectRoot,
-    `goal_src/${gameName}`
-  );
-  const files = await globAsync(`**/${fileName}.gc`, {
-    cwd: folderToSearch.fsPath,
-  });
 
-  if (files.length == 0 || files.length > 1) {
-    return;
-  }
-
-  const filePath = files[0];
-  // Read from the file until we've determined it's empty (add the decomp marker) or we find the decomp marker
-  const fileContents = await fs.readFile(
-    vscode.Uri.joinPath(projectRoot, `goal_src/${gameName}/${filePath}`).fsPath,
-    { encoding: "utf-8" }
-  );
-  const fileContentsLines = fileContents.split(/\r?\n/);
-
-  // Check if the file is empty
-  const newLines = [];
-  for (const line of fileContentsLines) {
-    if (line.toLowerCase().includes("decomp begins")) {
-      break;
+  const { stdout, stderr } = await execAsync(
+    `python ./scripts/gsrc/update-from-decomp.py --game ${gameName} --file ${fileName}`,
+    {
+      encoding: "utf8",
+      cwd: projectRoot?.fsPath,
+      timeout: 20000,
     }
-    newLines.push(line);
-  }
-  newLines.push(";; DECOMP BEGINS");
-
-  // TODO - make these configurable
-  const linesToIgnore = [
-    ";;-*-Lisp-*-",
-    "(in-package goal)",
-    ";; definition",
-    ";; INFO:",
-    ";; failed to figure",
-    ";; Used lq/sq",
-  ];
-
-  const decompContents = await fs.readFile(disasmFilePath, {
-    encoding: "utf-8",
-  });
-  const decompContentsLines = decompContents.split(/\r?\n/);
-
-  for (const line of decompContentsLines) {
-    // Check we don't want to ignore it
-    let ignore = false;
-    for (const ignorePrefix of linesToIgnore) {
-      if (line.toLowerCase().startsWith(ignorePrefix.toLowerCase())) {
-        ignore = true;
-        break;
-      }
-    }
-    if (!ignore) {
-      newLines.push(line);
-    }
-  }
-
-  await fs.writeFile(
-    vscode.Uri.joinPath(projectRoot, `goal_src/${gameName}/${filePath}`).fsPath,
-    newLines.join("\n"),
-    { encoding: "utf-8" }
   );
+  updateStatus(DecompStatus.Idle);
+  channel.append(stdout.toString());
+  channel.append(stderr.toString());
 }
 
 async function updateReferenceTest() {
