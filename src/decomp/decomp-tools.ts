@@ -1,5 +1,5 @@
 import { exec, execFile } from "child_process";
-import { existsSync, promises as fs } from "fs";
+import { existsSync, promises as fs, readFileSync } from "fs";
 import * as vscode from "vscode";
 import { determineGameFromPath, GameName, openFile } from "../utils/file-utils";
 import { open_in_pdf } from "./man-page";
@@ -237,6 +237,39 @@ async function decompFiles(decompConfig: string, fileNames: string[]) {
   updateStatus(DecompStatus.Idle);
 }
 
+async function getValidObjectNames(gameName: string) {
+  if (projectRoot === undefined) {
+    projectRoot = getWorkspaceFolderByName("jak-project");
+    if (projectRoot === undefined) {
+      return undefined;
+    }
+  }
+
+  // Look for the `all_objs.json` file
+  const objsPath = path.join(
+    projectRoot.fsPath,
+    "goal_src",
+    gameName,
+    "build",
+    "all_objs.json"
+  );
+  if (!existsSync(objsPath)) {
+    return undefined;
+  }
+  const objsData = await fs.readFile(objsPath, {
+    encoding: "utf-8",
+  });
+  const objs = JSON.parse(objsData);
+  const names = [];
+  for (const obj of objs) {
+    if (obj[2] != 3) {
+      continue;
+    }
+    names.push(obj[0]);
+  }
+  return names;
+}
+
 async function decompSpecificFile() {
   // Prompt the user for the game name
   let gameName;
@@ -258,8 +291,17 @@ async function decompSpecificFile() {
       gameName = GameName.Jak2;
     }
   }
-  // Prompt the user for the file name
-  const fileName = await vscode.window.showInputBox({ title: "Object Name?" });
+  const validNames = await getValidObjectNames(gameNameSelection);
+  let fileName;
+  if (validNames === undefined || validNames.length <= 0) {
+    // Prompt the user for the file name
+    fileName = await vscode.window.showInputBox({ title: "Object Name?" });
+  } else {
+    fileName = await vscode.window.showQuickPick(validNames, {
+      title: "File to Decompile?",
+    });
+  }
+
   if (fileName === undefined) {
     await vscode.window.showErrorMessage(
       "OpenGOAL - can't decompile, didn't provide an object name"
