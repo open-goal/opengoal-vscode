@@ -32,7 +32,7 @@ let lastTypeCastRegister: string | undefined;
 let lastTypeCastType: string | undefined;
 
 const opNumRegex = /.*;; \[\s*(\d+)\]/g;
-const registerRegex = /[a|s|t|v]\d|gp|fp|r0|ra/g;
+const registerRegex = /[a|s|t|v|f]\d+|gp|fp|r0|ra/g;
 const funcNameRegex = /; \.function (.*).*/g;
 const stackOffsetRegex = /sp, (\d+)/g;
 const labelRefRegex = /(L\d+).*;;/g;
