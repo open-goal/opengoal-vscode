@@ -202,6 +202,13 @@
             ],
             "default": true,
             "description": "Whether or not the LSP should be started automatically"
+          },
+          "opengoal.opengoalLspPath": {
+            "type": [
+              "string"
+            ],
+            "default": true,
+            "description": "Hardcode a path to the LSP executable"
           }
         }
       },
@@ -232,12 +239,17 @@
           "opengoal.colors.ir.error": {
             "description": "Colors - Error",
             "type": "string",
-            "default": "#fe4450E6"
+            "default": "#E93F4C"
           },
           "opengoal.colors.ir.warn": {
             "description": "Colors - Warning",
             "type": "string",
-            "default": "#feeb44e6"
+            "default": "#68B574"
+          },
+          "opengoal.colors.ir.info": {
+            "description": "Colors - Info",
+            "type": "string",
+            "default": "#3773AE"
           },
           "opengoal.colors.ir.opnumber": {
             "description": "Colors - OP Number",

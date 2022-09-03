@@ -132,6 +132,13 @@ function getTextMateRules() {
       },
     },
     {
+      name: "OpenGOAL-IR Info",
+      scope: "opengoal.ir.info",
+      settings: {
+        foreground: config.colorsIRInfo,
+      },
+    },
+    {
       name: "OpenGOAL-IR Op Number",
       scope: "opengoal.ir.op-num",
       settings: {

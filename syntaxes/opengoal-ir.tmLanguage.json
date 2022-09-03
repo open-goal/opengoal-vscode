@@ -41,10 +41,14 @@
         },
         {
           "name": "opengoal.ir.error",
-          "match": "^.*WARN:.*"
+          "match": "^.*ERROR:.*"
         },
         {
           "name": "opengoal.ir.warn",
+          "match": "^.*WARN:.*"
+        },
+        {
+          "name": "opengoal.ir.info",
           "match": "^.*INFO:.*"
         }
       ]
