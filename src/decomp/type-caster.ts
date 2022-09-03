@@ -3,19 +3,8 @@
 import { getExtensionContext } from "../context";
 import * as vscode from "vscode";
 import { basename, join } from "path";
-import { getWorkspaceFolderByName } from "../utils/workspace";
-import { existsSync, readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
 import { parse, stringify } from "comment-json";
-import {
-  getConfig,
-  updateJak1DecompConfigDirectory,
-  updateJak2DecompConfigDirectory,
-} from "../config/config";
-import {
-  determineGameFromPath,
-  GameName,
-  getDirectoriesInDir,
-} from "../utils/file-utils";
 import { getDecompilerConfigDirectory } from "../utils/decomp-tools";
 
 enum CastKind {
