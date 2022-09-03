@@ -26,6 +26,7 @@ export function getConfig() {
     colorsIRTypeAnalysis: configOptions.get<string>("colors.ir.typeanalysis"),
     colorsIRError: configOptions.get<string>("colors.ir.error"),
     colorsIRWarning: configOptions.get<string>("colors.ir.warn"),
+    colorsIRInfo: configOptions.get<string>("colors.ir.info"),
     colorsIROpNumber: configOptions.get<string>("colors.ir.opnumber"),
     colorsIRRegA0: configOptions.get<string>("colors.ir.reg.a0"),
     colorsIRRegA1: configOptions.get<string>("colors.ir.reg.a1"),
