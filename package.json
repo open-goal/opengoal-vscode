@@ -207,7 +207,7 @@
             "type": [
               "string"
             ],
-            "default": true,
+            "default": "",
             "description": "Hardcode a path to the LSP executable"
           }
         }
