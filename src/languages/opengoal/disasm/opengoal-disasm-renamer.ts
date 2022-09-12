@@ -67,14 +67,19 @@ export class OpenGOALDisasmRenameProvider implements vscode.RenameProvider {
           funcName = matches[0][1].toString();
           break;
         } else {
-          // methods are more difficult, for now we grab the info from the previous line
-          const prevLine = document.lineAt(i - 1).text;
+          // methods are more difficult, for now we walk back until we find
+          // an empty line, then grab the info from the line after that
+          let prevLineIdx = i - 1;
+          while (prevLineIdx > 0 && document.lineAt(prevLineIdx).text.trim() !== "") {
+            prevLineIdx--;
+          }
+          const defmethodLine = document.lineAt(prevLineIdx + 1).text;
           const methodMatches = [
-            ...prevLine.matchAll(
+            ...defmethodLine.matchAll(
               /;; definition for method (\d+) of type (.*)/g
             ),
           ];
-          if (matches.length == 1) {
+          if (methodMatches.length == 1) {
             funcName = `(method ${methodMatches[0][1]} ${methodMatches[0][2]})`;
           }
           break;
