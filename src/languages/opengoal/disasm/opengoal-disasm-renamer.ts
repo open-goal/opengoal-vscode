@@ -60,7 +60,9 @@ export class OpenGOALDisasmRenameProvider implements vscode.RenameProvider {
     let funcName = undefined;
     for (let i = position.line; i > 0; i--) {
       const currLine = document.lineAt(i).text;
-      const matches = [...currLine.matchAll(/(?:defun|defmethod)\s+([^\s]*)/g)];
+      const matches = [
+        ...currLine.matchAll(/(?:defun(?:-debug)?|defmethod)\s+([^\s]*)/g),
+      ];
       if (matches.length == 1) {
         // Functions are easy
         if (currLine.includes("defun")) {
