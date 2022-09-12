@@ -70,7 +70,10 @@ export class OpenGOALDisasmRenameProvider implements vscode.RenameProvider {
           // methods are more difficult, for now we walk back until we find
           // an empty line, then grab the info from the line after that
           let prevLineIdx = i - 1;
-          while (prevLineIdx > 0 && document.lineAt(prevLineIdx).text.trim() !== "") {
+          while (
+            prevLineIdx > 0 &&
+            document.lineAt(prevLineIdx).text.trim() !== ""
+          ) {
             prevLineIdx--;
           }
           const defmethodLine = document.lineAt(prevLineIdx + 1).text;
