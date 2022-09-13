@@ -12,6 +12,7 @@ import { IRFoldingRangeProvider } from "./languages/ir2/ir2-folder";
 import { activateTypeCastTools } from "./decomp/type-caster";
 import { IRInlayHintsProvider } from "./languages/ir2/ir2-inlay-hinter";
 import { OpenGOALDisasmRenameProvider } from "./languages/opengoal/disasm/opengoal-disasm-renamer";
+import { activateMiscDecompTools } from "./decomp/misc-tools";
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
@@ -32,6 +33,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     activateDecompTools();
     activateTypeCastTools();
+    activateMiscDecompTools();
 
     // Customized PDF Viewer
     const provider = new PdfCustomProvider(
