@@ -216,7 +216,7 @@ async function decompFiles(decompConfig: string, fileNames: string[]) {
         "./iso_data",
         "./decompiler_out",
         "--config-override",
-        `{"allowed_objects": [${allowed_objects}]}`,
+        `{"decompile_code": true, "allowed_objects": [${allowed_objects}]}`,
       ],
       {
         encoding: "utf8",
