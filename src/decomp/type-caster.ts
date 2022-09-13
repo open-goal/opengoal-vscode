@@ -1,5 +1,3 @@
-// [inclusive, exclusive]
-
 import { getExtensionContext } from "../context";
 import * as vscode from "vscode";
 import { basename, join } from "path";
@@ -464,39 +462,3 @@ export async function activateTypeCastTools() {
     )
   );
 }
-
-// TODO - better handling around upserting casts
-// this requires properly handling the CommentArray type instead of building raw arrays so comments are preserved
-// const finalEntries = [];
-//   if (relevantJson !== undefined) {
-//     // prepare the entry for the upcoming update
-//     // remove any identical casts / range casts that effect it
-//     for (const entry of relevantJson) {
-//       if (entry[1] === registerSelection) {
-//         if (entry[0] instanceof Array) {
-//           const [start, end] = entry[0];
-//           if (castContext.endOp === undefined) {
-//             if (castContext.startOp >= start && castContext.startOp < end) {
-//               continue;
-//             }
-//           } else if (
-//             (castContext.startOp >= start && castContext.startOp < end) ||
-//             (castContext.endOp > start && castContext.endOp < end) ||
-//             (castContext.startOp >= start && castContext.endOp < end)
-//           ) {
-//             continue;
-//           }
-//         } else if (castContext.startOp == entry[0]) {
-//           continue;
-//         }
-//         finalEntries.push(entry);
-//       }
-//     }
-//     // Add our new entry
-//     // TODO - sort by op number (annoying because of the ranges...)
-//     if (castContext.endOp === undefined) {
-//       finalEntries.push([castContext.startOp, registerSelection, castToType]);
-//     } else {
-//       finalEntries.push([[castContext.startOp, castContext.endOp], registerSelection, castToType]);
-//     }
-//   }
