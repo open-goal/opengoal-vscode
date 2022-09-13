@@ -310,7 +310,7 @@ async function typeCastSelection() {
     if (endOpNum === undefined) {
       return;
     }
-    castContext.endOp = endOpNum;
+    castContext.endOp = endOpNum + 1;
   }
 
   // Get the relevant function/method name
