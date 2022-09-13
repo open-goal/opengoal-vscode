@@ -59,6 +59,7 @@
     "onCommand:opengoal.decomp.casts.stackCastSelection",
     "onCommand:opengoal.decomp.casts.typeCastSelection",
     "onCommand:opengoal.decomp.misc.addToOffsets",
+    "onCommand:opengoal.decomp.misc.preserveBlock",
     "onCommand:opengoal.lsp.start",
     "onCommand:opengoal.lsp.stop",
     "onCommand:opengoal.lsp.restart"
@@ -120,6 +121,10 @@
       {
         "command": "opengoal.decomp.misc.addToOffsets",
         "title": "OpenGOAL - Misc - Add to deftype Offsets"
+      },
+      {
+        "command": "opengoal.decomp.misc.preserveBlock",
+        "title": "OpenGOAL - Misc - Preserve Block"
       },
       {
         "command": "opengoal.lsp.start",
