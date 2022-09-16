@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "comment-json": "^4.2.2",
-    "follow-redirects": "^1.15.1",
+    "follow-redirects": "^1.15.2",
     "glob": "^8.0.3",
     "vscode-languageclient": "^8.0.1"
   },
