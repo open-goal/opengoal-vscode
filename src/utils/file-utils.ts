@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { promises as fs } from "fs";
-
-// TODO - remove "most recent ir2 file, and wire it up here when in an `all-types.gc` file"
+import { getRecentFiles } from "../context";
 
 export enum GameName {
   Jak1,
@@ -20,6 +19,10 @@ export function switchFile() {
     return;
   }
   const currName = path.basename(currPath);
+  // all-types is handled a little different, we find the most recent IR2 file
+  if (currName === "all-types.gc") {
+    openFile(getRecentFiles().searchByPrefix("_ir2.asm"));
+  }
   for (const [key, value] of Object.entries(fileSwitchingAssoc)) {
     if (currName.endsWith(key)) {
       // Get everything before the suffix, check if a file with the associated suffix exists

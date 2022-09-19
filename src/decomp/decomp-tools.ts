@@ -392,10 +392,6 @@ async function decompAllActiveFiles() {
   }
 }
 
-function openMostRecentIRFile() {
-  openFile(getRecentFiles().searchByPrefix("_ir2.asm"));
-}
-
 function openManPage() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
@@ -564,12 +560,6 @@ export async function activateDecompTools() {
   decompStatusItem.show();
 
   // Commands
-  getExtensionContext().subscriptions.push(
-    vscode.commands.registerCommand(
-      "opengoal.decomp.openMostRecentIRFile",
-      openMostRecentIRFile
-    )
-  );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand("opengoal.decomp.openManPage", openManPage)
   );
