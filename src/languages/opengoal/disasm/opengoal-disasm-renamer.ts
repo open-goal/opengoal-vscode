@@ -15,7 +15,7 @@ export class OpenGOALDisasmRenameProvider implements vscode.RenameProvider {
     newName: string,
     token: vscode.CancellationToken
   ): Promise<vscode.WorkspaceEdit | undefined> {
-    const symbolRange = document.getWordRangeAtPosition(position, /[\w\-.]+/g);
+    const symbolRange = document.getWordRangeAtPosition(position, /[\w\-.!?+\/*%]+/g);
     if (symbolRange === undefined) {
       return;
     }
