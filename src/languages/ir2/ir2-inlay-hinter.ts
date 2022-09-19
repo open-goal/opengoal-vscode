@@ -1,6 +1,6 @@
 import path = require("path");
 import * as vscode from "vscode";
-import { getCastFileData } from "../../utils/decomp-tools";
+import { getCastFileData } from "../../decomp/utils";
 import { getWorkspaceFolderByName } from "../../utils/workspace";
 
 class HintCacheEntry {

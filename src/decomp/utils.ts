@@ -1,17 +1,19 @@
-import { parse } from "comment-json";
-import { existsSync, readFileSync } from "fs";
+import { parse, stringify } from "comment-json";
+import { existsSync, readFileSync, writeFileSync } from "fs";
+import { join } from "path";
 import * as vscode from "vscode";
 import {
   getConfig,
   updateJak1DecompConfigDirectory,
   updateJak2DecompConfigDirectory,
 } from "../config/config";
+import { ArgumentMeta } from "../languages/opengoal/opengoal-tools";
 import {
   determineGameFromPath,
   GameName,
   getDirectoriesInDir,
-} from "./file-utils";
-import { getWorkspaceFolderByName } from "./workspace";
+} from "../utils/file-utils";
+import { getWorkspaceFolderByName } from "../utils/workspace";
 
 export function getCastFileData(
   projectRoot: vscode.Uri,
@@ -45,7 +47,6 @@ export function getCastFileData(
     return undefined;
   }
 
-  // TODO - would be performant to cache these files, requires listening to them as well though
   return parse(readFileSync(path).toString(), undefined, true);
 }
 
@@ -131,4 +132,82 @@ export async function getDecompilerConfigDirectory(
       ).fsPath;
     }
   }
+}
+
+export async function updateVarCasts(
+  document: vscode.TextDocument,
+  funcName: string,
+  argMeta: ArgumentMeta | undefined,
+  currSymbol: string,
+  newName: string
+) {
+  // Update the var-names file
+  const projectRoot = getWorkspaceFolderByName("jak-project");
+  if (projectRoot === undefined) {
+    vscode.window.showErrorMessage(
+      "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+    );
+    return;
+  }
+
+  const varNameData = getCastFileData(projectRoot, document, "var_names.jsonc");
+  if (varNameData === undefined) {
+    return;
+  }
+
+  if (!(funcName in varNameData)) {
+    varNameData[funcName] = {};
+  }
+  if (argMeta) {
+    if (argMeta.index === undefined || argMeta.totalCount === undefined) {
+      return;
+    }
+    if ("args" in varNameData[funcName]) {
+      // We assume that all slots are filled up already, as this is required
+      varNameData[funcName].args[argMeta.index] = newName;
+    } else {
+      // Otherwise, we initialize it properly
+      varNameData[funcName].args = [];
+      for (let i = 0; i < argMeta.totalCount; i++) {
+        if (i == argMeta.index) {
+          varNameData[funcName].args[i] = newName;
+        } else {
+          if (argMeta.isMethod && i == 0) {
+            varNameData[funcName].args[i] = "obj";
+          } else {
+            varNameData[funcName].args[i] = `arg${i}`;
+          }
+        }
+      }
+    }
+  } else {
+    // if "vars" is in
+    if ("vars" in varNameData[funcName]) {
+      // Check to see if the current symbol has already been renamed
+      let internalVar = undefined;
+      for (const [key, value] of Object.entries(varNameData[funcName].vars)) {
+        if (value === currSymbol) {
+          internalVar = key;
+          break;
+        }
+      }
+      if (internalVar !== undefined) {
+        varNameData[funcName].vars[internalVar] = newName;
+      } else {
+        varNameData[funcName].vars[currSymbol] = newName;
+      }
+    } else {
+      varNameData[funcName]["vars"] = {};
+      varNameData[funcName]["vars"][currSymbol] = newName;
+    }
+  }
+
+  // Write out cast file change
+  const configDir = await getDecompilerConfigDirectory(document.uri);
+  if (configDir === undefined) {
+    return;
+  }
+  const filePath = join(configDir, "var_names.jsonc");
+
+  writeFileSync(filePath, stringify(varNameData, null, 2));
 }

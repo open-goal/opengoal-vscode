@@ -1,5 +1,5 @@
 import { exec, execFile } from "child_process";
-import { existsSync, promises as fs, readFileSync } from "fs";
+import { existsSync, promises as fs } from "fs";
 import * as vscode from "vscode";
 import { determineGameFromPath, GameName, openFile } from "../utils/file-utils";
 import { open_in_pdf } from "./man-page";

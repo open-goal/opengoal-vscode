@@ -3,7 +3,8 @@ import * as vscode from "vscode";
 import { basename, join } from "path";
 import { readFileSync, writeFileSync } from "fs";
 import { parse, stringify } from "comment-json";
-import { getDecompilerConfigDirectory } from "../utils/decomp-tools";
+import { getFuncNameFromSelection } from "../languages/ir2/ir2-utils";
+import { getDecompilerConfigDirectory } from "./utils";
 
 enum CastKind {
   Label,
@@ -20,7 +21,6 @@ let lastTypeCastType: string | undefined;
 
 const opNumRegex = /.*;; \[\s*(\d+)\]/g;
 const registerRegex = /[a|s|t|v|f]\d+|gp|fp|r0|ra/g;
-const funcNameRegex = /; \.function (.*).*/g;
 const stackOffsetRegex = /sp, (\d+)/g;
 const labelRefRegex = /(L\d+).*;;/g;
 
@@ -39,23 +39,6 @@ async function getOpNumber(line: string): Promise<number | undefined> {
     return parseInt(matches[0][1].toString());
   }
   await vscode.window.showErrorMessage("Couldn't determine operation number");
-  return undefined;
-}
-
-async function getFuncName(
-  document: vscode.TextDocument,
-  selection: vscode.Selection
-): Promise<string | undefined> {
-  for (let i = selection.start.line; i >= 0; i--) {
-    const line = document.lineAt(i).text;
-    const matches = [...line.matchAll(funcNameRegex)];
-    if (matches.length == 1) {
-      return matches[0][1].toString();
-    }
-  }
-  await vscode.window.showErrorMessage(
-    "Couldn't determine function or method name"
-  );
   return undefined;
 }
 
@@ -203,7 +186,10 @@ async function stackCastSelection() {
   }
 
   // Get the relevant function/method name
-  const funcName = await getFuncName(editor.document, editor.selection);
+  const funcName = await getFuncNameFromSelection(
+    editor.document,
+    editor.selection
+  );
   if (funcName === undefined) {
     return;
   }
@@ -312,7 +298,10 @@ async function typeCastSelection() {
   }
 
   // Get the relevant function/method name
-  const funcName = await getFuncName(editor.document, editor.selection);
+  const funcName = await getFuncNameFromSelection(
+    editor.document,
+    editor.selection
+  );
   if (funcName === undefined) {
     return;
   }
@@ -387,7 +376,10 @@ async function repeatLastCast() {
       lastLabelCastSize
     );
   } else if (lastCastKind === CastKind.Stack) {
-    const funcName = await getFuncName(editor.document, editor.selection);
+    const funcName = await getFuncNameFromSelection(
+      editor.document,
+      editor.selection
+    );
     if (funcName === undefined) {
       return;
     }
@@ -401,7 +393,10 @@ async function repeatLastCast() {
     }
     await applyStackCast(editor, funcName, stackOffset, lastStackCastType);
   } else if (lastCastKind === CastKind.TypeCast) {
-    const funcName = await getFuncName(editor.document, editor.selection);
+    const funcName = await getFuncNameFromSelection(
+      editor.document,
+      editor.selection
+    );
     if (funcName === undefined) {
       return;
     }
