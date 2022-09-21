@@ -47,7 +47,6 @@
     "onLanguage:opengoal-goos",
     "onLanguage:opengoal-ir",
     "onCommand:opengoal.switchFile",
-    "onCommand:opengoal.decomp.openMostRecentIRFile",
     "onCommand:opengoal.decomp.openManPage",
     "onCommand:opengoal.decomp.decompileSpecificFile",
     "onCommand:opengoal.decomp.decompileCurrentFile",

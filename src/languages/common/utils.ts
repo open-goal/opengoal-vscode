@@ -4,7 +4,7 @@ export function getSymbolAtPosition(
   document: vscode.TextDocument,
   position: vscode.Position
 ) {
-  const symbolRange = document.getWordRangeAtPosition(position, /[\w\-.]+/g);
+  const symbolRange = document.getWordRangeAtPosition(position, /[^\s()]+/g);
   if (symbolRange === undefined) {
     return;
   }
