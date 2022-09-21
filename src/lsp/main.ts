@@ -148,13 +148,7 @@ function createClient(lspPath: string): LanguageClient {
       ],
     },
     progressOnInitialization: true,
-    initializationOptions: {
-      "dependency-scheme": "jar",
-      "auto-add-ns-to-new-files?": true,
-      "document-formatting?": false,
-      "document-range-formatting?": false,
-      "keep-require-at-start?": true,
-    },
+    initializationOptions: {},
     middleware: {
       async provideHover(document, position, token, next) {
         return next(document, position, token);

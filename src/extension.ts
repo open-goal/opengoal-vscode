@@ -13,6 +13,7 @@ import { activateTypeCastTools } from "./decomp/type-caster";
 import { IRInlayHintsProvider } from "./languages/ir2/ir2-inlay-hinter";
 import { OpenGOALDisasmRenameProvider } from "./languages/opengoal/disasm/opengoal-disasm-renamer";
 import { activateMiscDecompTools } from "./decomp/misc-tools";
+import { IR2RenameProvider } from "./languages/ir2/ir2-renamer";
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
@@ -66,6 +67,10 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerRenameProvider(
       { scheme: "file", language: "opengoal", pattern: "**/*_disasm.gc" },
       new OpenGOALDisasmRenameProvider()
+    );
+    vscode.languages.registerRenameProvider(
+      { scheme: "file", language: "opengoal-ir" },
+      new IR2RenameProvider()
     );
 
     // Start the LSP

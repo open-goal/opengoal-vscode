@@ -1,12 +1,10 @@
 import * as vscode from "vscode";
-import { updateVarCasts } from "../../../decomp/utils";
-import { getSymbolAtPosition } from "../../common/utils";
-import {
-  determineCurrentFunctionName,
-  getSymbolsArgumentInfo,
-} from "../opengoal-tools";
+import { updateVarCasts } from "../../decomp/utils";
+import { getSymbolAtPosition } from "../common/utils";
+import { getSymbolsArgumentInfo } from "../opengoal/opengoal-tools";
+import { getFuncNameFromPosition, insideGoalCodeInIR } from "./ir2-utils";
 
-export class OpenGOALDisasmRenameProvider implements vscode.RenameProvider {
+export class IR2RenameProvider implements vscode.RenameProvider {
   public async provideRenameEdits(
     document: vscode.TextDocument,
     position: vscode.Position,
@@ -18,9 +16,16 @@ export class OpenGOALDisasmRenameProvider implements vscode.RenameProvider {
       return;
     }
 
+    // Check that we are actually inside an OpenGOAL function
+    if (!insideGoalCodeInIR(document, position)) {
+      return;
+    }
+
     const line = document.lineAt(position.line).text;
     const argMeta = getSymbolsArgumentInfo(line, symbol);
-    const funcName = determineCurrentFunctionName(document, position);
+    // We can determine the function in a more consistent way here, that will also allow
+    // for renaming anon-functions / states / etc
+    const funcName = await getFuncNameFromPosition(document, position);
     if (funcName === undefined) {
       return;
     }
