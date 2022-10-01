@@ -19,6 +19,7 @@ import {
   getWorkspaceFolderByName,
   truncateFileNameEndings,
 } from "../utils/workspace";
+import { activateDecompTypeSearcher } from "./type-searcher/type-searcher";
 
 const globAsync = util.promisify(glob);
 const execFileAsync = util.promisify(execFile);
@@ -593,4 +594,6 @@ export async function activateDecompTools() {
       updateReferenceTest
     )
   );
+
+  activateDecompTypeSearcher();
 }
