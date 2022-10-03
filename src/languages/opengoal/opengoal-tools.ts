@@ -15,7 +15,10 @@ export function getSymbolsArgumentInfo(
   line: string,
   symbol: string
 ): ArgumentMeta | undefined {
-  const isArgument = line.includes("defun") || line.includes("defmethod");
+  const isArgument =
+    line.includes("defun") ||
+    line.includes("defmethod") ||
+    line.includes("defbehavior");
   // TODO - 'new' method handling
   const isMethod = line.includes("defmethod"); // if it's a method, make the first arg be `obj`
   // If it's an argument, we have to figure out the index
