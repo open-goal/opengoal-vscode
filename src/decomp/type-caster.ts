@@ -414,7 +414,7 @@ async function repeatLastCast() {
       if (endOpNum === undefined) {
         return;
       }
-      castContext.endOp = endOpNum;
+      castContext.endOp = endOpNum + 1;
     }
 
     if (lastTypeCastRegister === undefined || lastTypeCastType === undefined) {
