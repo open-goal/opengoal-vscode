@@ -58,9 +58,19 @@ async function preserveBlock() {
   const fileName = await vscode.window.showInputBox({
     title: "File Name?",
   });
+
+  // Attempt to grab the first line's name if it's an `defenum`
+  const content = editor.document.getText(editor.selection);
+  const matches = [...content.matchAll(/\(defenum\s+([^\s]+)/g)];
+  let enumName = undefined;
+  if (matches.length == 1) {
+    enumName = matches[0][1].toString();
+  }
+
   // Ask the user for the block name
   const blockName = await vscode.window.showInputBox({
     title: "Block Name?",
+    value: enumName,
   });
 
   if (fileName === undefined || blockName === undefined) {
