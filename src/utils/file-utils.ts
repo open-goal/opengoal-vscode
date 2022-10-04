@@ -19,20 +19,24 @@ export function switchFile() {
     return;
   }
   const currName = path.basename(currPath);
-  // all-types is handled a little different, we find the most recent IR2 file
+  // Switch between recent all-types and the ir2.asm file
   if (currName === "all-types.gc") {
     openFile(getRecentFiles().searchByPrefix("_ir2.asm"));
+  } else if (currName.endsWith("_ir2.asm")) {
+    openFile(getRecentFiles().searchByPrefix("all-types.gc"));
   }
-  for (const [key, value] of Object.entries(fileSwitchingAssoc)) {
-    if (currName.endsWith(key)) {
-      // Get everything before the suffix, check if a file with the associated suffix exists
-      const prefix = currName.slice(0, -key.length);
-      const switchFileName = prefix + value;
-      const switchFilePath = path.join(path.dirname(currPath), switchFileName);
-      vscode.window.showTextDocument(vscode.Uri.file(switchFilePath));
-      return;
-    }
-  }
+
+  // TODO - revive for when supporting OpenGOAL code (switching between header files perhaps?)
+  // for (const [key, value] of Object.entries(fileSwitchingAssoc)) {
+  //   if (currName.endsWith(key)) {
+  //     // Get everything before the suffix, check if a file with the associated suffix exists
+  //     const prefix = currName.slice(0, -key.length);
+  //     const switchFileName = prefix + value;
+  //     const switchFilePath = path.join(path.dirname(currPath), switchFileName);
+  //     vscode.window.showTextDocument(vscode.Uri.file(switchFilePath));
+  //     return;
+  //   }
+  // }
 }
 
 export function openFile(filePath: string | undefined) {
