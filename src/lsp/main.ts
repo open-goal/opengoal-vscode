@@ -120,20 +120,23 @@ async function maybeDownloadLspServer(): Promise<void> {
 }
 
 function createClient(lspPath: string): LanguageClient {
+  const logPath =
+    getConfig().opengoalLspLogPath ??
+    path.join(extensionContext.extensionPath, "lsp.log");
+  const normalArgs = ["--log", logPath];
+  if (getConfig().opengoalLspLogVerbose) {
+    normalArgs.push("--verbose");
+  }
   const serverOptions: ServerOptions = {
     run: {
       command: lspPath,
       transport: TransportKind.stdio,
-      args: ["--log", path.join(extensionContext.extensionPath, "lsp.log")],
+      args: normalArgs,
     },
     debug: {
       command: lspPath,
       transport: TransportKind.stdio,
-      args: [
-        "--verbose",
-        "--log",
-        path.join(extensionContext.extensionPath, "lsp.log"),
-      ],
+      args: ["--verbose", "--log", logPath],
     },
   };
   const clientOptions: LanguageClientOptions = {

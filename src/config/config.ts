@@ -7,6 +7,9 @@ export function getConfig() {
     launchLspOnStartup: configOptions.get<boolean>("launchLspOnStartup"),
     opengoalLspVersion: configOptions.get<string>("opengoalLspVersion"),
     opengoalLspPath: configOptions.get<string>("opengoalLspPath"),
+    opengoalLspLogPath: configOptions.get<string>("opengoalLspLogPath"),
+    opengoalLspLogVerbose: configOptions.get<boolean>("opengoalLspLogVerbose"),
+
     eeManPagePath: configOptions.get<string>("eeManPagePath"),
     vuManPagePath: configOptions.get<string>("vuManPagePath"),
     decompilerPath: configOptions.get<string>("decompilerPath"),

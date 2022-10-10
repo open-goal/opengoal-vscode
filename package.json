@@ -211,18 +211,24 @@
         "title": "LSP",
         "properties": {
           "opengoal.launchLspOnStartup": {
-            "type": [
-              "boolean"
-            ],
+            "type": "boolean",
             "default": true,
             "description": "Whether or not the LSP should be started automatically"
           },
           "opengoal.opengoalLspPath": {
-            "type": [
-              "string"
-            ],
+            "type": "string",
             "default": "",
             "description": "Hardcode a path to the LSP executable"
+          },
+          "opengoal.opengoalLspLogPath": {
+            "type": "string",
+            "default": "",
+            "description": "Provide a path that the LSP should log it's debugging info to"
+          },
+          "opengoal.opengoalLspLogVerbose": {
+            "type": "boolean",
+            "default": "",
+            "description": "Should the LSP logging be verbose?"
           }
         }
       },
