@@ -61,6 +61,7 @@ function getWebviewContent() {
       function search(evt) {
         let parentName = document.getElementById("parent-name").value;
         let typeSize = parseInt(document.getElementById("type-size").value);
+        let methodId = parseInt(document.getElementById("method-id").value);
         let gameName = document.getElementById("game-name").value;
 
         let fieldNames = [];
@@ -79,6 +80,7 @@ function getWebviewContent() {
           command: 'search',
           parentName: parentName,
           typeSize: typeSize,
+          methodId: methodId,
           gameName: gameName,
           fieldNames: fieldNames,
           fieldOffsets: fieldOffsets
@@ -142,6 +144,11 @@ function getWebviewContent() {
       <div class="row">
         <div class="column column-25">
           <sl-input label="Type Size?" id="type-size" type="number"></sl-input>
+        </div>
+      </div>
+      <div class="row">
+        <div class="column column-25">
+          <sl-input label="Method ID?" id="method-id" type="number"></sl-input>
         </div>
       </div>
       <div class="row mt-1">
@@ -231,6 +238,10 @@ async function searchForTypes(message: any): Promise<string[]> {
   if ("typeSize" in message && message.typeSize !== null) {
     args.push(`--size`);
     args.push(message.typeSize);
+  }
+  if ("methodId" in message && message.methodId !== null) {
+    args.push(`--method_id`);
+    args.push(message.methodId);
   }
   if ("fieldNames" in message && message.fieldNames.length > 0) {
     const encodedFields = [];
