@@ -163,6 +163,16 @@ export async function updateVarCasts(
       return;
     }
     if ("args" in varNameData[funcName]) {
+      // Check to see if the name has already been used, the decompiler does not support this
+      for (const argName of varNameData[funcName].args) {
+        if (argName === newName) {
+          vscode.window.showErrorMessage(
+            "OpenGOAL - Cannot cast different args to the same name, unsupported!"
+          );
+          return;
+        }
+      }
+
       // We assume that all slots are filled up already, as this is required
       varNameData[funcName].args[argMeta.index] = newName;
     } else {
@@ -183,6 +193,16 @@ export async function updateVarCasts(
   } else {
     // if "vars" is in
     if ("vars" in varNameData[funcName]) {
+      // Check to see if the name has already been used, the decompiler does not support this
+      for (const [key, value] of Object.entries(varNameData[funcName].vars)) {
+        if (value === newName) {
+          vscode.window.showErrorMessage(
+            "OpenGOAL - Cannot cast different variables to the same name, unsupported!"
+          );
+          return;
+        }
+      }
+
       // Check to see if the current symbol has already been renamed
       let internalVar = undefined;
       for (const [key, value] of Object.entries(varNameData[funcName].vars)) {
@@ -191,6 +211,7 @@ export async function updateVarCasts(
           break;
         }
       }
+
       if (internalVar !== undefined) {
         varNameData[funcName].vars[internalVar] = newName;
       } else {
