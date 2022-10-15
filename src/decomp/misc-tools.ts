@@ -118,11 +118,7 @@ async function preserveBlock() {
 
 async function convertHexToDec() {
   const editor = vscode.window.activeTextEditor;
-  if (
-    editor === undefined ||
-    editor.selection.isEmpty ||
-    editor.selection.isSingleLine
-  ) {
+  if (editor === undefined || editor.selection.isEmpty) {
     return;
   }
 
@@ -134,6 +130,26 @@ async function convertHexToDec() {
     const result = content.replace(/#x([\da-fA-F]+)/g, (match, key) => {
       console.log(`${match}-${key}`);
       return `${parseInt(key, 16)}`;
+    });
+
+    selectedText.replace(editor.selection, result);
+  });
+}
+
+async function convertDecToHex() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined || editor.selection.isEmpty) {
+    return;
+  }
+
+  editor.edit((selectedText) => {
+    // Get the content of the selection
+    const content = editor.document.getText(editor.selection);
+
+    // Increment all values after `:offset` or `:offset-assert`
+    const result = content.replace(/ (\d+)/g, (match, key) => {
+      console.log(`${match}-${key}`);
+      return ` #x${parseInt(key).toString(16)}`;
     });
 
     selectedText.replace(editor.selection, result);
@@ -157,6 +173,12 @@ export async function activateMiscDecompTools() {
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.convertHexToDec",
       convertHexToDec
+    )
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.misc.convertDecToHex",
+      convertDecToHex
     )
   );
 }

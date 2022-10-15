@@ -131,6 +131,10 @@
         "title": "OpenGOAL - Misc - Convert Hex to Dec"
       },
       {
+        "command": "opengoal.decomp.misc.convertDecToHex",
+        "title": "OpenGOAL - Misc - Convert Dec to Hex"
+      },
+      {
         "command": "opengoal.decomp.typeSearcher.open",
         "title": "OpenGOAL - Misc - Type Searcher"
       },
