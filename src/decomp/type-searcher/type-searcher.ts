@@ -94,7 +94,7 @@ function getWebviewContent() {
         const nameColumn = document.createElement("div");
         nameColumn.className = "column column-25";
         const nameField = document.createElement("sl-input");
-        nameField.label = "Field Type?";
+        nameField.label = "Field Type Name?";
         nameColumn.appendChild(nameField);
 
         const offsetColumn = document.createElement("div");
@@ -108,6 +108,14 @@ function getWebviewContent() {
         row.appendChild(offsetColumn);
 
         document.getElementById("field-filters").appendChild(row);
+      }
+
+      function clearFields(evt) {
+        document.getElementById("parent-name").value = "";
+        document.getElementById("type-size").value = "";
+        document.getElementById("method-id").value = "";
+        document.getElementById("field-filters").innerHTML = "";
+        addField();
       }
 
       window.addEventListener('message', event => {
@@ -131,8 +139,6 @@ function getWebviewContent() {
           }
         }
       });
-
-      // TODO - implement clear
     </script>
     <div class="container">
       <h2 class="mt-2">General Filters</h2>
@@ -165,7 +171,7 @@ function getWebviewContent() {
       <div id="field-filters">
         <div class="row wrap">
           <div class="column column-25">
-            <sl-input label="Field Name?" class="field-name"></sl-input>
+            <sl-input label="Field Type Name?" class="field-name"></sl-input>
           </div>
           <div class="column column-25">
             <sl-input label="Offset?" class="field-offset" type="number"></sl-input>
@@ -176,7 +182,7 @@ function getWebviewContent() {
         <div class="column">
           <sl-button variant="primary" onclick="addField()" class="mr-1">Add Another Field</sl-button>
           <sl-button variant="success" onclick="search()" class="mr-1">Search</sl-button>
-          <sl-button variant="warning">Clear</sl-button>
+          <sl-button variant="warning" onclick="clearFields()">Clear</sl-button>
         </div>
       </div>
       <h2 class="mt-2">Results</h2>
@@ -256,8 +262,10 @@ async function searchForTypes(message: any): Promise<string[]> {
         offset: fieldOffset,
       });
     }
-    args.push(`--fields`);
-    args.push(JSON.stringify(encodedFields));
+    if (encodedFields.length > 0) {
+      args.push(`--fields`);
+      args.push(JSON.stringify(encodedFields));
+    }
   }
 
   try {
@@ -286,6 +294,7 @@ async function openPanel() {
     vscode.ViewColumn.One,
     {
       enableScripts: true,
+      retainContextWhenHidden: true,
     }
   );
 
