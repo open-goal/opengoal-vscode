@@ -23,7 +23,8 @@
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p ./",
     "format": "npx prettier --write .",
-    "format:check": "npx prettier --check ."
+    "format:check": "npx prettier --check .",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
@@ -33,6 +34,7 @@
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
     "eslint": "^8.25.0",
+    "patch-package": "^6.5.0",
     "typescript": "^4.8.4",
     "vsce": "^2.11.0"
   },
