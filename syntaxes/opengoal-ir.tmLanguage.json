@@ -7,6 +7,9 @@
       "include": "#goalCode"
     },
     {
+      "include": "#mips2c"
+    },
+    {
       "include": "#errorsAndWarnings"
     },
     {
@@ -23,6 +26,16 @@
     }
   ],
   "repository": {
+    "mips2c": {
+      "patterns": [
+        {
+          "name": "meta.embedded.block.mips2c",
+          "begin": ";;-\\*-MIPS2C-Start-\\*-",
+          "end": ";;-\\*-MIPS2C-End-\\*-",
+          "patterns": [{ "include": "source.cpp" }]
+        }
+      ]
+    },
     "goalCode": {
       "patterns": [
         {

@@ -445,7 +445,8 @@
         "scopeName": "source.opengoal-ir",
         "path": "./syntaxes/opengoal-ir.tmLanguage.json",
         "embeddedLanguages": {
-          "meta.embedded.block.opengoal": "opengoal"
+          "meta.embedded.block.opengoal": "opengoal",
+          "meta.embedded.block.mips2c": "cpp"
         }
       }
     ],
