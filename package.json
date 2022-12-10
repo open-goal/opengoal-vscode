@@ -61,6 +61,9 @@
     "onCommand:opengoal.decomp.casts.typeCastSelection",
     "onCommand:opengoal.decomp.misc.addToOffsets",
     "onCommand:opengoal.decomp.misc.preserveBlock",
+    "onCommand:opengoal.decomp.misc.convertHexToDec",
+    "onCommand:opengoal.decomp.misc.convertDecToHex",
+    "onCommand:opengoal.decomp.misc.genTypeFields",
     "onCommand:opengoal.decomp.typeSearcher.open",
     "onCommand:opengoal.lsp.start",
     "onCommand:opengoal.lsp.stop",
@@ -135,6 +138,10 @@
       {
         "command": "opengoal.decomp.misc.convertDecToHex",
         "title": "OpenGOAL - Misc - Convert Dec to Hex"
+      },
+      {
+        "command": "opengoal.decomp.misc.genTypeFields",
+        "title": "OpenGOAL - Misc - Generate Type Fields"
       },
       {
         "command": "opengoal.decomp.typeSearcher.open",
