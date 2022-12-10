@@ -61,7 +61,10 @@
     "onCommand:opengoal.decomp.casts.typeCastSelection",
     "onCommand:opengoal.decomp.misc.addToOffsets",
     "onCommand:opengoal.decomp.misc.preserveBlock",
+    "onCommand:opengoal.decomp.misc.convertHexToDec",
+    "onCommand:opengoal.decomp.misc.convertDecToHex",
     "onCommand:opengoal.decomp.misc.generateTypeFlags",
+    "onCommand:opengoal.decomp.misc.genTypeFields",
     "onCommand:opengoal.decomp.misc.genMethodStubs",
     "onCommand:opengoal.decomp.typeSearcher.open",
     "onCommand:opengoal.lsp.start",
@@ -141,6 +144,10 @@
       {
         "command": "opengoal.decomp.misc.generateTypeFlags",
         "title": "OpenGOAL - Misc - Generate Type Flags"
+      },
+      {
+        "command": "opengoal.decomp.misc.genTypeFields",
+        "title": "OpenGOAL - Misc - Generate Type Fields"
       },
       {
         "command": "opengoal.decomp.misc.genMethodStubs",

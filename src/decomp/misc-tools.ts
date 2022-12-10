@@ -202,6 +202,158 @@ async function generateTypeFlags() {
   return;
 }
 
+async function genTypeFields() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined || editor.selection.isEmpty) {
+    return;
+  }
+
+  const content = editor.document.getText(editor.selection);
+  const lines = content.split("\n");
+
+  const structureTypeSelection = await vscode.window.showQuickPick(
+    ["basic", "structure"],
+    {
+      title: "Structure Type?",
+    }
+  );
+  if (structureTypeSelection === undefined) {
+    return;
+  }
+  const isBasic = structureTypeSelection === "basic";
+
+  const fields: any[] = [];
+  // Loop through all lines
+  let i = 0;
+  while (i < lines.length) {
+    let line = lines[i];
+    // Loop until we find a line with the a field name:
+    // - `..."~2Tlos:...`
+    if (line.includes('"~2T')) {
+      // Get the field name
+      const fieldName = line.split('"~2T')[1].split(":")[0];
+      let skipLine = false;
+      for (const field of fields) {
+        if (field.name === fieldName) {
+          skipLine = true;
+          break;
+        }
+      }
+      if (skipLine) {
+        i++;
+        continue;
+      }
+      let formatString = "";
+      // See if the line also has the type name
+      let typeName = "UNKNOWN";
+      let isStructure = false;
+      if (line.includes(": #<")) {
+        typeName = line.split(": #<")[1].split(" @")[0];
+        isStructure = true;
+      } else {
+        formatString = line
+          .split('"~2T')[1]
+          .split(": ")[1]
+          .split("~%")[0]
+          .trim();
+      }
+      // Iterate until we find the offset, a bit fragile but look for the
+      // next line with `gp` in it
+      // - daddiu a2, gp, 988
+      // - lwu a2, 1136(gp)
+      let offset = 0;
+      let loadInstr = "";
+      while (i < lines.length) {
+        line = lines[i];
+        if (line.includes("gp")) {
+          // Get the offset, adjust it if it's a basic type
+          const matches = [...line.split(";;")[0].matchAll(/\s+(\d+)/g)];
+          if (matches.length == 1) {
+            offset = parseInt(matches[0][1].toString().trim());
+            if (line.includes("daddiu")) {
+              loadInstr = "daddiu";
+            } else {
+              loadInstr = line.trim().split(" ")[0];
+            }
+          } else {
+            return;
+          }
+          if (isBasic) {
+            offset += 4;
+          }
+          break;
+        }
+        i++;
+      }
+      // TODO - doesn't support arrays/inline-arrays/pointers yet
+      // Figure out the type name if we havn't already from the little information we have
+      if (typeName === "UNKNOWN") {
+        if (fieldName.includes("time") && loadInstr === "ld") {
+          typeName = "time-frame";
+        } else if (fieldName.includes("angle") && loadInstr === "lwc1") {
+          typeName = "degrees";
+        } else if (fieldName.includes("sound-id") && loadInstr === "ld") {
+          typeName = "sound-id";
+        } else if (formatString === "~f" && loadInstr === "lwc1") {
+          typeName = "float";
+        } else if (formatString === "~A" && loadInstr === "lwu") {
+          typeName = "symbol";
+        } else if (formatString === "~D") {
+          if (loadInstr === "lw") {
+            typeName = "int32";
+          } else if (loadInstr === "lwu") {
+            typeName = "uint32";
+          } else if (loadInstr === "ld") {
+            typeName = "int64";
+          }
+        }
+      }
+      // Construct the field definition
+      fields.push({
+        name: fieldName,
+        type: typeName,
+        offset: offset,
+        isStructure: isStructure,
+      });
+    }
+
+    i++;
+  }
+
+  // Make the output nice, find the maximum size of each so we can padEnd with spaces
+  let largestName = 0;
+  let largestTypeNameSection = 0;
+  for (let f = 0; f < fields.length; f++) {
+    const field = fields[f];
+    // Check if the field should be inlined
+    // TODO - edge-case for the last field (don't know the full size here)
+    if (field.isStructure && f + 1 < fields.length) {
+      if (field.offset + 4 !== fields[f + 1].offset) {
+        field.type += " :inline";
+      }
+    }
+    if (field.name.length > largestName) {
+      largestName = field.name.length;
+    }
+    if (field.type.length > largestTypeNameSection) {
+      largestTypeNameSection = field.type.length;
+    }
+  }
+
+  // Finally, construct the final output
+  let clipboardVal = "";
+  for (const field of fields) {
+    let fieldString = `    (${field.name.padEnd(largestName, " ")} `;
+    fieldString += `${field.type.padEnd(largestTypeNameSection, " ")} `;
+    fieldString += `:offset-assert ${field.offset.toString()})`;
+    clipboardVal += `${fieldString}\n`;
+  }
+
+  vscode.env.clipboard.writeText(`  (\n${clipboardVal}  )`);
+
+  return;
+}
+
 async function genMethodStubs() {
   const editor = vscode.window.activeTextEditor;
   if (editor === undefined || editor.selection.isEmpty) {
@@ -281,6 +433,12 @@ export async function activateMiscDecompTools() {
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.generateTypeFlags",
       generateTypeFlags
+    )
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.misc.genTypeFields",
+      genTypeFields
     )
   );
   getExtensionContext().subscriptions.push(
