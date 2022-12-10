@@ -156,6 +156,52 @@ async function convertDecToHex() {
   });
 }
 
+async function generateTypeFlags() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined || editor.selection.isEmpty) {
+    return;
+  }
+
+  // Get the content of the selection
+  const content = editor.document.getText(editor.selection);
+
+  // Get all lines that start with `.word`, there should only be two!
+  const lines = content
+    .split("\n")
+    .filter((line) => line.trim().startsWith(".word"));
+  if (lines.length !== 2) {
+    return;
+  }
+  const flags = lines[0]
+    .split(".word ")[1]
+    .trim()
+    .replace("0x", "")
+    .padStart(8, "0");
+  const methodCount = lines[1].split(".word ")[1].trim();
+
+  // :method-count-assert 203
+  // :size-assert         #x3d4
+  // :flag-assert         #xcb036003d4 / #x9 0000 0010
+  let clipboardVal = `  :method-count-assert ${parseInt(
+    methodCount.replace("0x", ""),
+    16
+  )}\n`;
+  clipboardVal += `  :size-assert         #x${parseInt(
+    flags.slice(-4),
+    16
+  ).toString(16)} ;; ${parseInt(flags.slice(-4), 16)}\n`;
+  clipboardVal += `  :flag-assert         #x${parseInt(
+    methodCount.replace("0x", ""),
+    16
+  ).toString(16)}${flags}`;
+
+  vscode.env.clipboard.writeText(clipboardVal);
+  vscode.window.showInformationMessage(
+    "OpenGOAL - Type Flags Copied to Clipboard!"
+  );
+  return;
+}
+
 export async function activateMiscDecompTools() {
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
@@ -179,6 +225,12 @@ export async function activateMiscDecompTools() {
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.convertDecToHex",
       convertDecToHex
+    )
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.misc.generateTypeFlags",
+      generateTypeFlags
     )
   );
 }
