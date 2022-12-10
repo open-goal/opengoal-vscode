@@ -165,10 +165,18 @@ async function genTypeFields() {
   const content = editor.document.getText(editor.selection);
   const lines = content.split("\n");
 
-  // TODO - ask the user if it's a basic or a structure
-  const isBasic = true;
+  const structureTypeSelection = await vscode.window.showQuickPick(
+    ["basic", "structure"],
+    {
+      title: "Structure Type?",
+    }
+  );
+  if (structureTypeSelection === undefined) {
+    return;
+  }
+  const isBasic = structureTypeSelection === "basic";
 
-  const fields = [];
+  const fields: any[] = [];
   // Loop through all lines
   let i = 0;
   while (i < lines.length) {
@@ -178,6 +186,17 @@ async function genTypeFields() {
     if (line.includes('"~2T')) {
       // Get the field name
       const fieldName = line.split('"~2T')[1].split(":")[0];
+      let skipLine = false;
+      for (const field of fields) {
+        if (field.name === fieldName) {
+          skipLine = true;
+          break;
+        }
+      }
+      if (skipLine) {
+        i++;
+        continue;
+      }
       let formatString = "";
       // See if the line also has the type name
       let typeName = "UNKNOWN";
@@ -186,7 +205,11 @@ async function genTypeFields() {
         typeName = line.split(": #<")[1].split(" @")[0];
         isStructure = true;
       } else {
-        formatString = line.split(": ")[1].split("~%")[0];
+        formatString = line
+          .split('"~2T')[1]
+          .split(": ")[1]
+          .split("~%")[0]
+          .trim();
       }
       // Iterate until we find the offset, a bit fragile but look for the
       // next line with `gp` in it
