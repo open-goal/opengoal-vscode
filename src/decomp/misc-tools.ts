@@ -156,6 +156,56 @@ async function convertDecToHex() {
   });
 }
 
+async function genMethodStubs() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined || editor.selection.isEmpty) {
+    return;
+  }
+
+  const content = editor.document.getText(editor.selection);
+  const lines = content.split("\n");
+
+  // Figure out the types, parent -- and method count
+  let parentType = "";
+  let methodCount = 0;
+  let typeName = "";
+  for (const line of lines) {
+    if (line.includes("deftype")) {
+      parentType = line.replace("(deftype", "").split("(")[1].split(")")[0];
+      typeName = line.replace("(deftype ", "").split(" ")[0];
+    }
+    if (line.includes("method-count-assert")) {
+      methodCount = parseInt(line.split("method-count-assert")[1].trim());
+    }
+  }
+
+  // Now, go find the parent type, and figure out it's method count
+  const fileContents = editor.document.getText();
+  const fileContentsLines = fileContents.split("\n");
+  let foundType = false;
+  let parentTypeMethodCount = 0;
+  for (const line of fileContentsLines) {
+    if (line.includes(`(deftype ${parentType}`)) {
+      foundType = true;
+    }
+    if (foundType && line.includes("method-count-assert")) {
+      parentTypeMethodCount = parseInt(
+        line.split("method-count-assert")[1].trim()
+      );
+      break;
+    }
+  }
+
+  // Now put it all together!
+  const methodStubs = [];
+  for (let i = parentTypeMethodCount; i < methodCount; i++) {
+    methodStubs.push(`    (${typeName}-method-${i} () none ${i})`);
+  }
+
+  vscode.env.clipboard.writeText(`(:methods\n${methodStubs.join("\n")})`);
+  return;
+}
+
 export async function activateMiscDecompTools() {
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
@@ -179,6 +229,12 @@ export async function activateMiscDecompTools() {
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.convertDecToHex",
       convertDecToHex
+    )
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.misc.genMethodStubs",
+      genMethodStubs
     )
   );
 }
