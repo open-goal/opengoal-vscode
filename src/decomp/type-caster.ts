@@ -68,13 +68,21 @@ async function applyLabelCast(
   // Add our new entry
   if (objectName in json) {
     if (pointerSize === undefined) {
-      json[objectName].push([labelRef, castToType]);
+      if (castToType === "uint64" || castToType === "float") {
+        json[objectName].push([labelRef, castToType, true]);
+      } else {
+        json[objectName].push([labelRef, castToType]);
+      }
     } else {
       json[objectName].push([labelRef, castToType, pointerSize]);
     }
   } else {
     if (pointerSize === undefined) {
-      json[objectName] = [[labelRef, castToType]];
+      if (castToType === "uint64" || castToType === "float") {
+        json[objectName] = [[labelRef, castToType, true]];
+      } else {
+        json[objectName] = [[labelRef, castToType]];
+      }
     } else {
       json[objectName] = [[labelRef, castToType, pointerSize]];
     }
