@@ -62,6 +62,7 @@
     "onCommand:opengoal.decomp.misc.addToOffsets",
     "onCommand:opengoal.decomp.misc.preserveBlock",
     "onCommand:opengoal.decomp.misc.generateTypeFlags",
+    "onCommand:opengoal.decomp.misc.genMethodStubs",
     "onCommand:opengoal.decomp.typeSearcher.open",
     "onCommand:opengoal.lsp.start",
     "onCommand:opengoal.lsp.stop",
@@ -140,6 +141,10 @@
       {
         "command": "opengoal.decomp.misc.generateTypeFlags",
         "title": "OpenGOAL - Misc - Generate Type Flags"
+      },
+      {
+        "command": "opengoal.decomp.misc.genMethodStubs",
+        "title": "OpenGOAL - Misc - Generate Method Stubs"
       },
       {
         "command": "opengoal.decomp.typeSearcher.open",
