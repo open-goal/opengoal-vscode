@@ -129,7 +129,7 @@ async function labelCastSelection() {
   const castToType = await vscode.window.showInputBox({
     title: "Cast to Type?",
   });
-  if (castToType === undefined) {
+  if (castToType === undefined || castToType.trim() === "") {
     await vscode.window.showErrorMessage("Can't cast if no type is provided");
     return;
   }
@@ -148,7 +148,13 @@ async function labelCastSelection() {
   }
 
   // Finally, do the cast!
-  await applyLabelCast(editor, objectName, labelRef, castToType, pointerSize);
+  await applyLabelCast(
+    editor,
+    objectName,
+    labelRef,
+    castToType.trim(),
+    pointerSize
+  );
 
   lastCastKind = CastKind.Label;
   lastLabelCastType = castToType;
@@ -214,13 +220,13 @@ async function stackCastSelection() {
   const castToType = await vscode.window.showInputBox({
     title: "Cast to Type?",
   });
-  if (castToType === undefined) {
+  if (castToType === undefined || castToType.trim() === "") {
     await vscode.window.showErrorMessage("Can't cast if no type is provided");
     return;
   }
 
   // Finally, do the cast!
-  await applyStackCast(editor, funcName, stackOffset, castToType);
+  await applyStackCast(editor, funcName, stackOffset, castToType.trim());
 
   lastCastKind = CastKind.Stack;
   lastStackCastType = castToType;
@@ -338,7 +344,7 @@ async function typeCastSelection() {
   const castToType = await vscode.window.showInputBox({
     title: "Cast to Type?",
   });
-  if (castToType === undefined) {
+  if (castToType === undefined || castToType.trim() === "") {
     await vscode.window.showErrorMessage("Can't cast if no type is provided");
     return;
   }
@@ -349,7 +355,7 @@ async function typeCastSelection() {
     funcName,
     castContext,
     registerSelection,
-    castToType
+    castToType.trim()
   );
 
   lastCastKind = CastKind.TypeCast;
