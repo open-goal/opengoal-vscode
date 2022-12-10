@@ -5,7 +5,7 @@
   "publisher": "opengoal",
   "version": "0.8.1",
   "engines": {
-    "vscode": "^1.72.0"
+    "vscode": "^1.74.0"
   },
   "categories": [
     "Programming Languages"
@@ -30,7 +30,7 @@
     "@types/follow-redirects": "^1.14.1",
     "@types/glob": "^8.0.0",
     "@types/node": "^17.0.45",
-    "@types/vscode": "^1.72.0",
+    "@types/vscode": "^1.74.0",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
     "eslint": "^8.29.0",
