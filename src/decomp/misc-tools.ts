@@ -156,6 +156,52 @@ async function convertDecToHex() {
   });
 }
 
+async function generateTypeFlags() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined || editor.selection.isEmpty) {
+    return;
+  }
+
+  // Get the content of the selection
+  const content = editor.document.getText(editor.selection);
+
+  // Get all lines that start with `.word`, there should only be two!
+  const lines = content
+    .split("\n")
+    .filter((line) => line.trim().startsWith(".word"));
+  if (lines.length !== 2) {
+    return;
+  }
+  const flags = lines[0]
+    .split(".word ")[1]
+    .trim()
+    .replace("0x", "")
+    .padStart(8, "0");
+  const methodCount = lines[1].split(".word ")[1].trim();
+
+  // :method-count-assert 203
+  // :size-assert         #x3d4
+  // :flag-assert         #xcb036003d4 / #x9 0000 0010
+  let clipboardVal = `  :method-count-assert ${parseInt(
+    methodCount.replace("0x", ""),
+    16
+  )}\n`;
+  clipboardVal += `  :size-assert         #x${parseInt(
+    flags.slice(-4),
+    16
+  ).toString(16)} ;; ${parseInt(flags.slice(-4), 16)}\n`;
+  clipboardVal += `  :flag-assert         #x${parseInt(
+    methodCount.replace("0x", ""),
+    16
+  ).toString(16)}${flags}`;
+
+  vscode.env.clipboard.writeText(clipboardVal);
+  vscode.window.showInformationMessage(
+    "OpenGOAL - Type Flags Copied to Clipboard!"
+  );
+  return;
+}
+
 async function genTypeFields() {
   const editor = vscode.window.activeTextEditor;
   if (editor === undefined || editor.selection.isEmpty) {
@@ -308,6 +354,56 @@ async function genTypeFields() {
   return;
 }
 
+async function genMethodStubs() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined || editor.selection.isEmpty) {
+    return;
+  }
+
+  const content = editor.document.getText(editor.selection);
+  const lines = content.split("\n");
+
+  // Figure out the types, parent -- and method count
+  let parentType = "";
+  let methodCount = 0;
+  let typeName = "";
+  for (const line of lines) {
+    if (line.includes("deftype")) {
+      parentType = line.replace("(deftype", "").split("(")[1].split(")")[0];
+      typeName = line.replace("(deftype ", "").split(" ")[0];
+    }
+    if (line.includes("method-count-assert")) {
+      methodCount = parseInt(line.split("method-count-assert")[1].trim());
+    }
+  }
+
+  // Now, go find the parent type, and figure out it's method count
+  const fileContents = editor.document.getText();
+  const fileContentsLines = fileContents.split("\n");
+  let foundType = false;
+  let parentTypeMethodCount = 0;
+  for (const line of fileContentsLines) {
+    if (line.includes(`(deftype ${parentType}`)) {
+      foundType = true;
+    }
+    if (foundType && line.includes("method-count-assert")) {
+      parentTypeMethodCount = parseInt(
+        line.split("method-count-assert")[1].trim()
+      );
+      break;
+    }
+  }
+
+  // Now put it all together!
+  const methodStubs = [];
+  for (let i = parentTypeMethodCount; i < methodCount; i++) {
+    methodStubs.push(`    (${typeName}-method-${i} () none ${i})`);
+  }
+
+  vscode.env.clipboard.writeText(`(:methods\n${methodStubs.join("\n")})`);
+  return;
+}
+
 export async function activateMiscDecompTools() {
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
@@ -335,8 +431,20 @@ export async function activateMiscDecompTools() {
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
+      "opengoal.decomp.misc.generateTypeFlags",
+      generateTypeFlags
+    )
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
       "opengoal.decomp.misc.genTypeFields",
       genTypeFields
+    )
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.misc.genMethodStubs",
+      genMethodStubs
     )
   );
 }
