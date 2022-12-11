@@ -60,7 +60,7 @@ function getWebviewContent() {
 
       function search(evt) {
         let parentName = document.getElementById("parent-name").value;
-        let typeSize = parseInt(document.getElementById("type-size").value);
+        let typeSize = document.getElementById("type-size").value;
         let methodId = parseInt(document.getElementById("method-id").value);
         let gameName = document.getElementById("game-name").value;
 
@@ -94,12 +94,14 @@ function getWebviewContent() {
         const nameColumn = document.createElement("div");
         nameColumn.className = "column column-25";
         const nameField = document.createElement("sl-input");
+        nameField.className = "field-name";
         nameField.label = "Field Type Name?";
         nameColumn.appendChild(nameField);
 
         const offsetColumn = document.createElement("div");
         offsetColumn.className = "column column-25";
         const offsetField = document.createElement("sl-input");
+        offsetField.className = "field-offset";
         offsetField.label = "Offset?";
         offsetField.type = "number";
         offsetColumn.appendChild(offsetField);
@@ -121,18 +123,25 @@ function getWebviewContent() {
       window.addEventListener('message', event => {
         document.getElementById("results").innerHTML = "";
         const message = event.data;
+        document.getElementById("command").innerHTML = JSON.stringify(message.args);
         if (message.command === "search") {
           if (message.data instanceof Array && message.data.length <= 0) {
             const column = document.createElement("div");
-            column.className = "column column-20";
+            column.className = "column";
             const content = document.createTextNode("No Results");
             column.appendChild(content);
             document.getElementById("results").appendChild(column);
+          } else if (message.data.length === 1) {
+            const column = document.createElement("div");
+            column.className = "column";
+            const content = document.createTextNode(message.data[0]);
+            column.appendChild(content);
+            document.getElementById("results").appendChild(column);
           } else {
-            for (const name of message.data) {
+            for (const val of message.data) {
               const column = document.createElement("div");
               column.className = "column column-20";
-              const content = document.createTextNode(name);
+              const content = document.createTextNode(val);
               column.appendChild(content);
               document.getElementById("results").appendChild(column);
             }
@@ -141,49 +150,62 @@ function getWebviewContent() {
       });
     </script>
     <div class="container">
-      <h2 class="mt-2">General Filters</h2>
       <div class="row">
-        <div class="column column-25">
-          <sl-input label="Parent Type Name?" id="parent-name"></sl-input>
-        </div>
-      </div>
-      <div class="row">
-        <div class="column column-25">
-          <sl-input label="Type Size?" id="type-size" type="number"></sl-input>
-        </div>
-      </div>
-      <div class="row">
-        <div class="column column-25">
-          <sl-input label="Method ID?" id="method-id" type="number"></sl-input>
-        </div>
-      </div>
-      <div class="row mt-1">
-        <div class="column column-25">
-          <sl-radio-group label="Game?" value="jak2" fieldset id="game-name">
-            <sl-radio-button value="jak1">Jak 1</sl-radio-button>
-            <sl-radio-button value="jak2">Jak 2</sl-radio-button>
-            <sl-radio-button value="jak3">Jak 3</sl-radio-button>
-            <sl-radio-button value="jakx">Jak X</sl-radio-button>
-          </sl-radio-group>
-        </div>
-      </div>
-      <h2 class="mt-2">Field Type Filters</h2>
-      <div id="field-filters">
-        <div class="row wrap">
-          <div class="column column-25">
-            <sl-input label="Field Type Name?" class="field-name"></sl-input>
+        <div class="column column-50">
+          <h2 class="mt-2">General Filters</h2>
+          <div class="row">
+            <div class="column">
+              <sl-input label="Parent Type Name?" id="parent-name"></sl-input>
+            </div>
           </div>
-          <div class="column column-25">
-            <sl-input label="Offset?" class="field-offset" type="number"></sl-input>
+          <div class="row">
+            <div class="column">
+              <sl-input label="Type Size?" id="type-size"></sl-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column">
+              <sl-input label="Method ID?" id="method-id" type="number"></sl-input>
+            </div>
+          </div>
+          <div class="row mt-1">
+            <div class="column">
+              <sl-radio-group label="Game?" value="jak2" fieldset id="game-name">
+                <sl-radio-button value="jak1">Jak 1</sl-radio-button>
+                <sl-radio-button value="jak2">Jak 2</sl-radio-button>
+                <sl-radio-button value="jak3">Jak 3</sl-radio-button>
+                <sl-radio-button value="jakx">Jak X</sl-radio-button>
+              </sl-radio-group>
+            </div>
+          </div>
+        </div>
+        <div class="column column-50">
+          <h2 class="mt-2">Field Type Filters</h2>
+          <div id="field-filters">
+            <div class="row wrap">
+              <div class="column column-50">
+                <sl-input label="Field Type Name?" class="field-name"></sl-input>
+              </div>
+              <div class="column column-50">
+                <sl-input label="Offset?" class="field-offset" type="number"></sl-input>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="column">
+              <sl-button variant="primary" onclick="addField()" class="mr-1">Add Another Field</sl-button>
+            </div>
           </div>
         </div>
       </div>
       <div class="row mt-2">
         <div class="column">
-          <sl-button variant="primary" onclick="addField()" class="mr-1">Add Another Field</sl-button>
           <sl-button variant="success" onclick="search()" class="mr-1">Search</sl-button>
           <sl-button variant="warning" onclick="clearFields()">Clear</sl-button>
         </div>
+      </div>
+      <div class="row mt-2">
+        <div class="column" id="command"></div>
       </div>
       <h2 class="mt-2">Results</h2>
       <div class="row wrap" id="results">
@@ -210,7 +232,7 @@ const execFileAsync = util.promisify(execFile);
 let projectRoot: vscode.Uri | undefined = undefined;
 let currentPanel: vscode.WebviewPanel | undefined = undefined;
 
-async function searchForTypes(message: any): Promise<string[]> {
+async function searchForTypes(message: any): Promise<any> {
   if (projectRoot === undefined) {
     projectRoot = getWorkspaceFolderByName("jak-project");
     if (projectRoot === undefined) {
@@ -241,7 +263,7 @@ async function searchForTypes(message: any): Promise<string[]> {
     args.push(`--parent`);
     args.push(message.parentName);
   }
-  if ("typeSize" in message && message.typeSize !== null) {
+  if ("typeSize" in message && message.typeSize !== "") {
     args.push(`--size`);
     args.push(message.typeSize);
   }
@@ -280,10 +302,17 @@ async function searchForTypes(message: any): Promise<string[]> {
     );
     // Parse the file
     const result = readFileSync(searchFile, { encoding: "utf-8" });
-    return JSON.parse(result);
+    return {
+      results: JSON.parse(result),
+      args: args,
+    };
   } catch (error: any) {
     console.log(error);
-    return [`error - ${error}`];
+    return {
+      error: true,
+      results: [`error - ${error}`],
+      args: args,
+    };
   }
 }
 
@@ -307,7 +336,8 @@ async function openPanel() {
         const result = await searchForTypes(message);
         currentPanel?.webview.postMessage({
           command: "search",
-          data: result,
+          data: result.results,
+          args: result.args,
         });
       }
     },
