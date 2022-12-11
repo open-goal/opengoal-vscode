@@ -229,9 +229,17 @@ async function genTypeFields() {
     let line = lines[i];
     // Loop until we find a line with the a field name:
     // - `..."~2Tlos:...`
-    if (line.includes('"~2T')) {
+    if (line.includes('"~2T') || line.includes('"~1T')) {
       // Get the field name
-      const fieldName = line.split('"~2T')[1].split(":")[0];
+      let fieldName = "";
+      let arraySize = 0;
+      const fieldString = line.split(/"~\dT/g)[1];
+      if (fieldString.includes("[")) {
+        fieldName = fieldString.split("[")[0];
+        arraySize = parseInt(fieldString.split("[")[1].split("]")[0]);
+      } else {
+        fieldName = fieldString.split(":")[0];
+      }
       let skipLine = false;
       for (const field of fields) {
         if (field.name === fieldName) {
@@ -250,12 +258,8 @@ async function genTypeFields() {
       if (line.includes(": #<")) {
         typeName = line.split(": #<")[1].split(" @")[0];
         isStructure = true;
-      } else {
-        formatString = line
-          .split('"~2T')[1]
-          .split(": ")[1]
-          .split("~%")[0]
-          .trim();
+      } else if (arraySize === 0) {
+        formatString = fieldString.split(": ")[1].split("~%")[0].trim();
       }
       // Iterate until we find the offset, a bit fragile but look for the
       // next line with `gp` in it
@@ -285,7 +289,7 @@ async function genTypeFields() {
         }
         i++;
       }
-      // TODO - doesn't support arrays/inline-arrays/pointers yet
+      // TODO - doesn't support inline-arrays/pointers yet
       // Figure out the type name if we havn't already from the little information we have
       if (typeName === "UNKNOWN") {
         if (fieldName.includes("time") && loadInstr === "ld") {
@@ -305,6 +309,14 @@ async function genTypeFields() {
             typeName = "uint32";
           } else if (loadInstr === "ld") {
             typeName = "int64";
+          } else if (loadInstr === "lbu") {
+            typeName = "uint8";
+          } else if (loadInstr === "lb") {
+            typeName = "int8";
+          } else if (loadInstr === "lh") {
+            typeName = "int16";
+          } else if (loadInstr === "lhu") {
+            typeName = "uint16";
           }
         }
       }
@@ -314,6 +326,8 @@ async function genTypeFields() {
         type: typeName,
         offset: offset,
         isStructure: isStructure,
+        arraySize: arraySize,
+        annotation: "",
       });
     }
 
@@ -327,11 +341,21 @@ async function genTypeFields() {
     const field = fields[f];
     // Check if the field should be inlined
     // TODO - edge-case for the last field (don't know the full size here)
-    if (field.isStructure && f + 1 < fields.length) {
+    if (field.arraySize === 0 && field.isStructure && f + 1 < fields.length) {
       if (field.offset + 4 !== fields[f + 1].offset) {
+        // NOTE - this can have false positives without knowing the true size of the struct
         field.type += " :inline";
       }
     }
+    if (field.arraySize !== 0) {
+      field.type += ` ${field.arraySize}`;
+      if (field.offset + 4 !== fields[f + 1].offset) {
+        field.annotation = ` ;; elt size: ${
+          (fields[f + 1].offset - field.offset) / field.arraySize
+        }`;
+      }
+    }
+
     if (field.name.length > largestName) {
       largestName = field.name.length;
     }
@@ -345,7 +369,9 @@ async function genTypeFields() {
   for (const field of fields) {
     let fieldString = `    (${field.name.padEnd(largestName, " ")} `;
     fieldString += `${field.type.padEnd(largestTypeNameSection, " ")} `;
-    fieldString += `:offset-assert ${field.offset.toString()})`;
+    fieldString += `:offset-assert ${field.offset.toString()})${
+      field.annotation
+    }`;
     clipboardVal += `${fieldString}\n`;
   }
 
@@ -383,7 +409,7 @@ async function genMethodStubs() {
   let foundType = false;
   let parentTypeMethodCount = 0;
   for (const line of fileContentsLines) {
-    if (line.includes(`(deftype ${parentType}`)) {
+    if (line.includes(`(deftype ${parentType} `)) {
       foundType = true;
     }
     if (foundType && line.includes("method-count-assert")) {
