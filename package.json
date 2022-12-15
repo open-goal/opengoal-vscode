@@ -3,7 +3,7 @@
   "displayName": "OpenGOAL",
   "description": "OpenGOAL Support for VSCode",
   "publisher": "opengoal",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "engines": {
     "vscode": "^1.74.0"
   },
