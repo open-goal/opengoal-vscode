@@ -279,6 +279,13 @@ async function genTypeFields() {
             } else {
               loadInstr = line.trim().split(" ")[0];
             }
+          } else if (line.includes("r0")) {
+            offset = 0;
+            if (line.includes("daddiu")) {
+              loadInstr = "daddiu";
+            } else {
+              loadInstr = line.trim().split(" ")[0];
+            }
           } else {
             return;
           }
