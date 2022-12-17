@@ -4,6 +4,7 @@ export function getConfig() {
   const configOptions = vscode.workspace.getConfiguration("opengoal");
 
   return {
+    opengoalParinferMode: configOptions.get<string>("parinferMode"),
     launchLspOnStartup: configOptions.get<boolean>("launchLspOnStartup"),
     opengoalLspVersion: configOptions.get<string>("opengoalLspVersion"),
     opengoalLspPath: configOptions.get<string>("opengoalLspPath"),
@@ -106,6 +107,15 @@ export async function updateJak2DecompConfigDirectory(dir: string) {
   await userConfig.update(
     "opengoal.decompilerJak2ConfigDirectory",
     dir,
+    vscode.ConfigurationTarget.Global
+  );
+}
+
+export async function updateOpengoalParinferMode(mode: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.parinferMode",
+    mode,
     vscode.ConfigurationTarget.Global
   );
 }
