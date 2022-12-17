@@ -20,12 +20,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: npm
+          cache: yarn
 
-      - name: Install Dependencies and Check Formatting
-        run: |
-          npm ci
-          npm run lint
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Check Linting
+        run: yarn lint
+
   formatting:
     name: Formatting
     runs-on: ubuntu-latest
@@ -37,9 +39,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: npm
+          cache: yarn
 
-      - name: Install Dependencies and Check Formatting
-        run: |
-          npm ci
-          npm run format:check
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Check Linting
+        run: yarn format:check

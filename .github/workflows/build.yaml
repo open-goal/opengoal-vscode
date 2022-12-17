@@ -22,9 +22,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: npm
+          cache: yarn
 
-      - name: Install NPM Dependencies and Build Extension
-        run: |
-          npm ci
-          npm run compile
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build Extension
+        run: yarn compile

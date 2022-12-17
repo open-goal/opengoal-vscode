@@ -42,6 +42,7 @@
     "comment-json": "^4.2.3",
     "follow-redirects": "^1.15.2",
     "glob": "^8.0.3",
+    "parinfer": "^3.13.1",
     "vscode-languageclient": "^8.0.1"
   },
   "activationEvents": [
@@ -171,6 +172,23 @@
       }
     ],
     "configuration": [
+      {
+        "id": "opengoal-goal",
+        "title": "GOAL Tooling",
+        "properties": {
+          "opengoal.parinferMode": {
+            "type": "string",
+            "default": "DISABLED",
+            "enum": ["DISABLED", "SMART", "PAREN", "INDENT"],
+            "enumDescriptions": [
+              "Disable parinfer",
+              "Parinfer will try it's best to deduce when to run Paren mode and when to run Indent mode",
+              "Parinfer will handle the indentation, you handle the parens",
+              "Parinfer will handle the parens, you handle the indentation"
+            ]
+          }
+        }
+      },
       {
         "id": "opengoal-decomp",
         "title": "Decompilation",
