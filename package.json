@@ -179,7 +179,12 @@
           "opengoal.parinferMode": {
             "type": "string",
             "default": "DISABLED",
-            "enum": ["DISABLED", "SMART", "PAREN", "INDENT"],
+            "enum": [
+              "DISABLED",
+              "SMART",
+              "PAREN",
+              "INDENT"
+            ],
             "enumDescriptions": [
               "Disable parinfer",
               "Parinfer will try it's best to deduce when to run Paren mode and when to run Indent mode",

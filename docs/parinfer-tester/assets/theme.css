@@ -53,15 +53,34 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 }
 */
 
-.cm-s-github .cm-keyword {color: #a71d5d;}    /* clojure core forms */
-.cm-s-github .cm-builtin {color: #a71d5d;}    /* clojure core library */
-.cm-s-github .cm-string {color: #183691;}     /* clojure strings */
-.cm-s-github .cm-variable {color: #333;}      /* clojure misc symbols */
-.cm-s-github .cm-def {color: #795da3;}        /* clojure function calls or defs */
-.cm-s-github .cm-atom {color: #0086b3;}       /* clojure keyword, bool, nil */
-.cm-s-github .cm-number {color: #0086b3;}     /* clojure number */
-.cm-s-github .cm-bracket {color: #333;}       /* clojure brackets */
-.cm-s-github .cm-comment {color: #969896; font-style: italic;}    /* clojure comment */
+.cm-s-github .cm-keyword {
+  color: #a71d5d;
+} /* clojure core forms */
+.cm-s-github .cm-builtin {
+  color: #a71d5d;
+} /* clojure core library */
+.cm-s-github .cm-string {
+  color: #183691;
+} /* clojure strings */
+.cm-s-github .cm-variable {
+  color: #333;
+} /* clojure misc symbols */
+.cm-s-github .cm-def {
+  color: #795da3;
+} /* clojure function calls or defs */
+.cm-s-github .cm-atom {
+  color: #0086b3;
+} /* clojure keyword, bool, nil */
+.cm-s-github .cm-number {
+  color: #0086b3;
+} /* clojure number */
+.cm-s-github .cm-bracket {
+  color: #333;
+} /* clojure brackets */
+.cm-s-github .cm-comment {
+  color: #969896;
+  font-style: italic;
+} /* clojure comment */
 
 div.CodeMirror span.CodeMirror-matchingbracket {
   background: #e8f2ff;
@@ -72,6 +91,9 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 }
 
 /* don't change selection color based on an editor's focus status. */
-.CodeMirror-selected { background:  #d7d4f0; /* #d9d9d9 */}
-.CodeMirror-focused .CodeMirror-selected { background: #d7d4f0; }
-
+.CodeMirror-selected {
+  background: #d7d4f0; /* #d9d9d9 */
+}
+.CodeMirror-focused .CodeMirror-selected {
+  background: #d7d4f0;
+}

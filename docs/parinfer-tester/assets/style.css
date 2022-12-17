@@ -5,7 +5,7 @@
 body {
   font-family: "Open Sans", Arial, freesans, sans-serif;
   color: #555;
-  background: #F7F7F7;
+  background: #f7f7f7;
 }
 
 #xkcd a {
@@ -16,7 +16,6 @@ body {
   padding-top: 0;
 }
 
-
 #toc {
   text-align: left;
   margin-left: 10px;
@@ -24,7 +23,7 @@ body {
 }
 
 a.header-link {
-  color: #CCC;
+  color: #ccc;
   position: absolute;
   left: -1em;
   border-bottom: 0;
@@ -54,7 +53,7 @@ a.header-link {
 }
 
 .toc-link.toc-active-ancestor {
-  border-right: 2px solid #CCC;
+  border-right: 2px solid #ccc;
   margin-right: 0;
   opacity: 1;
 }
@@ -79,14 +78,14 @@ a.header-link {
   position: fixed;
   right: 0;
   top: 0;
-  background-color: rgba(0,255,255,0.3);
+  background-color: rgba(0, 255, 255, 0.3);
   margin: 0;
   padding: 20px;
 }
 
 .interact {
   padding: 20px;
-  background: #E7EAE9;
+  background: #e7eae9;
   border-radius: 8px;
   margin: 32px 0;
 }
@@ -98,8 +97,8 @@ a.header-link {
 }
 
 .interact:after {
-  content:'';
-  display:block;
+  content: "";
+  display: block;
   clear: both;
 }
 
@@ -108,24 +107,27 @@ a.header-link {
 }
 
 .paredit-table th,
-.paredit-table td
-{
+.paredit-table td {
   padding: 14px;
   border: 1px solid #cecece;
   background: #fefefe;
   vertical-align: top;
 }
 
-.paredit-table th
-{
+.paredit-table th {
   color: #888;
   font-style: italic;
   background: none;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: #222;
-  margin-top:0;
+  margin-top: 0;
   margin-bottom: 20px;
   position: relative;
 }
@@ -161,15 +163,19 @@ h1 em {
 }
 
 a {
-  border-bottom: 1px solid #CC3385;
-  color: #CC3385;
+  border-bottom: 1px solid #cc3385;
+  color: #cc3385;
 }
 
-a:link, a:visited, a:hover, a:active {
+a:link,
+a:visited,
+a:hover,
+a:active {
   text-decoration: none;
 }
 
-p, li {
+p,
+li {
   line-height: 1.7em;
   color: #555;
 }
@@ -182,14 +188,14 @@ p, li {
   padding-left: 20px;
   padding-bottom: 32px;
   height: 100%;
-  border-right: 1px solid #DDD;
+  border-right: 1px solid #ddd;
   background-color: #f1f1f1;
   overflow-y: auto;
 }
 
 .sidebar-logo {
-  margin:60px 0 0 70px;
-  display:block
+  margin: 60px 0 0 70px;
+  display: block;
 }
 
 .credits {
@@ -214,7 +220,7 @@ p, li {
 
 .wrapper {
   right: 0;
-  margin:0;
+  margin: 0;
   border-top: 1px solid #dedede;
 }
 
@@ -252,14 +258,14 @@ section {
 }
 
 code {
-  font-family: Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+  font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
   font-size: 16px;
 }
 
 .CodeMirror {
-  font-family: Menlo, Consolas, 'DejaVu Sans Mono', monospace;
-  background: #FEFEFE;
-  border: 1px solid #EEE;
+  font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  background: #fefefe;
+  border: 1px solid #eee;
   padding: 5px;
   margin-bottom: 20px;
 }
@@ -272,14 +278,14 @@ code {
 }
 
 .col {
-  float:left;
+  float: left;
   width: 350px;
   margin-right: 10px;
 }
 
 .two-col:after {
-  content:'';
-  display:block;
+  content: "";
+  display: block;
   clear: both;
 }
 
@@ -289,25 +295,21 @@ code {
 }
 
 #cm-code-lisp-expr,
-#cm-code-c-expr
-{
+#cm-code-c-expr {
   height: 120px;
 }
 
 #cm-code-lisp-indent,
-#cm-code-c-indent
-{
+#cm-code-c-indent {
   height: 174px;
 }
 
 #cm-code-skim,
-#cm-code-inspect
-{
+#cm-code-inspect {
   height: 96px;
 }
 
-#cm-code-skim span.cm-bracket
-{
+#cm-code-skim span.cm-bracket {
   opacity: 0.15;
   color: #000;
 }
@@ -319,95 +321,82 @@ code {
 #cm-code-inspect span.cm-def,
 #cm-code-inspect span.cm-atom,
 #cm-code-inspect span.cm-number,
-#cm-code-inspect span.cm-comment
-{
+#cm-code-inspect span.cm-comment {
   opacity: 0.15;
   color: #000;
 }
 
 #cm-code-indent,
-#cm-code-indent-far
-{
+#cm-code-indent-far {
   height: 70px;
 }
 
 #cm-code-indent-multi,
-#cm-code-intro-indent
-{
+#cm-code-intro-indent {
   height: 130px;
 }
 
 #cm-code-line,
-#cm-code-intro-insert
-{
+#cm-code-intro-insert {
   height: 150px;
 }
 
 #cm-code-comment,
-#cm-code-intro-comment
-{
+#cm-code-intro-comment {
   height: 130px;
 }
 
 #cm-code-wrap,
 #cm-code-splice,
 #cm-code-slurp,
-#cm-code-barf
-{
+#cm-code-barf {
   height: 70px;
 }
 
-#cm-code-string
-{
+#cm-code-string {
   height: 110px;
 }
 
 #cm-code-displaced,
-#cm-code-not-displaced
-{
+#cm-code-not-displaced {
   height: 90px;
 }
 
 #cm-code-indent-input,
-#cm-code-indent-output
-{
+#cm-code-indent-output {
   height: 250px;
 }
 
-#cm-code-indent-output
-{
+#cm-code-indent-output {
   opacity: 0.75;
 }
 
-#cm-code-indent-output .cm-bracket.cm-eol
-{
+#cm-code-indent-output .cm-bracket.cm-eol {
   opacity: 1;
-  background: #AAFFC2;
+  background: #aaffc2;
 }
 
 #cm-code-indent-input .cm-bracket.cm-eol,
-#cm-code-indent-input .cm-bracket.cm-sol
-{
+#cm-code-indent-input .cm-bracket.cm-sol {
   opacity: 1;
-  background: #FFBEBE;
+  background: #ffbebe;
 }
 
 .removed {
-  background: #FFBEBE;
+  background: #ffbebe;
 }
 
 .kept {
-  background: #FFE8B0;
+  background: #ffe8b0;
 }
 
 .inserted {
-  background: #AAFFC2;
+  background: #aaffc2;
 }
 
 #cm-code-indent-output .cm-bracket.cm-mol,
-#cm-code-indent-input .cm-bracket.cm-mol
-{
-  background: #FFE8B0;
+#cm-code-indent-input .cm-bracket.cm-mol {
+  background: #ffe8b0;
 }
 
 #cm-code-indent-output span.cm-keyword,
@@ -425,21 +414,18 @@ code {
 #cm-code-indent-input span.cm-def,
 #cm-code-indent-input span.cm-atom,
 #cm-code-indent-input span.cm-number,
-#cm-code-indent-input span.cm-comment
-{
+#cm-code-indent-input span.cm-comment {
   opacity: 0.3;
   color: #000;
 }
 
 #cm-code-warn-good,
-#cm-code-warn-bad
-{
+#cm-code-warn-bad {
   font-size: 14px;
   height: 110px;
 }
 
-#cm-code-enter
-{
+#cm-code-enter {
   height: 180px;
 }
 
@@ -447,30 +433,25 @@ code {
 #cm-code-paren-frac,
 #cm-code-paren-comment,
 #cm-code-paren-wrap,
-#cm-code-intro-paren
-{
+#cm-code-intro-paren {
   height: 100px;
 }
 
-#cm-code-intro-paredit
-{
+#cm-code-intro-paredit {
   height: 100px;
 }
 
 #cm-code-displaced-after-balance,
 #cm-code-not-displaced-on-enter,
-#cm-code-displaced-after-cursor-leaves
-{
+#cm-code-displaced-after-cursor-leaves {
   height: 80px;
 }
 
-p.centered
-{
+p.centered {
   text-align: center;
 }
 
-a.img-link
-{
+a.img-link {
   border-bottom: 0;
 }
 
@@ -482,58 +463,48 @@ blockquote.aside {
   opacity: 0.8;
 }
 
-.side-point
-{
+.side-point {
   font-style: italic;
-  color: #BBB;
+  color: #bbb;
 }
 
-td .side-point
-{
-  margin-top:5px;
+td .side-point {
+  margin-top: 5px;
 }
 
-.warning
-{
+.warning {
   padding: 20px;
   border-radius: 5px;
-  background: #FFFF7B;
+  background: #ffff7b;
 }
 
-.warning-title
-{
+.warning-title {
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.warning-body
-{
+.warning-body {
   margin-left: 34px;
   color: #333;
 }
 
-.green
-{
-  color: #63CA63;
+.green {
+  color: #63ca63;
 }
 
-.red
-{
-  color: #E84545;
+.red {
+  color: #e84545;
 }
 
-.question
-{
+.question {
   font-weight: bold;
 }
 
-.question i.fa
-{
-  color: #5380C7;
+.question i.fa {
+  color: #5380c7;
 }
 
-.answer
-{
+.answer {
   margin-left: 22px;
 }
 
@@ -554,7 +525,7 @@ i.fa {
 }
 
 .state-table {
-  margin-top: 6px;;
+  margin-top: 6px;
   font: 14px Menlo;
 }
 
@@ -573,9 +544,8 @@ i.fa {
 }
 
 .state-table .active-line {
-  background: #FF0;
+  background: #ff0;
 }
-
 
 .gear {
   opacity: 0.3;
@@ -586,18 +556,15 @@ i.fa {
   opacity: 0.8;
 }
 
-.gear.auto-indent-gear
-{
+.gear.auto-indent-gear {
   opacity: 0.8;
 }
 
-.gear.auto-indent-gear.invisible
-{
+.gear.auto-indent-gear.invisible {
   opacity: 0;
 }
 
-.parinfer-gear
-{
+.parinfer-gear {
   opacity: 0.15;
 }
 
@@ -607,12 +574,12 @@ i.fa {
 
 .lego-img {
   width: 100%;
-  border: 1px solid #EEE;
+  border: 1px solid #eee;
 }
 
 .math-page {
   background: #fefefe;
-  border: 1px solid #EEE;
+  border: 1px solid #eee;
   padding: 30px;
   font-family: "Computer Modern Serif";
   font-size: 18px;
@@ -640,14 +607,14 @@ i.fa {
   float: right;
   font-style: italic;
   font-size: 0.8em;
-  color: #BBB;
+  color: #bbb;
 }
 
 .only-mobile {
   display: none;
 }
 
-@media only screen and (max-width : 850px) {
+@media only screen and (max-width: 850px) {
   #app {
     position: static;
   }
@@ -677,4 +644,3 @@ i.fa {
     display: block;
   }
 }
-
