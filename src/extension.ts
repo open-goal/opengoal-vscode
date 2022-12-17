@@ -14,6 +14,11 @@ import { IRInlayHintsProvider } from "./languages/ir2/ir2-inlay-hinter";
 import { OpenGOALDisasmRenameProvider } from "./languages/opengoal/disasm/opengoal-disasm-renamer";
 import { activateMiscDecompTools } from "./decomp/misc-tools";
 import { IR2RenameProvider } from "./languages/ir2/ir2-renamer";
+import {
+  onChangeSelection,
+  onChangeTextDocument,
+  registerParinferCommands,
+} from "./goal/parinfer/parinfer";
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
@@ -75,6 +80,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Start the LSP
     lsp.activate(context);
+
+    // Parinfer
+    registerParinferCommands(context);
+    vscode.workspace.onDidChangeTextDocument(onChangeTextDocument);
+    vscode.window.onDidChangeTextEditorSelection(onChangeSelection);
   } catch (err) {
     vscode.window.showErrorMessage(
       "Failed to activate OpenGOAL extension, see logs for details"

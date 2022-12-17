@@ -25,7 +25,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: npm
+          cache: yarn
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Bump Version
         env:
@@ -33,9 +36,8 @@ jobs:
         run: |
           git config --global user.name "OpenGOALBot"
           git config --global user.email "OpenGOALBot@users.noreply.github.com"
-          npm ci
-          npx vsce package
-          npx vsce publish ${{ github.event.inputs.bump }}
+          yarn vsce package
+          yarn vsce publish ${{ github.event.inputs.bump }}
           git push
           git push origin $(git tag --points-at HEAD)
 
