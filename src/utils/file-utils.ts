@@ -4,8 +4,8 @@ import { promises as fs } from "fs";
 import { getRecentFiles } from "../context";
 
 export enum GameName {
-  Jak1,
-  Jak2,
+  Jak1 = "jak1",
+  Jak2 = "jak2",
 }
 
 const fileSwitchingAssoc = {

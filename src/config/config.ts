@@ -14,6 +14,7 @@ export function getConfig() {
     eeManPagePath: configOptions.get<string>("eeManPagePath"),
     vuManPagePath: configOptions.get<string>("vuManPagePath"),
     decompilerPath: configOptions.get<string>("decompilerPath"),
+    typeSearcherPath: configOptions.get<string>("typeSearcherPath"),
     jak1DecompConfig: configOptions.get<string>("decompilerJak1Config"),
     jak2DecompConfig: configOptions.get<string>("decompilerJak2Config"),
     decompilerJak1ConfigDirectory: configOptions.get<string>(
@@ -70,6 +71,15 @@ export async function updateDecompilerPath(path: string) {
   const userConfig = vscode.workspace.getConfiguration();
   await userConfig.update(
     "opengoal.decompilerPath",
+    path,
+    vscode.ConfigurationTarget.Global
+  );
+}
+
+export async function updateTypeSearcherPath(path: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.typeSearcherPath",
     path,
     vscode.ConfigurationTarget.Global
   );

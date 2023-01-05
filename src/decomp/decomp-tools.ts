@@ -1,7 +1,7 @@
 import { exec, execFile } from "child_process";
 import { existsSync, promises as fs } from "fs";
 import * as vscode from "vscode";
-import { determineGameFromPath, GameName, openFile } from "../utils/file-utils";
+import { determineGameFromPath, GameName } from "../utils/file-utils";
 import { open_in_pdf } from "./man-page";
 import * as util from "util";
 import {
@@ -12,21 +12,18 @@ import {
 } from "../config/config";
 import * as path from "path";
 import * as glob from "glob";
-import { getExtensionContext, getRecentFiles } from "../context";
+import { getExtensionContext, getProjectRoot } from "../context";
 import {
   getFileNamesFromUris,
   getUrisFromTabs,
-  getWorkspaceFolderByName,
   truncateFileNameEndings,
 } from "../utils/workspace";
 import { activateDecompTypeSearcher } from "./type-searcher/type-searcher";
+import { updateTypeCastSuggestions } from "./type-caster";
 
 const globAsync = util.promisify(glob);
 const execFileAsync = util.promisify(execFile);
 const execAsync = util.promisify(exec);
-
-// Put some of this stuff into the context
-let projectRoot: vscode.Uri | undefined = undefined;
 
 let channel: vscode.OutputChannel;
 let fsWatcher: vscode.FileSystemWatcher | undefined;
@@ -102,27 +99,19 @@ async function promptUserToSelectConfig(
 async function getDecompilerConfig(
   gameName: GameName
 ): Promise<string | undefined> {
-  if (projectRoot === undefined) {
-    projectRoot = getWorkspaceFolderByName("jak-project");
-    if (projectRoot === undefined) {
-      vscode.window.showErrorMessage(
-        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
-      );
-      return undefined;
-    }
-  }
-
   const config = getConfig();
   if (gameName == GameName.Jak1) {
     const decompConfig = config.jak1DecompConfig;
     if (
       decompConfig === undefined ||
       !existsSync(
-        vscode.Uri.joinPath(projectRoot, `decompiler/config/${decompConfig}`)
-          .fsPath
+        vscode.Uri.joinPath(
+          getProjectRoot(),
+          `decompiler/config/${decompConfig}`
+        ).fsPath
       )
     ) {
-      const config = await promptUserToSelectConfig(projectRoot);
+      const config = await promptUserToSelectConfig(getProjectRoot());
       if (config === undefined) {
         return;
       } else {
@@ -137,11 +126,13 @@ async function getDecompilerConfig(
     if (
       decompConfig === undefined ||
       !existsSync(
-        vscode.Uri.joinPath(projectRoot, `decompiler/config/${decompConfig}`)
-          .fsPath
+        vscode.Uri.joinPath(
+          getProjectRoot(),
+          `decompiler/config/${decompConfig}`
+        ).fsPath
       )
     ) {
-      const config = await promptUserToSelectConfig(projectRoot);
+      const config = await promptUserToSelectConfig(getProjectRoot());
       if (config === undefined) {
         return;
       } else {
@@ -156,16 +147,6 @@ async function getDecompilerConfig(
 }
 
 async function checkDecompilerPath(): Promise<string | undefined> {
-  if (projectRoot === undefined) {
-    projectRoot = getWorkspaceFolderByName("jak-project");
-    if (projectRoot === undefined) {
-      vscode.window.showErrorMessage(
-        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
-      );
-      return undefined;
-    }
-  }
-
   let decompilerPath = getConfig().decompilerPath;
 
   // Look for the decompiler if the path isn't set or the file is now missing
@@ -173,7 +154,10 @@ async function checkDecompilerPath(): Promise<string | undefined> {
     return decompilerPath;
   }
 
-  const potentialPath = vscode.Uri.joinPath(projectRoot, defaultDecompPath());
+  const potentialPath = vscode.Uri.joinPath(
+    getProjectRoot(),
+    defaultDecompPath()
+  );
   if (existsSync(potentialPath.fsPath)) {
     decompilerPath = potentialPath.fsPath;
   } else {
@@ -221,7 +205,7 @@ async function decompFiles(decompConfig: string, fileNames: string[]) {
       ],
       {
         encoding: "utf8",
-        cwd: projectRoot?.fsPath,
+        cwd: getProjectRoot()?.fsPath,
         timeout: 20000,
       }
     );
@@ -239,16 +223,9 @@ async function decompFiles(decompConfig: string, fileNames: string[]) {
 }
 
 async function getValidObjectNames(gameName: string) {
-  if (projectRoot === undefined) {
-    projectRoot = getWorkspaceFolderByName("jak-project");
-    if (projectRoot === undefined) {
-      return undefined;
-    }
-  }
-
   // Look for the `all_objs.json` file
   const objsPath = path.join(
-    projectRoot.fsPath,
+    getProjectRoot().fsPath,
     "goal_src",
     gameName,
     "build",
@@ -415,7 +392,14 @@ function toggleAutoDecompilation() {
     fsWatcher = vscode.workspace.createFileSystemWatcher(
       "**/decompiler/config/**/*.{jsonc,json,gc}"
     );
-    fsWatcher.onDidChange(() => decompAllActiveFiles());
+    fsWatcher.onDidChange((uri: vscode.Uri) => {
+      decompAllActiveFiles();
+      // Also update list of types for that game
+      const gameName = determineGameFromPath(uri);
+      if (gameName !== undefined) {
+        updateTypeCastSuggestions(gameName);
+      }
+    });
     fsWatcher.onDidCreate(() => decompAllActiveFiles());
     fsWatcher.onDidDelete(() => decompAllActiveFiles());
   } else {
@@ -432,16 +416,6 @@ async function updateSourceFile() {
       "No active file open, can't decompile!"
     );
     return;
-  }
-
-  if (projectRoot === undefined) {
-    projectRoot = getWorkspaceFolderByName("jak-project");
-    if (projectRoot === undefined) {
-      vscode.window.showErrorMessage(
-        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
-      );
-      return undefined;
-    }
   }
 
   let fileName = path.basename(editor.document.fileName);
@@ -468,7 +442,7 @@ async function updateSourceFile() {
     `python ./scripts/gsrc/update-from-decomp.py --game ${gameName} --file ${fileName}`,
     {
       encoding: "utf8",
-      cwd: projectRoot?.fsPath,
+      cwd: getProjectRoot()?.fsPath,
       timeout: 20000,
     }
   );
@@ -484,16 +458,6 @@ async function updateReferenceTest() {
       "No active file open, can't decompile!"
     );
     return;
-  }
-
-  if (projectRoot === undefined) {
-    projectRoot = getWorkspaceFolderByName("jak-project");
-    if (projectRoot === undefined) {
-      vscode.window.showErrorMessage(
-        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
-      );
-      return undefined;
-    }
   }
 
   // TODO - duplication with above
@@ -518,7 +482,7 @@ async function updateReferenceTest() {
     gameName = "jak2";
   }
   const folderToSearch = vscode.Uri.joinPath(
-    projectRoot,
+    getProjectRoot(),
     `goal_src/${gameName}`
   );
   const files = await globAsync(`**/${fileName}.gc`, {
@@ -530,7 +494,7 @@ async function updateReferenceTest() {
   }
 
   const refTestPath = vscode.Uri.joinPath(
-    projectRoot,
+    getProjectRoot(),
     `test/decompiler/reference/${gameName}/${files[0].replace(
       ".gc",
       "_REF.gc"

@@ -222,6 +222,14 @@
             "default": null,
             "description": "File path to the decompiler executable"
           },
+          "opengoal.typeSearcherPath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "File path to the type searcher executable"
+          },
           "opengoal.decompilerJak1Config": {
             "type": [
               "string",
