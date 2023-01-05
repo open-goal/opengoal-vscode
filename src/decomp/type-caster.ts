@@ -1,10 +1,16 @@
-import { getExtensionContext } from "../context";
+import { getExtensionContext, getProjectRoot } from "../context";
 import * as vscode from "vscode";
 import { basename, join } from "path";
-import { readFileSync, writeFileSync } from "fs";
+import { fstat, readFileSync, writeFileSync } from "fs";
 import { parse, stringify } from "comment-json";
 import { getFuncNameFromSelection } from "../languages/ir2/ir2-utils";
 import { getDecompilerConfigDirectory } from "./utils";
+import { determineGameFromPath, GameName } from "../utils/file-utils";
+import { getConfig, updateTypeSearcherPath } from "../config/config";
+import { existsSync } from "fs";
+import * as util from "util";
+import { execFile } from "child_process";
+const execFileAsync = util.promisify(execFile);
 
 enum CastKind {
   Label,
@@ -30,6 +36,81 @@ class CastContext {
   constructor(start: number, end?: number) {
     this.startOp = start;
     this.endOp = end;
+  }
+}
+
+const typeCastSuggestions = new Map<GameName, string[]>();
+const recentLabelCasts = new Map<GameName, string[]>();
+const recentTypeCasts = new Map<GameName, string[]>();
+const recentStackCasts = new Map<GameName, string[]>();
+
+function defaultTypeSearcherPath() {
+  const platform = process.platform;
+  if (platform == "win32") {
+    return "out/build/Release/bin/type_searcher.exe";
+  } else {
+    return "build/tools/type_searcher";
+  }
+}
+
+async function checkTypeSearcherPath(): Promise<string | undefined> {
+  let typeSearcherPath = getConfig().typeSearcherPath;
+
+  // Look for the decompiler if the path isn't set or the file is now missing
+  if (typeSearcherPath !== undefined && existsSync(typeSearcherPath)) {
+    return typeSearcherPath;
+  }
+
+  const potentialPath = vscode.Uri.joinPath(
+    getProjectRoot(),
+    defaultTypeSearcherPath()
+  );
+  if (existsSync(potentialPath.fsPath)) {
+    typeSearcherPath = potentialPath.fsPath;
+  } else {
+    // Ask the user to find it cause we have no idea
+    const path = await vscode.window.showOpenDialog({
+      canSelectMany: false,
+      openLabel: "Select Type Searcher",
+      title: "Provide the type searcher executable's path",
+    });
+    if (path === undefined || path.length == 0) {
+      return undefined;
+    }
+    typeSearcherPath = path[0].fsPath;
+  }
+  updateTypeSearcherPath(typeSearcherPath);
+  return typeSearcherPath;
+}
+
+export async function updateTypeCastSuggestions(gameName: GameName) {
+  const typeSearcherPath = await checkTypeSearcherPath();
+  if (!typeSearcherPath) {
+    return;
+  }
+
+  try {
+    const jsonPath = vscode.Uri.joinPath(
+      getExtensionContext().extensionUri,
+      `${gameName.toString()}-types.json`
+    ).fsPath;
+    await execFileAsync(
+      typeSearcherPath,
+      [`--game`, gameName.toString(), `--output-path`, jsonPath, `--all`],
+      {
+        encoding: "utf8",
+        cwd: getProjectRoot().fsPath,
+        timeout: 20000,
+      }
+    );
+    if (existsSync(jsonPath)) {
+      const result = readFileSync(jsonPath, { encoding: "utf-8" });
+      typeCastSuggestions.set(gameName, JSON.parse(result));
+    }
+  } catch (error: any) {
+    vscode.window.showErrorMessage(
+      "Couldn't get a list of all types to use for casting suggestions"
+    );
   }
 }
 
@@ -109,6 +190,51 @@ async function validActiveFile(editor: vscode.TextEditor): Promise<boolean> {
   return true;
 }
 
+function generateCastSelectionItems(
+  fullList: string[] | undefined,
+  recentList: string[] | undefined
+): vscode.QuickPickItem[] {
+  const items: vscode.QuickPickItem[] = [];
+  if (recentList !== undefined && recentList.length > 0) {
+    items.push({
+      label: "Recent Casts",
+      kind: vscode.QuickPickItemKind.Separator,
+    });
+    for (const name of recentList) {
+      items.push({
+        label: name,
+      });
+    }
+  }
+  if (fullList !== undefined && fullList.length > 0) {
+    items.push({
+      label: "All Types",
+      kind: vscode.QuickPickItemKind.Separator,
+    });
+    for (const name of fullList) {
+      items.push({
+        label: name,
+      });
+    }
+  }
+  return items;
+}
+
+async function initTypeCastSuggestions(gameName: GameName | undefined) {
+  if (gameName !== undefined && typeCastSuggestions.size === 0) {
+    await updateTypeCastSuggestions(gameName);
+    if (recentLabelCasts.get(gameName) === undefined) {
+      recentLabelCasts.set(gameName, []);
+    }
+    if (recentTypeCasts.get(gameName) === undefined) {
+      recentTypeCasts.set(gameName, []);
+    }
+    if (recentStackCasts.get(gameName) === undefined) {
+      recentStackCasts.set(gameName, []);
+    }
+  }
+}
+
 async function labelCastSelection() {
   const editor = vscode.window.activeTextEditor;
   if (editor === undefined || !validActiveFile(editor)) {
@@ -126,14 +252,34 @@ async function labelCastSelection() {
   }
 
   // Get what we should cast to
-  const castToType = await vscode.window.showInputBox({
-    title: "Cast to Type?",
-  });
+  const gameName = determineGameFromPath(editor.document.uri);
+  await initTypeCastSuggestions(gameName);
+  if (gameName === undefined) {
+    await vscode.window.showErrorMessage("Couldn't determine game version");
+    return;
+  }
+
+  const items = generateCastSelectionItems(
+    typeCastSuggestions.get(gameName),
+    recentLabelCasts.get(gameName)
+  );
+  let castToType;
+  if (items.length > 0) {
+    castToType = (
+      await vscode.window.showQuickPick(items, {
+        title: "Cast to Type?",
+      })
+    )?.label;
+  } else {
+    castToType = await vscode.window.showInputBox({
+      title: "Cast to Type?",
+    });
+  }
+
   if (castToType === undefined || castToType.trim() === "") {
     await vscode.window.showErrorMessage("Can't cast if no type is provided");
     return;
   }
-
   // If the label is a pointer, ask for a size
   let pointerSize = undefined;
   if (castToType.includes("pointer")) {
@@ -159,6 +305,7 @@ async function labelCastSelection() {
   lastCastKind = CastKind.Label;
   lastLabelCastType = castToType;
   lastLabelCastSize = pointerSize;
+  recentLabelCasts.get(gameName)?.unshift(castToType);
 }
 
 async function getStackOffset(line: string): Promise<number | undefined> {
@@ -217,9 +364,30 @@ async function stackCastSelection() {
   }
 
   // Get what we should cast to
-  const castToType = await vscode.window.showInputBox({
-    title: "Cast to Type?",
-  });
+  const gameName = determineGameFromPath(editor.document.uri);
+  await initTypeCastSuggestions(gameName);
+  if (gameName === undefined) {
+    await vscode.window.showErrorMessage("Couldn't determine game version");
+    return;
+  }
+
+  const items = generateCastSelectionItems(
+    typeCastSuggestions.get(gameName),
+    recentStackCasts.get(gameName)
+  );
+  let castToType;
+  if (items.length > 0) {
+    castToType = (
+      await vscode.window.showQuickPick(items, {
+        title: "Cast to Type?",
+      })
+    )?.label;
+  } else {
+    castToType = await vscode.window.showInputBox({
+      title: "Cast to Type?",
+    });
+  }
+
   if (castToType === undefined || castToType.trim() === "") {
     await vscode.window.showErrorMessage("Can't cast if no type is provided");
     return;
@@ -230,6 +398,7 @@ async function stackCastSelection() {
 
   lastCastKind = CastKind.Stack;
   lastStackCastType = castToType;
+  recentStackCasts.get(gameName)?.unshift(castToType);
 }
 
 function getRegisters(
@@ -341,9 +510,29 @@ async function typeCastSelection() {
   }
 
   // Get what we should cast to
-  const castToType = await vscode.window.showInputBox({
-    title: "Cast to Type?",
-  });
+  const gameName = determineGameFromPath(editor.document.uri);
+  await initTypeCastSuggestions(gameName);
+  if (gameName === undefined) {
+    await vscode.window.showErrorMessage("Couldn't determine game version");
+    return;
+  }
+
+  const items = generateCastSelectionItems(
+    typeCastSuggestions.get(gameName),
+    recentTypeCasts.get(gameName)
+  );
+  let castToType;
+  if (items.length > 0) {
+    castToType = (
+      await vscode.window.showQuickPick(items, {
+        title: "Cast to Type?",
+      })
+    )?.label;
+  } else {
+    castToType = await vscode.window.showInputBox({
+      title: "Cast to Type?",
+    });
+  }
   if (castToType === undefined || castToType.trim() === "") {
     await vscode.window.showErrorMessage("Can't cast if no type is provided");
     return;
@@ -361,6 +550,7 @@ async function typeCastSelection() {
   lastCastKind = CastKind.TypeCast;
   lastTypeCastRegister = registerSelection;
   lastTypeCastType = castToType;
+  recentTypeCasts.get(gameName)?.unshift(castToType);
 }
 
 // Execute the same cast as last time (same type, same register) just on a different selection
