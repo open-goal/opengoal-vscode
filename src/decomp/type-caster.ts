@@ -217,6 +217,15 @@ function generateCastSelectionItems(
       });
     }
   }
+  items.unshift(
+    {
+      label: "Custom Types",
+      kind: vscode.QuickPickItemKind.Separator,
+    },
+    {
+      label: "__custom",
+    }
+  );
   return items;
 }
 
@@ -270,6 +279,11 @@ async function labelCastSelection() {
         title: "Cast to Type?",
       })
     )?.label;
+    if (castToType === "__custom") {
+      castToType = await vscode.window.showInputBox({
+        title: "Cast to Type?",
+      });
+    }
   } else {
     castToType = await vscode.window.showInputBox({
       title: "Cast to Type?",
@@ -382,6 +396,11 @@ async function stackCastSelection() {
         title: "Cast to Type?",
       })
     )?.label;
+    if (castToType === "__custom") {
+      castToType = await vscode.window.showInputBox({
+        title: "Cast to Type?",
+      });
+    }
   } else {
     castToType = await vscode.window.showInputBox({
       title: "Cast to Type?",
@@ -528,6 +547,11 @@ async function typeCastSelection() {
         title: "Cast to Type?",
       })
     )?.label;
+    if (castToType === "__custom") {
+      castToType = await vscode.window.showInputBox({
+        title: "Cast to Type?",
+      });
+    }
   } else {
     castToType = await vscode.window.showInputBox({
       title: "Cast to Type?",
