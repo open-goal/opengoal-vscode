@@ -227,7 +227,11 @@ export function onChangeSelection(
 ) {
   const editor = event.textEditor;
 
-  if (editor.document.languageId !== "opengoal") {
+  if (
+    editor.document.languageId !== "opengoal" ||
+    editor.document.fileName.endsWith("_disasm.gc") ||
+    editor.document.fileName.endsWith("_REF.gc")
+  ) {
     return;
   }
 
@@ -279,7 +283,11 @@ export function onChangeTextDocument(event: vscode.TextDocumentChangeEvent) {
     return;
   }
 
-  if (event.document.languageId !== "opengoal") {
+  if (
+    event.document.languageId !== "opengoal" ||
+    event.document.fileName.endsWith("_disasm.gc") ||
+    event.document.fileName.endsWith("_REF.gc")
+  ) {
     return;
   }
 
