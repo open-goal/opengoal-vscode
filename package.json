@@ -41,7 +41,7 @@
   "dependencies": {
     "comment-json": "^4.2.3",
     "follow-redirects": "^1.15.2",
-    "glob": "^8.0.3",
+    "glob": "^8.1.0",
     "parinfer": "^3.13.1",
     "vscode-languageclient": "^8.0.1"
   },
