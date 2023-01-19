@@ -6,6 +6,43 @@ export interface ArgumentMeta {
   isMethod: boolean;
 }
 
+export interface ArgumentDefinition {
+  name: string;
+  type: string;
+}
+
+export function getArgumentsInSignature(
+  signature: string
+): ArgumentDefinition[] {
+  const isArgument =
+    signature.includes("defun") ||
+    signature.includes("defmethod") ||
+    signature.includes("defbehavior");
+
+  if (!isArgument) {
+    return [];
+  }
+
+  const matches = [...signature.matchAll(/(\([^\s(]*\s[^\s)]*\))/g)];
+  if (matches.length == 0) {
+    return [];
+  }
+
+  const args: ArgumentDefinition[] = [];
+  for (const match of matches) {
+    const [argName, argType] = match[1]
+      .toString()
+      .replace("(", "")
+      .replace(")", "")
+      .split(" ");
+    args.push({
+      name: argName,
+      type: argType,
+    });
+  }
+  return args;
+}
+
 // This function can only currently figure out arguments if they are on the same line as
 // a defun/defmethod/etc
 //
@@ -15,35 +52,19 @@ export function getSymbolsArgumentInfo(
   line: string,
   symbol: string
 ): ArgumentMeta | undefined {
-  const isArgument =
-    line.includes("defun") ||
-    line.includes("defmethod") ||
-    line.includes("defbehavior");
   // TODO - 'new' method handling
-  const isMethod = line.includes("defmethod"); // if it's a method, make the first arg be `obj`
   // If it's an argument, we have to figure out the index
   let argumentIndex = undefined;
-  let argumentCount = undefined;
-  if (isArgument) {
-    const matches = [...line.matchAll(/(\([^\s(]*\s[^\s)]*\))/g)];
-    if (matches.length == 0) {
-      return undefined;
-    }
-    let tempIdx = 0;
-    for (const match of matches) {
-      const [argName, argType] = match[1]
-        .toString()
-        .replace("(", "")
-        .replace(")", "")
-        .split(" ");
-      if (argName === symbol) {
-        argumentIndex = tempIdx;
-        argumentCount = matches.length;
+  const args = getArgumentsInSignature(line);
+  const argumentCount = args.length;
+  if (argumentCount > 0) {
+    for (let i = 0; i < args.length; i++) {
+      if (args[i].name === symbol) {
+        argumentIndex = i;
         break;
       }
-      tempIdx++;
     }
-    if (argumentIndex === undefined || argumentCount === undefined) {
+    if (argumentIndex === undefined) {
       return undefined;
     }
   } else {
@@ -52,7 +73,7 @@ export function getSymbolsArgumentInfo(
   return {
     index: argumentIndex,
     totalCount: argumentCount,
-    isMethod: isMethod,
+    isMethod: line.includes("defmethod"), // if it's a method, make the first arg be `obj`
   };
 }
 

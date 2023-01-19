@@ -13,12 +13,13 @@ import { activateTypeCastTools } from "./decomp/type-caster";
 import { IRInlayHintsProvider } from "./languages/ir2/ir2-inlay-hinter";
 import { OpenGOALDisasmRenameProvider } from "./languages/opengoal/disasm/opengoal-disasm-renamer";
 import { activateMiscDecompTools } from "./decomp/misc-tools";
-import { IR2RenameProvider } from "./languages/ir2/ir2-renamer";
+import { IRRenameProvider } from "./languages/ir2/ir2-renamer";
 import {
   onChangeSelection,
   onChangeTextDocument,
   registerParinferCommands,
 } from "./goal/parinfer/parinfer";
+import { IRCompletionItemProvider } from "./languages/ir2/ir2-completions";
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
@@ -75,7 +76,12 @@ export async function activate(context: vscode.ExtensionContext) {
     );
     vscode.languages.registerRenameProvider(
       { scheme: "file", language: "opengoal-ir" },
-      new IR2RenameProvider()
+      new IRRenameProvider()
+    );
+    vscode.languages.registerCompletionItemProvider(
+      { scheme: "file", language: "opengoal-ir" },
+      new IRCompletionItemProvider(),
+      "@" // NOTE - can't use `"` without overriding a default setting https://github.com/microsoft/vscode/issues/131238#issuecomment-902519923
     );
 
     // Start the LSP
