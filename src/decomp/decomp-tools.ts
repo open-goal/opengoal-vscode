@@ -36,20 +36,26 @@ const decompStatusItem = vscode.window.createStatusBarItem(
 enum DecompStatus {
   Idle,
   Running,
+  Errored,
 }
 
 function updateStatus(status: DecompStatus, metadata?: any) {
   let subText = "";
   switch (status) {
+    case DecompStatus.Errored:
+      decompStatusItem.tooltip = "Toggle Auto-Decomp";
+      decompStatusItem.command = "opengoal.decomp.toggleAutoDecompilation";
+      decompStatusItem.text = "$(testing-error-icon) Decomp Failed";
+      break;
     case DecompStatus.Idle:
-      decompStatusItem.tooltip = "Toggle Auto-Decompilation";
+      decompStatusItem.tooltip = "Toggle Auto-Decomp";
       decompStatusItem.command = "opengoal.decomp.toggleAutoDecompilation";
       if (fsWatcher === undefined) {
         decompStatusItem.text =
-          "$(extensions-sync-ignored) Auto-Decompilation Disabled";
+          "$(extensions-sync-ignored) Auto-Decomp Disabled";
       } else {
         decompStatusItem.text =
-          "$(extensions-sync-enabled) Auto-Decompilation Enabled";
+          "$(extensions-sync-enabled) Auto-Decomp Enabled";
       }
       break;
     case DecompStatus.Running:
@@ -211,15 +217,13 @@ async function decompFiles(decompConfig: string, fileNames: string[]) {
     );
     channel.append(stdout.toString());
     channel.append(stderr.toString());
+    updateStatus(DecompStatus.Idle);
   } catch (error: any) {
-    vscode.window.showErrorMessage(
-      "Decompilation Failed, see OpenGOAL Decompiler logs for details"
-    );
+    updateStatus(DecompStatus.Errored);
     channel.append(
       `DECOMP ERROR:\nSTDOUT:\n${error.stdout}\nSTDERR:\n${error.stderr}`
     );
   }
-  updateStatus(DecompStatus.Idle);
 }
 
 async function getValidObjectNames(gameName: string) {

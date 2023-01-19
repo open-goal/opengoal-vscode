@@ -100,17 +100,15 @@ export async function updateTypeCastSuggestions(gameName: GameName) {
       {
         encoding: "utf8",
         cwd: getProjectRoot().fsPath,
-        timeout: 20000,
+        timeout: 500,
       }
     );
     if (existsSync(jsonPath)) {
       const result = readFileSync(jsonPath, { encoding: "utf-8" });
       typeCastSuggestions.set(gameName, JSON.parse(result));
     }
-  } catch (error: any) {
-    vscode.window.showErrorMessage(
-      "Couldn't get a list of all types to use for casting suggestions"
-    );
+  } catch (error: unknown) {
+    /* empty */
   }
 }
 
