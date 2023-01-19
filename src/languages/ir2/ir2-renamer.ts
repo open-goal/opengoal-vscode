@@ -4,7 +4,7 @@ import { getSymbolAtPosition } from "../common/utils";
 import { getSymbolsArgumentInfo } from "../opengoal/opengoal-tools";
 import { getFuncNameFromPosition, insideGoalCodeInIR } from "./ir2-utils";
 
-export class IR2RenameProvider implements vscode.RenameProvider {
+export class IRRenameProvider implements vscode.RenameProvider {
   public async provideRenameEdits(
     document: vscode.TextDocument,
     position: vscode.Position,
