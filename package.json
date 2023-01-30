@@ -31,7 +31,7 @@
     "@types/glob": "^8.0.0",
     "@types/node": "^17.0.45",
     "@types/vscode": "^1.74.0",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.48.1",
     "eslint": "^8.32.0",
     "patch-package": "^6.5.1",
