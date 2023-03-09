@@ -230,37 +230,21 @@
             "default": null,
             "description": "File path to the type searcher executable"
           },
-          "opengoal.decompilerJak1Config": {
+          "opengoal.decompilerJak1ConfigVersion": {
             "type": [
               "string",
               "null"
             ],
-            "default": null,
-            "description": "Config to use for decompiling jak 1 related files"
+            "default": "ntsc_v1",
+            "description": "Config version to use for decompiling jak 1 related files"
           },
-          "opengoal.decompilerJak2Config": {
+          "opengoal.decompilerJak2ConfigVersion": {
             "type": [
               "string",
               "null"
             ],
-            "default": null,
-            "description": "Config to use for decompiling jak 2 related files"
-          },
-          "opengoal.decompilerJak1ConfigDirectory": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "default": null,
-            "description": "Directory containing cast files to use for decompiling jak 1 related files"
-          },
-          "opengoal.decompilerJak2ConfigDirectory": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "default": null,
-            "description": "Directory containing cast files to use for decompiling jak 2 related files"
+            "default": "ntsc_v1",
+            "description": "Config version to use for decompiling jak 2 related files"
           }
         }
       },
