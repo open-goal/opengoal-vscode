@@ -15,13 +15,13 @@ export function getConfig() {
     vuManPagePath: configOptions.get<string>("vuManPagePath"),
     decompilerPath: configOptions.get<string>("decompilerPath"),
     typeSearcherPath: configOptions.get<string>("typeSearcherPath"),
-    jak1DecompConfig: configOptions.get<string>("decompilerJak1Config"),
-    jak2DecompConfig: configOptions.get<string>("decompilerJak2Config"),
-    decompilerJak1ConfigDirectory: configOptions.get<string>(
-      "decompilerJak1ConfigDirectory"
+    jak1DecompConfigVersion: configOptions.get<string>(
+      "decompilerJak1ConfigVersion",
+      "ntsc_v1"
     ),
-    decompilerJak2ConfigDirectory: configOptions.get<string>(
-      "decompilerJak2ConfigDirectory"
+    jak2DecompConfigVersion: configOptions.get<string>(
+      "decompilerJak2ConfigVersion",
+      "ntsc_v1"
     ),
     colorsGoalGlobals: configOptions.get<string>("colors.goal.entity.global"),
     colorsGoalStorageControl: configOptions.get<string>(
@@ -81,42 +81,6 @@ export async function updateTypeSearcherPath(path: string) {
   await userConfig.update(
     "opengoal.typeSearcherPath",
     path,
-    vscode.ConfigurationTarget.Global
-  );
-}
-
-export async function updateJak1DecompConfig(config: string) {
-  const userConfig = vscode.workspace.getConfiguration();
-  await userConfig.update(
-    "opengoal.decompilerJak1Config",
-    config,
-    vscode.ConfigurationTarget.Global
-  );
-}
-
-export async function updateJak2DecompConfig(config: string) {
-  const userConfig = vscode.workspace.getConfiguration();
-  await userConfig.update(
-    "opengoal.decompilerJak2Config",
-    config,
-    vscode.ConfigurationTarget.Global
-  );
-}
-
-export async function updateJak1DecompConfigDirectory(dir: string) {
-  const userConfig = vscode.workspace.getConfiguration();
-  await userConfig.update(
-    "opengoal.decompilerJak1ConfigDirectory",
-    dir,
-    vscode.ConfigurationTarget.Global
-  );
-}
-
-export async function updateJak2DecompConfigDirectory(dir: string) {
-  const userConfig = vscode.workspace.getConfiguration();
-  await userConfig.update(
-    "opengoal.decompilerJak2ConfigDirectory",
-    dir,
     vscode.ConfigurationTarget.Global
   );
 }
