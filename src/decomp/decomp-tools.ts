@@ -11,7 +11,6 @@ import {
   updateJak2DecompConfig,
 } from "../config/config";
 import * as path from "path";
-import * as glob from "glob";
 import { getExtensionContext, getProjectRoot } from "../context";
 import {
   getFileNamesFromUris,
@@ -20,8 +19,8 @@ import {
 } from "../utils/workspace";
 import { activateDecompTypeSearcher } from "./type-searcher/type-searcher";
 import { updateTypeCastSuggestions } from "./type-caster";
+import { glob } from "glob";
 
-const globAsync = util.promisify(glob);
 const execFileAsync = util.promisify(execFile);
 const execAsync = util.promisify(exec);
 
@@ -90,7 +89,7 @@ async function promptUserToSelectConfig(
   projectRoot: vscode.Uri
 ): Promise<string | undefined> {
   // Get all `.jsonc` files in ./decompiler/config
-  const configs = await globAsync("decompiler/config/*.jsonc", {
+  const configs = await glob("decompiler/config/*.jsonc", {
     cwd: projectRoot.fsPath,
   });
   const options = [];
@@ -489,7 +488,7 @@ async function updateReferenceTest() {
     getProjectRoot(),
     `goal_src/${gameName}`
   );
-  const files = await globAsync(`**/${fileName}.gc`, {
+  const files = await glob(`**/${fileName}.gc`, {
     cwd: folderToSearch.fsPath,
   });
 
