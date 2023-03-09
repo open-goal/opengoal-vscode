@@ -43,7 +43,7 @@
     "follow-redirects": "^1.15.2",
     "glob": "^9.2.1",
     "parinfer": "^3.13.1",
-    "vscode-languageclient": "^8.0.1"
+    "vscode-languageclient": "^8.1.0"
   },
   "activationEvents": [],
   "contributes": {
