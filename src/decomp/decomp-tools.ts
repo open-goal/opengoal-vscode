@@ -4,12 +4,7 @@ import * as vscode from "vscode";
 import { determineGameFromPath, GameName } from "../utils/file-utils";
 import { open_in_pdf } from "./man-page";
 import * as util from "util";
-import {
-  getConfig,
-  updateDecompilerPath,
-  updateJak1DecompConfig,
-  updateJak2DecompConfig,
-} from "../config/config";
+import { getConfig, updateDecompilerPath } from "../config/config";
 import * as path from "path";
 import { getExtensionContext, getProjectRoot } from "../context";
 import {
@@ -85,70 +80,38 @@ function defaultDecompPath() {
   }
 }
 
-async function promptUserToSelectConfig(
-  projectRoot: vscode.Uri
-): Promise<string | undefined> {
-  // Get all `.jsonc` files in ./decompiler/config
-  const configs = await glob("decompiler/config/*.jsonc", {
-    cwd: projectRoot.fsPath,
-  });
-  const options = [];
-  for (const config of configs) {
-    options.push(path.basename(config));
+function getDecompilerConfig(gameName: GameName): string | undefined {
+  let decompConfigPath = undefined;
+  if (gameName == GameName.Jak1) {
+    decompConfigPath = vscode.Uri.joinPath(
+      getProjectRoot(),
+      `decompiler/config/jak1/jak1_config.jsonc`
+    ).fsPath;
+  } else if (gameName == GameName.Jak2) {
+    decompConfigPath = vscode.Uri.joinPath(
+      getProjectRoot(),
+      `decompiler/config/jak2/jak2_config.jsonc`
+    ).fsPath;
   }
-  return await vscode.window.showQuickPick(options, {
-    title: "Config?",
-  });
+  if (decompConfigPath === undefined || !existsSync(decompConfigPath)) {
+    return undefined;
+  } else {
+    return decompConfigPath;
+  }
 }
 
-async function getDecompilerConfig(
-  gameName: GameName
-): Promise<string | undefined> {
-  const config = getConfig();
+function getDecompilerConfigVersion(gameName: GameName): string {
+  let version = undefined;
   if (gameName == GameName.Jak1) {
-    const decompConfig = config.jak1DecompConfig;
-    if (
-      decompConfig === undefined ||
-      !existsSync(
-        vscode.Uri.joinPath(
-          getProjectRoot(),
-          `decompiler/config/${decompConfig}`
-        ).fsPath
-      )
-    ) {
-      const config = await promptUserToSelectConfig(getProjectRoot());
-      if (config === undefined) {
-        return;
-      } else {
-        updateJak1DecompConfig(config);
-        return config;
-      }
-    } else {
-      return decompConfig;
-    }
+    version = getConfig().jak1DecompConfigVersion;
   } else if (gameName == GameName.Jak2) {
-    const decompConfig = config.jak2DecompConfig;
-    if (
-      decompConfig === undefined ||
-      !existsSync(
-        vscode.Uri.joinPath(
-          getProjectRoot(),
-          `decompiler/config/${decompConfig}`
-        ).fsPath
-      )
-    ) {
-      const config = await promptUserToSelectConfig(getProjectRoot());
-      if (config === undefined) {
-        return;
-      } else {
-        updateJak2DecompConfig(config);
-        return config;
-      }
-    } else {
-      return decompConfig;
-    }
+    version = getConfig().jak2DecompConfigVersion;
   }
-  return undefined;
+  if (version === undefined) {
+    return "ntsc_v1";
+  } else {
+    return version;
+  }
 }
 
 async function checkDecompilerPath(): Promise<string | undefined> {
@@ -184,7 +147,11 @@ async function checkDecompilerPath(): Promise<string | undefined> {
   return decompilerPath;
 }
 
-async function decompFiles(decompConfig: string, fileNames: string[]) {
+async function decompFiles(
+  decompConfig: string,
+  gameName: GameName,
+  fileNames: string[]
+) {
   if (fileNames.length == 0) {
     return;
   }
@@ -196,24 +163,23 @@ async function decompFiles(decompConfig: string, fileNames: string[]) {
   const allowed_objects = fileNames.map((name) => `"${name}"`).join(",");
   updateStatus(DecompStatus.Running, {
     objectNames: fileNames,
-    decompConfig: decompConfig,
+    decompConfig: path.parse(decompConfig).name,
   });
   try {
-    const { stdout, stderr } = await execFileAsync(
-      decompilerPath,
-      [
-        `./decompiler/config/${decompConfig}`,
-        "./iso_data",
-        "./decompiler_out",
-        "--config-override",
-        `{"decompile_code": true, "levels_extract": false, "allowed_objects": [${allowed_objects}]}`,
-      ],
-      {
-        encoding: "utf8",
-        cwd: getProjectRoot()?.fsPath,
-        timeout: 20000,
-      }
-    );
+    const args = [
+      decompConfig,
+      "./iso_data",
+      "./decompiler_out",
+      "--version",
+      getDecompilerConfigVersion(gameName),
+      "--config-override",
+      `{"decompile_code": true, "levels_extract": false, "allowed_objects": [${allowed_objects}]}`,
+    ];
+    const { stdout, stderr } = await execFileAsync(decompilerPath, args, {
+      encoding: "utf8",
+      cwd: getProjectRoot()?.fsPath,
+      timeout: 20000,
+    });
     channel.append(stdout.toString());
     channel.append(stderr.toString());
     updateStatus(DecompStatus.Idle);
@@ -291,7 +257,7 @@ async function decompSpecificFile() {
   }
 
   // Determine what decomp config to use
-  const decompConfig = await getDecompilerConfig(gameName);
+  const decompConfig = getDecompilerConfig(gameName);
   if (decompConfig === undefined) {
     await vscode.window.showErrorMessage(
       `OpenGOAL - Can't decompile no ${gameName.toString} config selected`
@@ -299,7 +265,7 @@ async function decompSpecificFile() {
     return;
   }
 
-  await decompFiles(decompConfig, [fileName]);
+  await decompFiles(decompConfig, gameName, [fileName]);
 }
 
 async function decompCurrentFile() {
@@ -322,14 +288,14 @@ async function decompCurrentFile() {
   }
 
   // Determine what decomp config to use
-  const gameName = await determineGameFromPath(editor.document.uri);
+  const gameName = determineGameFromPath(editor.document.uri);
   if (gameName === undefined) {
     await vscode.window.showErrorMessage(
       "OpenGOAL - Can't decompile, couldn't determine game from file"
     );
     return;
   }
-  const decompConfig = await getDecompilerConfig(gameName);
+  const decompConfig = getDecompilerConfig(gameName);
   if (decompConfig === undefined) {
     await vscode.window.showErrorMessage(
       `OpenGOAL - Can't decompile no ${gameName.toString} config selected`
@@ -337,7 +303,7 @@ async function decompCurrentFile() {
     return;
   }
 
-  await decompFiles(decompConfig, [fileName]);
+  await decompFiles(decompConfig, gameName, [fileName]);
 }
 
 async function decompAllActiveFiles() {
@@ -351,25 +317,25 @@ async function decompAllActiveFiles() {
   );
 
   if (jak1ObjectNames.length > 0) {
-    const jak1Config = await getDecompilerConfig(GameName.Jak1);
+    const jak1Config = getDecompilerConfig(GameName.Jak1);
     if (jak1Config === undefined) {
       await vscode.window.showErrorMessage(
         "OpenGOAL - Can't decompile no Jak 1 config selected"
       );
       return;
     }
-    await decompFiles(jak1Config, jak1ObjectNames);
+    await decompFiles(jak1Config, GameName.Jak1, jak1ObjectNames);
   }
 
   if (jak2ObjectNames.length > 0) {
-    const jak2Config = await getDecompilerConfig(GameName.Jak2);
+    const jak2Config = getDecompilerConfig(GameName.Jak2);
     if (jak2Config === undefined) {
       await vscode.window.showErrorMessage(
         "OpenGOAL - Can't decompile no Jak 2 config selected"
       );
       return;
     }
-    await decompFiles(jak2Config, jak2ObjectNames);
+    await decompFiles(jak2Config, GameName.Jak2, jak2ObjectNames);
   }
 }
 

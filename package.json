@@ -5,7 +5,7 @@
   "publisher": "opengoal",
   "version": "0.13.0",
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.76.0"
   },
   "categories": [
     "Programming Languages"
@@ -30,7 +30,7 @@
     "@types/follow-redirects": "^1.14.1",
     "@types/glob": "^8.0.1",
     "@types/node": "^17.0.45",
-    "@types/vscode": "^1.74.0",
+    "@types/vscode": "^1.76.0",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "eslint": "^8.35.0",
@@ -45,33 +45,7 @@
     "parinfer": "^3.13.1",
     "vscode-languageclient": "^8.0.1"
   },
-  "activationEvents": [
-    "onLanguage:opengoal",
-    "onLanguage:opengoal-goos",
-    "onLanguage:opengoal-ir",
-    "onCommand:opengoal.switchFile",
-    "onCommand:opengoal.decomp.openManPage",
-    "onCommand:opengoal.decomp.decompileSpecificFile",
-    "onCommand:opengoal.decomp.decompileCurrentFile",
-    "onCommand:opengoal.decomp.toggleAutoDecompilation",
-    "onCommand:opengoal.decomp.updateSourceFile",
-    "onCommand:opengoal.decomp.updateReferenceTest",
-    "onCommand:opengoal.decomp.casts.repeatLast",
-    "onCommand:opengoal.decomp.casts.labelCastSelection",
-    "onCommand:opengoal.decomp.casts.stackCastSelection",
-    "onCommand:opengoal.decomp.casts.typeCastSelection",
-    "onCommand:opengoal.decomp.misc.addToOffsets",
-    "onCommand:opengoal.decomp.misc.preserveBlock",
-    "onCommand:opengoal.decomp.misc.convertHexToDec",
-    "onCommand:opengoal.decomp.misc.convertDecToHex",
-    "onCommand:opengoal.decomp.misc.generateTypeFlags",
-    "onCommand:opengoal.decomp.misc.genTypeFields",
-    "onCommand:opengoal.decomp.misc.genMethodStubs",
-    "onCommand:opengoal.decomp.typeSearcher.open",
-    "onCommand:opengoal.lsp.start",
-    "onCommand:opengoal.lsp.stop",
-    "onCommand:opengoal.lsp.restart"
-  ],
+  "activationEvents": [],
   "contributes": {
     "commands": [
       {
@@ -230,37 +204,15 @@
             "default": null,
             "description": "File path to the type searcher executable"
           },
-          "opengoal.decompilerJak1Config": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "default": null,
-            "description": "Config to use for decompiling jak 1 related files"
+          "opengoal.decompilerJak1ConfigVersion": {
+            "type": "string",
+            "default": "ntsc_v1",
+            "description": "Config version to use for decompiling jak 1 related files"
           },
-          "opengoal.decompilerJak2Config": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "default": null,
-            "description": "Config to use for decompiling jak 2 related files"
-          },
-          "opengoal.decompilerJak1ConfigDirectory": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "default": null,
-            "description": "Directory containing cast files to use for decompiling jak 1 related files"
-          },
-          "opengoal.decompilerJak2ConfigDirectory": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "default": null,
-            "description": "Directory containing cast files to use for decompiling jak 2 related files"
+          "opengoal.decompilerJak2ConfigVersion": {
+            "type": "string",
+            "default": "ntsc_v1",
+            "description": "Config version to use for decompiling jak 2 related files"
           }
         }
       },
