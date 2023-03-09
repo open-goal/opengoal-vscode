@@ -16,10 +16,12 @@ export function getConfig() {
     decompilerPath: configOptions.get<string>("decompilerPath"),
     typeSearcherPath: configOptions.get<string>("typeSearcherPath"),
     jak1DecompConfigVersion: configOptions.get<string>(
-      "decompilerJak1ConfigVersion"
+      "decompilerJak1ConfigVersion",
+      "ntsc_v1"
     ),
     jak2DecompConfigVersion: configOptions.get<string>(
-      "decompilerJak2ConfigVersion"
+      "decompilerJak2ConfigVersion",
+      "ntsc_v1"
     ),
     colorsGoalGlobals: configOptions.get<string>("colors.goal.entity.global"),
     colorsGoalStorageControl: configOptions.get<string>(

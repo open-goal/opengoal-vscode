@@ -205,18 +205,12 @@
             "description": "File path to the type searcher executable"
           },
           "opengoal.decompilerJak1ConfigVersion": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": "string",
             "default": "ntsc_v1",
             "description": "Config version to use for decompiling jak 1 related files"
           },
           "opengoal.decompilerJak2ConfigVersion": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": "string",
             "default": "ntsc_v1",
             "description": "Config version to use for decompiling jak 2 related files"
           }

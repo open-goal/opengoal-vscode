@@ -40,18 +40,6 @@ export function getCastFileData(
   return parse(readFileSync(castFilePath).toString(), undefined, true);
 }
 
-async function promptUserToSelectConfigDirectory(
-  projectRoot: vscode.Uri
-): Promise<string | undefined> {
-  // Get all `.jsonc` files in ./decompiler/config
-  const dirs = await getDirectoriesInDir(
-    vscode.Uri.joinPath(projectRoot, "decompiler/config").fsPath
-  );
-  return await vscode.window.showQuickPick(dirs, {
-    title: "Config?",
-  });
-}
-
 export function getDecompilerConfigDirectory(
   activeFile: vscode.Uri
 ): string | undefined {
@@ -68,12 +56,14 @@ export function getDecompilerConfigDirectory(
   if (gameName == GameName.Jak1) {
     decompConfigPath = vscode.Uri.joinPath(
       projectRoot,
-      `decompiler/config/jak1/`
+      `decompiler/config/jak1/`,
+      getConfig().jak1DecompConfigVersion
     ).fsPath;
   } else if (gameName == GameName.Jak2) {
     decompConfigPath = vscode.Uri.joinPath(
       projectRoot,
-      `decompiler/config/jak2/`
+      `decompiler/config/jak2/`,
+      getConfig().jak1DecompConfigVersion
     ).fsPath;
   }
   if (decompConfigPath === undefined || !existsSync(decompConfigPath)) {
