@@ -6,7 +6,6 @@ import { open_in_pdf } from "./man-page";
 import * as util from "util";
 import { getConfig, updateDecompilerPath } from "../config/config";
 import * as path from "path";
-import * as glob from "glob";
 import { getExtensionContext, getProjectRoot } from "../context";
 import {
   getFileNamesFromUris,
@@ -15,8 +14,8 @@ import {
 } from "../utils/workspace";
 import { activateDecompTypeSearcher } from "./type-searcher/type-searcher";
 import { updateTypeCastSuggestions } from "./type-caster";
+import { glob } from "glob";
 
-const globAsync = util.promisify(glob);
 const execFileAsync = util.promisify(execFile);
 const execAsync = util.promisify(exec);
 
@@ -455,7 +454,7 @@ async function updateReferenceTest() {
     getProjectRoot(),
     `goal_src/${gameName}`
   );
-  const files = await globAsync(`**/${fileName}.gc`, {
+  const files = await glob(`**/${fileName}.gc`, {
     cwd: folderToSearch.fsPath,
   });
 
