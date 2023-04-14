@@ -80,6 +80,13 @@ export async function updateVarCasts(
   currSymbol: string,
   newName: string
 ) {
+  // If the user provides a name with a space and an extra word, interpret that as the variable type
+  let varType = undefined;
+  if (newName.split(" ").length == 2) {
+    varType = newName.split(" ")[1];
+    newName = newName.split(" ")[0];
+  }
+
   // Update the var-names file
   const projectRoot = getWorkspaceFolderByName("jak-project");
   if (projectRoot === undefined) {
@@ -113,13 +120,21 @@ export async function updateVarCasts(
       }
 
       // We assume that all slots are filled up already, as this is required
-      varNameData[funcName].args[argMeta.index] = newName;
+      if (varType !== undefined) {
+        varNameData[funcName].args[argMeta.index] = [newName, varType];
+      } else {
+        varNameData[funcName].args[argMeta.index] = newName;
+      }
     } else {
       // Otherwise, we initialize it properly
       varNameData[funcName].args = [];
       for (let i = 0; i < argMeta.totalCount; i++) {
         if (i == argMeta.index) {
-          varNameData[funcName].args[i] = newName;
+          if (varType !== undefined) {
+            varNameData[funcName].args[i] = [newName, varType];
+          } else {
+            varNameData[funcName].args[i] = newName;
+          }
         } else {
           if (argMeta.isMethod && i == 0) {
             varNameData[funcName].args[i] = "obj";
@@ -134,7 +149,11 @@ export async function updateVarCasts(
     if ("vars" in varNameData[funcName]) {
       // Check to see if the name has already been used, the decompiler does not support this
       for (const [key, value] of Object.entries(varNameData[funcName].vars)) {
-        if (value === newName) {
+        if (
+          (Array.isArray(value) && value.length == 2 && value[0] === newName) ||
+          ((typeof value === "string" || value instanceof String) &&
+            value === newName)
+        ) {
           vscode.window.showErrorMessage(
             "OpenGOAL - Cannot cast different variables to the same name, unsupported!"
           );
@@ -145,20 +164,38 @@ export async function updateVarCasts(
       // Check to see if the current symbol has already been renamed
       let internalVar = undefined;
       for (const [key, value] of Object.entries(varNameData[funcName].vars)) {
-        if (value === currSymbol) {
+        if (
+          (Array.isArray(value) &&
+            value.length == 2 &&
+            value[0] === currSymbol) ||
+          ((typeof value === "string" || value instanceof String) &&
+            value === currSymbol)
+        ) {
           internalVar = key;
           break;
         }
       }
 
       if (internalVar !== undefined) {
-        varNameData[funcName].vars[internalVar] = newName;
+        if (varType !== undefined) {
+          varNameData[funcName].vars[internalVar] = [newName, varType];
+        } else {
+          varNameData[funcName].vars[internalVar] = newName;
+        }
       } else {
-        varNameData[funcName].vars[currSymbol] = newName;
+        if (varType !== undefined) {
+          varNameData[funcName].vars[currSymbol] = [newName, varType];
+        } else {
+          varNameData[funcName].vars[currSymbol] = newName;
+        }
       }
     } else {
       varNameData[funcName]["vars"] = {};
-      varNameData[funcName]["vars"][currSymbol] = newName;
+      if (varType !== undefined) {
+        varNameData[funcName]["vars"][currSymbol] = [newName, varType];
+      } else {
+        varNameData[funcName]["vars"][currSymbol] = newName;
+      }
     }
   }
 
