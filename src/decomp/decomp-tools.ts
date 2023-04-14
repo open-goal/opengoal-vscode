@@ -307,14 +307,28 @@ async function decompCurrentFile() {
 }
 
 async function decompAllActiveFiles() {
-  const jak1ObjectNames = truncateFileNameEndings(
+  let jak1ObjectNames = truncateFileNameEndings(
     getFileNamesFromUris(getUrisFromTabs(/.*jak1\/.*_ir2\.asm/)),
     "_ir2.asm"
   );
-  const jak2ObjectNames = truncateFileNameEndings(
+  jak1ObjectNames = jak1ObjectNames.concat(
+    truncateFileNameEndings(
+      getFileNamesFromUris(getUrisFromTabs(/.*jak1\/.*_disasm\.gc/)),
+      "_disasm.gc"
+    )
+  );
+  jak1ObjectNames = [...new Set(jak1ObjectNames)];
+  let jak2ObjectNames = truncateFileNameEndings(
     getFileNamesFromUris(getUrisFromTabs(/.*jak2\/.*_ir2\.asm/)),
     "_ir2.asm"
   );
+  jak2ObjectNames = jak2ObjectNames.concat(
+    truncateFileNameEndings(
+      getFileNamesFromUris(getUrisFromTabs(/.*jak2\/.*_disasm\.gc/)),
+      "_disasm.gc"
+    )
+  );
+  jak2ObjectNames = [...new Set(jak2ObjectNames)];
 
   if (jak1ObjectNames.length > 0) {
     const jak1Config = getDecompilerConfig(GameName.Jak1);
