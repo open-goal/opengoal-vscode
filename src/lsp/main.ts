@@ -1,64 +1,97 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import {
+  BaseLanguageClient,
+  ClientCapabilities,
+  FeatureState,
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
+  StaticFeature,
   TransportKind,
+  WorkDoneProgress,
+  WorkDoneProgressCreateRequest,
 } from "vscode-languageclient/node";
 import { getConfig } from "../config/config";
 import { downloadLsp } from "./download";
 import { getLatestVersion, getLspPath, getVersionFromMetaFile } from "./util";
+import * as fs from "fs";
+import { disposeAll } from "../vendor/vscode-pdfviewer/disposable";
 
 let extensionContext: vscode.ExtensionContext;
 let opengoalLspPath: string | undefined;
 let activeClient: LanguageClient | undefined;
 
-const lspStatusItem = vscode.window.createStatusBarItem(
-  vscode.StatusBarAlignment.Left,
-  0
-);
-
-export type LspStatus =
+type LspStatus =
   | "stopped"
   | "starting"
   | "started"
   | "downloading"
-  | "error";
-export let lspStatus: LspStatus = "stopped";
+  | "error"
+  | "serverProgressBegin"
+  | "serverProgressEnd";
 
-function updateStatus(status: LspStatus, extraInfo?: string) {
-  lspStatus = status;
-  switch (status) {
-    case "stopped":
-      lspStatusItem.text = "$(circle-outline) OpenGOAL LSP Stopped";
-      lspStatusItem.tooltip = "Launch LSP";
-      lspStatusItem.command = "opengoal.lsp.start";
-      break;
-    case "starting":
-      lspStatusItem.text = "$(loading~spin) OpenGOAL LSP Starting";
-      lspStatusItem.tooltip = "LSP Starting";
-      lspStatusItem.command = undefined;
-      break;
-    case "started":
-      lspStatusItem.text = "$(circle-filled) OpenGOAL LSP Ready";
-      lspStatusItem.tooltip = `LSP Active - ${extraInfo}`;
-      lspStatusItem.command = "opengoal.lsp.showLspStartedMenu";
-      break;
-    case "downloading":
-      lspStatusItem.text = `$(sync~spin) OpenGOAL LSP Downloading - ${extraInfo}`;
-      lspStatusItem.tooltip = `Downloading version - ${extraInfo}`;
-      lspStatusItem.command = undefined;
-      break;
-    case "error":
-      lspStatusItem.text = "$(error) OpenGOAL LSP Error";
-      lspStatusItem.tooltip = "LSP not running due to an error";
-      lspStatusItem.command = undefined;
-      break;
-    default:
-      break;
+// TODO - rust analyzer's context menu on hover is nice
+class LSPStatusItem {
+  private currentStatus: LspStatus = "stopped";
+
+  constructor(private readonly statusItem: vscode.StatusBarItem) {}
+
+  public updateStatus(status: LspStatus, extraInfo?: string) {
+    this.currentStatus = status;
+    switch (this.currentStatus) {
+      case "stopped":
+        this.statusItem.text = "$(circle-outline) OpenGOAL LSP Stopped";
+        this.statusItem.tooltip = "Launch LSP";
+        this.statusItem.command = "opengoal.lsp.start";
+        break;
+      case "starting":
+        this.statusItem.text = "$(loading~spin) OpenGOAL LSP Starting";
+        this.statusItem.tooltip = "LSP Starting";
+        this.statusItem.command = undefined;
+        break;
+      case "started":
+        this.statusItem.text = "$(circle-filled) OpenGOAL LSP Ready";
+        this.statusItem.tooltip = `LSP Active - ${extraInfo}`;
+        this.statusItem.command = "opengoal.lsp.showLspStartedMenu";
+        break;
+      case "downloading":
+        this.statusItem.text = `$(sync~spin) OpenGOAL LSP Downloading - ${extraInfo}`;
+        this.statusItem.tooltip = `Downloading version - ${extraInfo}`;
+        this.statusItem.command = undefined;
+        break;
+      case "error":
+        this.statusItem.text = "$(error) OpenGOAL LSP Error";
+        this.statusItem.tooltip = "LSP not running due to an error";
+        this.statusItem.command = undefined;
+        break;
+      case "serverProgressBegin":
+        this.statusItem.text = `$(loading~spin) ${extraInfo}`;
+        this.statusItem.tooltip = extraInfo;
+        this.statusItem.command = "opengoal.lsp.showLspStartedMenu";
+        break;
+      case "serverProgressEnd":
+        this.statusItem.text = `$(circle-filled) ${extraInfo}`;
+        this.statusItem.tooltip = extraInfo;
+        this.statusItem.command = "opengoal.lsp.showLspStartedMenu";
+        break;
+      default:
+        break;
+    }
+  }
+
+  public hide() {
+    this.statusItem.hide();
+  }
+
+  public show() {
+    this.statusItem.show();
   }
 }
+
+const statusItem = new LSPStatusItem(
+  vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0)
+);
 
 async function ensureServerDownloaded(): Promise<string | undefined> {
   const installedVersion = getVersionFromMetaFile(
@@ -94,15 +127,15 @@ async function ensureServerDownloaded(): Promise<string | undefined> {
   }
 
   // Install the LSP and update the version metadata file
-  updateStatus("downloading", versionToDownload);
+  statusItem.updateStatus("downloading", versionToDownload);
   const newLspPath = await downloadLsp(
     extensionContext.extensionPath,
     versionToDownload
   );
   if (newLspPath === undefined) {
-    updateStatus("error");
+    statusItem.updateStatus("error");
   } else {
-    updateStatus("stopped");
+    statusItem.updateStatus("stopped");
   }
   return newLspPath;
 }
@@ -113,7 +146,13 @@ async function maybeDownloadLspServer(): Promise<void> {
     userConfiguredOpengoalLspPath !== "" &&
     userConfiguredOpengoalLspPath !== undefined
   ) {
-    opengoalLspPath = userConfiguredOpengoalLspPath;
+    // Copy the binary to the extension directory so it doesn't block future compilations
+    const lspPath = path.join(
+      extensionContext.extensionPath,
+      `opengoal-lsp-local.bin`
+    );
+    fs.copyFileSync(userConfiguredOpengoalLspPath, lspPath);
+    opengoalLspPath = lspPath;
   } else {
     opengoalLspPath = await ensureServerDownloaded();
   }
@@ -146,6 +185,7 @@ function createClient(lspPath: string): LanguageClient {
     ],
     synchronize: {
       fileEvents: [
+        vscode.workspace.createFileSystemWatcher("**/*.gc"),
         vscode.workspace.createFileSystemWatcher("**/*_ir2.asm"),
         vscode.workspace.createFileSystemWatcher("**/all-types.gc"),
       ],
@@ -167,7 +207,7 @@ function createClient(lspPath: string): LanguageClient {
 }
 
 async function stopClient() {
-  updateStatus("stopped");
+  statusItem.updateStatus("stopped");
   if (activeClient !== undefined) {
     console.log("Stopping opengoal-lsp");
     return await activeClient
@@ -181,29 +221,69 @@ async function stopClient() {
   }
 }
 
+class StatusBarFeature implements StaticFeature {
+  private requestHandlers: vscode.Disposable[] = [];
+  public fillClientCapabilities(capabilities: ClientCapabilities): void {
+    if (!capabilities.window) {
+      capabilities.window = {};
+    }
+    capabilities.window.workDoneProgress = true;
+  }
+
+  constructor(private readonly client: BaseLanguageClient) {}
+
+  public getState(): FeatureState {
+    return { kind: "static" };
+  }
+
+  public dispose(): void {
+    // nothing to dispose here
+  }
+
+  public initialize(): void {
+    this.requestHandlers.push(
+      this.client.onRequest(WorkDoneProgressCreateRequest.type, ({ token }) => {
+        this.client.onProgress(WorkDoneProgress.type, token, (progress) => {
+          if (progress.kind === "begin") {
+            statusItem.updateStatus("serverProgressBegin", progress.title);
+          }
+          if (progress.kind === "report") {
+            // do nothing right now, goalc provides no feedback on it's status
+          }
+          if (progress.kind === "end") {
+            statusItem.updateStatus("serverProgressEnd", progress.message);
+            disposeAll(this.requestHandlers);
+          }
+        });
+      })
+    );
+  }
+}
+
 async function startClient(): Promise<void> {
   if (opengoalLspPath === undefined) {
     return;
   }
   const client = createClient(opengoalLspPath);
+  client.registerFeature(new StatusBarFeature(client));
   console.log("Starting opengoal-lsp at", opengoalLspPath);
 
   // TODO - some form of startup test would be nice
   try {
-    updateStatus("starting");
+    statusItem.updateStatus("starting");
     await client.start();
     activeClient = client;
-    updateStatus("started", path.basename(opengoalLspPath));
+    statusItem.updateStatus("started", path.basename(opengoalLspPath));
   } catch (error) {
     console.error("opengoal-lsp:", error);
-    updateStatus("error");
-    lspStatusItem.hide();
+    statusItem.updateStatus("error");
+    statusItem.hide();
     await stopClient();
   }
 }
 
 export async function startClientCommand() {
-  lspStatusItem.show();
+  statusItem.show();
   await maybeDownloadLspServer();
   if (opengoalLspPath !== undefined) {
     await startClient();
@@ -211,7 +291,10 @@ export async function startClientCommand() {
 }
 
 async function restartClient() {
+  console.log("Stopping opengoal-lsp - restart");
   await stopClient();
+  await new Promise((f) => setTimeout(f, 2000));
+  console.log("Starting opengoal-lsp - restart");
   await startClientCommand();
 }
 
@@ -276,8 +359,8 @@ export async function activate(
   registerLifeCycleCommands(context);
   // TODO - add info and open log file options
   // registerDiagnosticsCommands(context);
-  updateStatus("stopped");
-  lspStatusItem.show();
+  statusItem.updateStatus("stopped");
+  statusItem.show();
   const config = getConfig();
   if (config.launchLspOnStartup) {
     await startClientCommand();
