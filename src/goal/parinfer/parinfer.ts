@@ -344,7 +344,7 @@ export function registerParinferCommands(
     (getConfig().opengoalParinferMode as ParinferMode) ?? ParinferMode.DISABLED
   );
   updateStatus();
-  parinferStatusItem.show();
+  parinferStatusItem.hide(); // TODO - consolidate menu https://github.com/rust-lang/rust-analyzer/blob/9c03aa1ac2e67051db83a85baf3cfee902e4dd84/editors/code/src/ctx.ts#L406
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.parinfer.changeMode",
