@@ -20,6 +20,10 @@ import {
   registerParinferCommands,
 } from "./goal/parinfer/parinfer";
 import { IRCompletionItemProvider } from "./languages/ir2/ir2-completions";
+import {
+  nreplOnFileSaveHandler,
+  registerNReplCommands,
+} from "./tools/opengoal/nrepl/opengoal-nrepl";
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
@@ -91,6 +95,10 @@ export async function activate(context: vscode.ExtensionContext) {
     registerParinferCommands(context);
     vscode.workspace.onDidChangeTextDocument(onChangeTextDocument);
     vscode.window.onDidChangeTextEditorSelection(onChangeSelection);
+
+    // nREPL
+    registerNReplCommands(context);
+    vscode.workspace.onDidSaveTextDocument(nreplOnFileSaveHandler);
   } catch (err) {
     vscode.window.showErrorMessage(
       "Failed to activate OpenGOAL extension, see logs for details"

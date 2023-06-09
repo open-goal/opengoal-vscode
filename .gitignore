@@ -6,3 +6,6 @@ out/
 *.bin
 lsp-metadata.json
 *-types.json
+.yarn/*
+!.yarn/patches
+.pnp.*

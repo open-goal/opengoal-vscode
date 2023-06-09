@@ -1,7 +1,7 @@
-diff --git a/node_modules/vscode-jsonrpc/lib/common/messageReader.js b/node_modules/vscode-jsonrpc/lib/common/messageReader.js
-index 99e3dea..c8fc01c 100644
---- a/node_modules/vscode-jsonrpc/lib/common/messageReader.js
-+++ b/node_modules/vscode-jsonrpc/lib/common/messageReader.js
+diff --git a/lib/common/messageReader.js b/lib/common/messageReader.js
+index 99e3dea72d23baacef1a4ced34feedcc6b0cc9f2..c8fc01ca1cfe40f5af0a94eb649ee888bc10bee6 100644
+--- a/lib/common/messageReader.js
++++ b/lib/common/messageReader.js
 @@ -136,6 +136,9 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
                  }
                  const contentLength = headers.get('content-length');

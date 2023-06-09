@@ -5,6 +5,8 @@ export function getConfig() {
 
   return {
     opengoalParinferMode: configOptions.get<string>("parinferMode"),
+    autoReplJackIn: configOptions.get<boolean>("replAutoJackIn"),
+    reloadFileOnSave: configOptions.get<boolean>("reloadFileOnSave"),
     launchLspOnStartup: configOptions.get<boolean>("launchLspOnStartup"),
     opengoalLspVersion: configOptions.get<string>("opengoalLspVersion"),
     opengoalLspPath: configOptions.get<string>("opengoalLspPath"),

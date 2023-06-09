@@ -23,8 +23,7 @@
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p ./",
     "format": "npx prettier --write .",
-    "format:check": "npx prettier --check .",
-    "postinstall": "patch-package"
+    "format:check": "npx prettier --check ."
   },
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
@@ -33,16 +32,16 @@
     "@types/vscode": "^1.78.0",
     "@typescript-eslint/eslint-plugin": "^5.59.7",
     "@typescript-eslint/parser": "^5.59.8",
+    "@vscode/vsce": "^2.15.0",
     "eslint": "^8.41.0",
-    "patch-package": "^7.0.0",
-    "typescript": "^5.0.4",
-    "vsce": "^2.15.0"
+    "typescript": "^5.0.4"
   },
   "dependencies": {
     "comment-json": "^4.2.3",
     "follow-redirects": "^1.15.2",
     "glob": "^10.0.0",
     "parinfer": "^3.13.1",
+    "promise-socket": "^7.0.0",
     "vscode-languageclient": "^8.1.0"
   },
   "activationEvents": [],
@@ -143,6 +142,14 @@
       {
         "command": "opengoal.lsp.restart",
         "title": "OpenGOAL - LSP - Restart"
+      },
+      {
+        "command": "opengoal.nrepl.jackin",
+        "title": "OpenGOAL - nREPL - Jack-In"
+      },
+      {
+        "command": "opengoal.nrepl.unjack",
+        "title": "OpenGOAL - nREPL - Un-jack"
       }
     ],
     "configuration": [
@@ -165,6 +172,22 @@
               "Parinfer will handle the indentation, you handle the parens",
               "Parinfer will handle the parens, you handle the indentation"
             ]
+          }
+        }
+      },
+      {
+        "id": "opengoal-repl",
+        "title": "REPL",
+        "properties": {
+          "opengoal.replAutoJackIn": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to automatically attempt to jack into a REPL when performing an action that requires it"
+          },
+          "opengoal.reloadFileOnSave": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to automatically (ml \"file-name\") when saving a `.gc` file"
           }
         }
       },
@@ -456,5 +479,8 @@
         "path": "./snippets/opengoal.json"
       }
     ]
+  },
+  "resolutions": {
+    "vscode-jsonrpc@8.1.0": "patch:vscode-jsonrpc@npm%3A8.1.0#./.yarn/patches/vscode-jsonrpc-npm-8.1.0-557f20ee72.patch"
   }
 }
