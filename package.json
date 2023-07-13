@@ -482,5 +482,6 @@
   },
   "resolutions": {
     "vscode-jsonrpc@8.1.0": "patch:vscode-jsonrpc@npm%3A8.1.0#./.yarn/patches/vscode-jsonrpc-npm-8.1.0-557f20ee72.patch"
-  }
+  },
+  "packageManager": "yarn@3.6.1"
 }
