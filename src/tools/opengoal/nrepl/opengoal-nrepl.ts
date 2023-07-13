@@ -9,7 +9,7 @@ let socket: PromiseSocket<Socket> | undefined = undefined;
 
 const nreplStatusItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
-  0
+  0,
 );
 
 function updateStatus() {
@@ -95,7 +95,7 @@ export async function reloadFile(fileName: string) {
 export function registerNReplCommands(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand("opengoal.nrepl.jackin", jackIn),
-    vscode.commands.registerCommand("opengoal.nrepl.unjack", unJack)
+    vscode.commands.registerCommand("opengoal.nrepl.unjack", unJack),
   );
   updateStatus();
   nreplStatusItem.show();

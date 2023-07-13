@@ -12,7 +12,7 @@ export interface ArgumentDefinition {
 }
 
 export function getArgumentsInSignature(
-  signature: string
+  signature: string,
 ): ArgumentDefinition[] {
   const isArgument =
     signature.includes("defun") ||
@@ -50,7 +50,7 @@ export function getArgumentsInSignature(
 // TODO - likely doesn't work on states
 export function getSymbolsArgumentInfo(
   line: string,
-  symbol: string
+  symbol: string,
 ): ArgumentMeta | undefined {
   // TODO - 'new' method handling
   // If it's an argument, we have to figure out the index
@@ -80,7 +80,7 @@ export function getSymbolsArgumentInfo(
 // Determines the name of the current function/method that we are in
 export function determineCurrentFunctionName(
   document: vscode.TextDocument,
-  position: vscode.Position
+  position: vscode.Position,
 ): string | undefined {
   for (let i = position.line; i > 0; i--) {
     const currLine = document.lineAt(i).text;

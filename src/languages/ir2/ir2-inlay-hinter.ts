@@ -62,7 +62,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
   public async provideInlayHints(
     document: vscode.TextDocument,
     range: vscode.Range,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): Promise<vscode.InlayHint[] | undefined> {
     // Check if the file has already been computed in the cache
     // We store the entire files hints in the cache and just return the ones that the range wants here
@@ -97,7 +97,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
 
   private async getAllPotentialStackValues(
     stackCastData: any,
-    stackOffset: number
+    stackOffset: number,
   ): Promise<string[]> {
     // Consistently sort the values
     const values = [];
@@ -112,7 +112,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
   private async generateStackCastHints(
     stackCastData: any,
     lineNumber: number,
-    line: string
+    line: string,
   ): Promise<vscode.InlayHint[]> {
     const hints = [];
     // If the line has an op number, we will care about it
@@ -133,7 +133,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
       ].map((a) => a.index);
       const hintLabel = await this.getAllPotentialStackValues(
         stackCastData,
-        stackOffset
+        stackOffset,
       );
       for (const index of indexes) {
         if (index === undefined) {
@@ -141,7 +141,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
         }
         const newHint = new vscode.InlayHint(
           new vscode.Position(lineNumber, index + `sp, ${stackOffset}`.length),
-          `: ${hintLabel.join(" | ")}`
+          `: ${hintLabel.join(" | ")}`,
         );
         newHint.paddingLeft = true;
         newHint.kind = vscode.InlayHintKind.Type;
@@ -155,7 +155,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
 
   private async getAllPotentialLabelValues(
     labelCastData: any,
-    labelRef: string
+    labelRef: string,
   ): Promise<string[]> {
     // Consistently sort the values
     const values = [];
@@ -174,7 +174,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
   private async generateLabelCastHints(
     labelCastData: any,
     lineNumber: number,
-    line: string
+    line: string,
   ): Promise<vscode.InlayHint[]> {
     const hints = [];
     // If the line has an op number, we will care about it
@@ -191,11 +191,11 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
         continue;
       }
       const indexes = [...line.matchAll(new RegExp(labelRef, "gi"))].map(
-        (a) => a.index
+        (a) => a.index,
       );
       const hintLabel = await this.getAllPotentialLabelValues(
         labelCastData,
-        labelRef
+        labelRef,
       );
       for (const index of indexes) {
         if (index === undefined) {
@@ -203,7 +203,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
         }
         const newHint = new vscode.InlayHint(
           new vscode.Position(lineNumber, index + `L${labelRef}`.length),
-          `: ${hintLabel.join(" | ")}`
+          `: ${hintLabel.join(" | ")}`,
         );
         newHint.paddingLeft = true;
         newHint.kind = vscode.InlayHintKind.Type;
@@ -218,7 +218,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
   private async getAllPotentialTypeValues(
     typeCastData: any,
     opNumber: number,
-    register: string
+    register: string,
   ): Promise<string[]> {
     // Consistently sort the values
     const values = [];
@@ -241,7 +241,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
   private async generateTypeCastHints(
     typeCastData: any,
     lineNumber: number,
-    line: string
+    line: string,
   ): Promise<vscode.InlayHint[]> {
     const hints = [];
     // If the line has an op number, we will care about it
@@ -268,12 +268,12 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
           continue;
         }
         const indexes = [...line.matchAll(new RegExp(register, "gi"))].map(
-          (a) => a.index
+          (a) => a.index,
         );
         const hintLabel = await this.getAllPotentialTypeValues(
           typeCastData,
           opNumber,
-          register
+          register,
         );
         for (const index of indexes) {
           if (index === undefined) {
@@ -281,7 +281,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
           }
           const newHint = new vscode.InlayHint(
             new vscode.Position(lineNumber, index + register.length),
-            `: ${hintLabel.join(" | ")}`
+            `: ${hintLabel.join(" | ")}`,
           );
           newHint.paddingLeft = true;
           newHint.kind = vscode.InlayHintKind.Type;
@@ -295,12 +295,12 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
   }
 
   private async computeHintsForDocument(
-    document: vscode.TextDocument
+    document: vscode.TextDocument,
   ): Promise<vscode.InlayHint[] | undefined> {
     const projectRoot = getWorkspaceFolderByName("jak-project");
     if (projectRoot === undefined) {
       vscode.window.showErrorMessage(
-        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+        "OpenGOAL - Unable to locate 'jak-project' workspace folder",
       );
       return undefined;
     }
@@ -308,19 +308,19 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
     const labelCastData = getCastFileData(
       projectRoot,
       document,
-      "label_types.jsonc"
+      "label_types.jsonc",
     );
 
     const stackCastData = getCastFileData(
       projectRoot,
       document,
-      "stack_structures.jsonc"
+      "stack_structures.jsonc",
     );
 
     const typeCastData = getCastFileData(
       projectRoot,
       document,
-      "type_casts.jsonc"
+      "type_casts.jsonc",
     );
 
     let funcName = undefined;
@@ -331,7 +331,7 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
       // Label casts are file-level, so the func name doesn't matter
       if (labelCastData !== undefined && fileName in labelCastData) {
         hints = hints.concat(
-          await this.generateLabelCastHints(labelCastData[fileName], i, line)
+          await this.generateLabelCastHints(labelCastData[fileName], i, line),
         );
       }
 
@@ -348,12 +348,12 @@ export class IRInlayHintsProvider implements vscode.InlayHintsProvider {
       // Collect any potential hints for this line
       if (typeCastData !== undefined && funcName in typeCastData) {
         hints = hints.concat(
-          await this.generateTypeCastHints(typeCastData[funcName], i, line)
+          await this.generateTypeCastHints(typeCastData[funcName], i, line),
         );
       }
       if (stackCastData !== undefined && funcName in stackCastData) {
         hints = hints.concat(
-          await this.generateStackCastHints(stackCastData[funcName], i, line)
+          await this.generateStackCastHints(stackCastData[funcName], i, line),
         );
       }
     }

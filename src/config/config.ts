@@ -19,15 +19,15 @@ export function getConfig() {
     typeSearcherPath: configOptions.get<string>("typeSearcherPath"),
     jak1DecompConfigVersion: configOptions.get<string>(
       "decompilerJak1ConfigVersion",
-      "ntsc_v1"
+      "ntsc_v1",
     ),
     jak2DecompConfigVersion: configOptions.get<string>(
       "decompilerJak2ConfigVersion",
-      "ntsc_v1"
+      "ntsc_v1",
     ),
     colorsGoalGlobals: configOptions.get<string>("colors.goal.entity.global"),
     colorsGoalStorageControl: configOptions.get<string>(
-      "colors.goal.storage.control"
+      "colors.goal.storage.control",
     ),
     colorsGoalSymbols: configOptions.get<string>("colors.goal.symbol"),
     colorsIRTypeAnalysis: configOptions.get<string>("colors.ir.typeanalysis"),
@@ -56,7 +56,7 @@ export async function updateEeManPagePath(path: string) {
   await userConfig.update(
     "opengoal.eeManPagePath",
     path,
-    vscode.ConfigurationTarget.Global
+    vscode.ConfigurationTarget.Global,
   );
 }
 
@@ -65,7 +65,7 @@ export async function updateVuManPagePath(path: string) {
   await userConfig.update(
     "opengoal.vuManPagePath",
     path,
-    vscode.ConfigurationTarget.Global
+    vscode.ConfigurationTarget.Global,
   );
 }
 
@@ -74,7 +74,7 @@ export async function updateDecompilerPath(path: string) {
   await userConfig.update(
     "opengoal.decompilerPath",
     path,
-    vscode.ConfigurationTarget.Global
+    vscode.ConfigurationTarget.Global,
   );
 }
 
@@ -83,7 +83,7 @@ export async function updateTypeSearcherPath(path: string) {
   await userConfig.update(
     "opengoal.typeSearcherPath",
     path,
-    vscode.ConfigurationTarget.Global
+    vscode.ConfigurationTarget.Global,
   );
 }
 
@@ -92,6 +92,6 @@ export async function updateOpengoalParinferMode(mode: string) {
   await userConfig.update(
     "opengoal.parinferMode",
     mode,
-    vscode.ConfigurationTarget.Global
+    vscode.ConfigurationTarget.Global,
   );
 }

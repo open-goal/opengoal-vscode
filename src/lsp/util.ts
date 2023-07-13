@@ -13,7 +13,7 @@ const versionFileName = "lsp-metadata.json";
 
 export function getLspReleaseAssetName(
   version: string,
-  platform: string = process.platform
+  platform: string = process.platform,
 ): string | undefined {
   if (!(platform in artifactNameTemplates)) {
     console.log(`Unsupported platform '${platform}'`);
@@ -31,7 +31,7 @@ export function getLspReleaseAssetName(
 export async function getLatestVersion(): Promise<string> {
   try {
     const releasesJSON = await fetchFromUrl(
-      "https://api.github.com/repos/open-goal/jak-project/releases"
+      "https://api.github.com/repos/open-goal/jak-project/releases",
     );
     const releases = JSON.parse(releasesJSON);
     return releases[0].tag_name;
@@ -42,7 +42,7 @@ export async function getLatestVersion(): Promise<string> {
 
 export function getLspPath(
   extensionPath: string,
-  version: string
+  version: string,
 ): string | undefined {
   const lspName = getLspReleaseAssetName(version);
   if (lspName === undefined) {
@@ -73,7 +73,7 @@ export function writeLspMetadata(extensionPath: string, version: string): void {
       filePath,
       JSON.stringify({
         version: version,
-      })
+      }),
     );
   } catch (e: any) {
     console.log("Could not write lsp metadata file.", e.message);

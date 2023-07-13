@@ -13,7 +13,7 @@ export class RecentFiles {
         if (editor?.document != undefined) {
           this.addFile(editor?.document.fileName);
         }
-      })
+      }),
     );
   }
 

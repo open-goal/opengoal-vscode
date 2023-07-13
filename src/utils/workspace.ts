@@ -24,7 +24,7 @@ export function getFileNamesFromUris(uris: vscode.Uri[]): string[] {
 
 export function truncateFileNameEndings(
   names: string[],
-  toRemove: string
+  toRemove: string,
 ): string[] {
   return names.map((name) => name.split(toRemove)[0]);
 }

@@ -85,21 +85,21 @@ export async function open_in_pdf(mnemonic: string) {
   // Finally, open the PDF
   if (selected_option.type == "ee") {
     const path = vscode.Uri.parse(
-      `${config.eeManPagePath}#page=${selected_option.page}`
+      `${config.eeManPagePath}#page=${selected_option.page}`,
     );
     vscode.commands.executeCommand(
       "vscode.openWith",
       path,
-      "pdf.opengoal.manpage"
+      "pdf.opengoal.manpage",
     );
   } else if (selected_option.type == "vu") {
     const path = vscode.Uri.parse(
-      `${config.vuManPagePath}#page=${selected_option.page}`
+      `${config.vuManPagePath}#page=${selected_option.page}`,
     );
     vscode.commands.executeCommand(
       "vscode.openWith",
       path,
-      "pdf.opengoal.manpage"
+      "pdf.opengoal.manpage",
     );
   }
 }

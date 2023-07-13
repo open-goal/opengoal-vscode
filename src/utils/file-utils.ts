@@ -56,7 +56,7 @@ export function determineGameFromPath(path: vscode.Uri): GameName | undefined {
 }
 
 export function determineGameFromAllTypes(
-  path: vscode.Uri
+  path: vscode.Uri,
 ): GameName | undefined {
   if (path.fsPath.includes("jak2")) {
     return GameName.Jak2;
@@ -86,12 +86,12 @@ async function* walkForName(dir: string, name: string): any {
 export async function findFileInGoalSrc(
   rootFolder: vscode.Uri,
   gameName: string,
-  fileName: string
+  fileName: string,
 ): Promise<string | undefined> {
   const searchFolder = vscode.Uri.joinPath(
     rootFolder,
     "goal_src",
-    gameName
+    gameName,
   ).fsPath;
 
   if (!fileName.includes(".gc")) {
@@ -110,7 +110,7 @@ export async function findFileInGoalSrc(
 
 export async function updateFileBeforeDecomp(
   filePath: string,
-  content: string
+  content: string,
 ) {
   const fileContents = await fs.readFile(filePath, "utf-8");
   const fileLines = fileContents.split(/\r?\n/);

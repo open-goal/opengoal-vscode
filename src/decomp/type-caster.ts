@@ -63,7 +63,7 @@ async function checkTypeSearcherPath(): Promise<string | undefined> {
 
   const potentialPath = vscode.Uri.joinPath(
     getProjectRoot(),
-    defaultTypeSearcherPath()
+    defaultTypeSearcherPath(),
   );
   if (existsSync(potentialPath.fsPath)) {
     typeSearcherPath = potentialPath.fsPath;
@@ -92,7 +92,7 @@ export async function updateTypeCastSuggestions(gameName: GameName) {
   try {
     const jsonPath = vscode.Uri.joinPath(
       getExtensionContext().extensionUri,
-      `${gameName.toString()}-types.json`
+      `${gameName.toString()}-types.json`,
     ).fsPath;
     await execFileAsync(
       typeSearcherPath,
@@ -101,7 +101,7 @@ export async function updateTypeCastSuggestions(gameName: GameName) {
         encoding: "utf8",
         cwd: getProjectRoot().fsPath,
         timeout: 500,
-      }
+      },
     );
     if (existsSync(jsonPath)) {
       const result = readFileSync(jsonPath, { encoding: "utf-8" });
@@ -135,7 +135,7 @@ async function applyLabelCast(
   objectName: string,
   labelRef: string,
   castToType: string,
-  pointerSize?: number
+  pointerSize?: number,
 ) {
   const configDir = await getDecompilerConfigDirectory(editor.document.uri);
   if (configDir === undefined) {
@@ -173,7 +173,7 @@ async function applyLabelCast(
 async function validActiveFile(editor: vscode.TextEditor): Promise<boolean> {
   if (!editor.document === undefined) {
     await vscode.window.showErrorMessage(
-      "No active file open, can't decompile!"
+      "No active file open, can't decompile!",
     );
     return false;
   }
@@ -181,7 +181,7 @@ async function validActiveFile(editor: vscode.TextEditor): Promise<boolean> {
   const fileName = basename(editor.document.fileName);
   if (!fileName.match(/.*_ir2\.asm/)) {
     await vscode.window.showErrorMessage(
-      "Current file is not a valid IR2 file."
+      "Current file is not a valid IR2 file.",
     );
     return false;
   }
@@ -190,7 +190,7 @@ async function validActiveFile(editor: vscode.TextEditor): Promise<boolean> {
 
 function generateCastSelectionItems(
   fullList: string[] | undefined,
-  recentList: string[] | undefined
+  recentList: string[] | undefined,
 ): vscode.QuickPickItem[] {
   const items: vscode.QuickPickItem[] = [];
   if (recentList !== undefined && recentList.length > 0) {
@@ -222,7 +222,7 @@ function generateCastSelectionItems(
     },
     {
       label: "__custom",
-    }
+    },
   );
   return items;
 }
@@ -252,7 +252,7 @@ async function labelCastSelection() {
 
   // Get the stack index
   const labelRef = await getLabelReference(
-    editor.document.lineAt(editor.selection.start.line).text
+    editor.document.lineAt(editor.selection.start.line).text,
   );
   if (labelRef === undefined) {
     return;
@@ -268,7 +268,7 @@ async function labelCastSelection() {
 
   const items = generateCastSelectionItems(
     typeCastSuggestions.get(gameName),
-    recentLabelCasts.get(gameName)
+    recentLabelCasts.get(gameName),
   );
   let castToType;
   if (items.length > 0) {
@@ -311,7 +311,7 @@ async function labelCastSelection() {
     objectName,
     labelRef,
     castToType.trim(),
-    pointerSize
+    pointerSize,
   );
 
   lastCastKind = CastKind.Label;
@@ -333,7 +333,7 @@ async function applyStackCast(
   editor: vscode.TextEditor,
   funcName: string,
   stackOffset: number,
-  castToType: string
+  castToType: string,
 ) {
   const configDir = await getDecompilerConfigDirectory(editor.document.uri);
   if (configDir === undefined) {
@@ -361,7 +361,7 @@ async function stackCastSelection() {
   // Get the relevant function/method name
   const funcName = await getFuncNameFromSelection(
     editor.document,
-    editor.selection
+    editor.selection,
   );
   if (funcName === undefined) {
     return;
@@ -369,7 +369,7 @@ async function stackCastSelection() {
 
   // Get the stack index
   const stackOffset = await getStackOffset(
-    editor.document.lineAt(editor.selection.start.line).text
+    editor.document.lineAt(editor.selection.start.line).text,
   );
   if (stackOffset === undefined) {
     return;
@@ -385,7 +385,7 @@ async function stackCastSelection() {
 
   const items = generateCastSelectionItems(
     typeCastSuggestions.get(gameName),
-    recentStackCasts.get(gameName)
+    recentStackCasts.get(gameName),
   );
   let castToType;
   if (items.length > 0) {
@@ -420,7 +420,7 @@ async function stackCastSelection() {
 
 function getRegisters(
   document: vscode.TextDocument,
-  selection: vscode.Selection
+  selection: vscode.Selection,
 ): string[] {
   const regSet = new Set<string>();
   for (let i = selection.start.line; i <= selection.end.line; i++) {
@@ -436,7 +436,7 @@ async function applyTypeCast(
   funcName: string,
   castContext: CastContext,
   registerSelection: string,
-  castToType: string
+  castToType: string,
 ) {
   const configDir = await getDecompilerConfigDirectory(editor.document.uri);
   if (configDir === undefined) {
@@ -481,7 +481,7 @@ async function typeCastSelection() {
 
   // Determine the range of the selection
   const startOpNum = await getOpNumber(
-    editor.document.lineAt(editor.selection.start.line).text
+    editor.document.lineAt(editor.selection.start.line).text,
   );
   if (startOpNum === undefined) {
     return;
@@ -489,7 +489,7 @@ async function typeCastSelection() {
   const castContext = new CastContext(startOpNum);
   if (!editor.selection.isSingleLine) {
     const endOpNum = await getOpNumber(
-      editor.document.lineAt(editor.selection.end.line).text
+      editor.document.lineAt(editor.selection.end.line).text,
     );
     if (endOpNum === undefined) {
       return;
@@ -500,7 +500,7 @@ async function typeCastSelection() {
   // Get the relevant function/method name
   const funcName = await getFuncNameFromSelection(
     editor.document,
-    editor.selection
+    editor.selection,
   );
   if (funcName === undefined) {
     return;
@@ -510,7 +510,7 @@ async function typeCastSelection() {
   const registers = getRegisters(editor.document, editor.selection);
   if (registers.length == 0) {
     await vscode.window.showErrorMessage(
-      "Found no registers to cast in that selection"
+      "Found no registers to cast in that selection",
     );
     return;
   }
@@ -521,7 +521,7 @@ async function typeCastSelection() {
   });
   if (registerSelection === undefined) {
     await vscode.window.showErrorMessage(
-      "Can't cast if no register is provided"
+      "Can't cast if no register is provided",
     );
     return;
   }
@@ -536,7 +536,7 @@ async function typeCastSelection() {
 
   const items = generateCastSelectionItems(
     typeCastSuggestions.get(gameName),
-    recentTypeCasts.get(gameName)
+    recentTypeCasts.get(gameName),
   );
   let castToType;
   if (items.length > 0) {
@@ -566,7 +566,7 @@ async function typeCastSelection() {
     funcName,
     castContext,
     registerSelection,
-    castToType.trim()
+    castToType.trim(),
   );
 
   lastCastKind = CastKind.TypeCast;
@@ -589,7 +589,7 @@ async function repeatLastCast() {
   if (lastCastKind === CastKind.Label) {
     const objectName = basename(editor.document.fileName).split("_ir2.asm")[0];
     const labelRef = await getLabelReference(
-      editor.document.lineAt(editor.selection.start.line).text
+      editor.document.lineAt(editor.selection.start.line).text,
     );
     if (labelRef === undefined || lastLabelCastType === undefined) {
       return;
@@ -599,12 +599,12 @@ async function repeatLastCast() {
       objectName,
       labelRef,
       lastLabelCastType,
-      lastLabelCastSize
+      lastLabelCastSize,
     );
   } else if (lastCastKind === CastKind.Stack) {
     const funcName = await getFuncNameFromSelection(
       editor.document,
-      editor.selection
+      editor.selection,
     );
     if (funcName === undefined) {
       return;
@@ -612,7 +612,7 @@ async function repeatLastCast() {
 
     // Get the stack index
     const stackOffset = await getStackOffset(
-      editor.document.lineAt(editor.selection.start.line).text
+      editor.document.lineAt(editor.selection.start.line).text,
     );
     if (stackOffset === undefined || lastStackCastType === undefined) {
       return;
@@ -621,13 +621,13 @@ async function repeatLastCast() {
   } else if (lastCastKind === CastKind.TypeCast) {
     const funcName = await getFuncNameFromSelection(
       editor.document,
-      editor.selection
+      editor.selection,
     );
     if (funcName === undefined) {
       return;
     }
     const startOpNum = await getOpNumber(
-      editor.document.lineAt(editor.selection.start.line).text
+      editor.document.lineAt(editor.selection.start.line).text,
     );
     if (startOpNum === undefined) {
       return;
@@ -635,7 +635,7 @@ async function repeatLastCast() {
     const castContext = new CastContext(startOpNum);
     if (!editor.selection.isSingleLine) {
       const endOpNum = await getOpNumber(
-        editor.document.lineAt(editor.selection.end.line).text
+        editor.document.lineAt(editor.selection.end.line).text,
       );
       if (endOpNum === undefined) {
         return;
@@ -652,7 +652,7 @@ async function repeatLastCast() {
       funcName,
       castContext,
       lastTypeCastRegister,
-      lastTypeCastType
+      lastTypeCastType,
     );
   }
 }
@@ -661,25 +661,25 @@ export async function activateTypeCastTools() {
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.casts.labelCastSelection",
-      labelCastSelection
-    )
+      labelCastSelection,
+    ),
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.casts.stackCastSelection",
-      stackCastSelection
-    )
+      stackCastSelection,
+    ),
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.casts.typeCastSelection",
-      typeCastSelection
-    )
+      typeCastSelection,
+    ),
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.casts.repeatLast",
-      repeatLastCast
-    )
+      repeatLastCast,
+    ),
   );
 }

@@ -6,7 +6,7 @@ export class IRCompletionItemProvider implements vscode.CompletionItemProvider {
     document: vscode.TextDocument,
     position: vscode.Position,
     token: vscode.CancellationToken,
-    context: vscode.CompletionContext
+    context: vscode.CompletionContext,
   ): vscode.ProviderResult<
     vscode.CompletionItem[] | vscode.CompletionList<vscode.CompletionItem>
   > {
@@ -29,7 +29,7 @@ export class IRCompletionItemProvider implements vscode.CompletionItemProvider {
       position.line,
       position.character - 1,
       position.line,
-      position.character
+      position.character,
     );
 
     let docstring = `"something\n`;
@@ -51,7 +51,7 @@ export class IRCompletionItemProvider implements vscode.CompletionItemProvider {
 
   resolveCompletionItem?(
     item: vscode.CompletionItem,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): vscode.ProviderResult<vscode.CompletionItem> {
     throw new Error("Method not implemented.");
   }

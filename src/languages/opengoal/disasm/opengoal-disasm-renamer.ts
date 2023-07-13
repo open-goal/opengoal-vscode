@@ -11,7 +11,7 @@ export class OpenGOALDisasmRenameProvider implements vscode.RenameProvider {
     document: vscode.TextDocument,
     position: vscode.Position,
     newName: string,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): Promise<vscode.WorkspaceEdit | undefined> {
     const symbol = getSymbolAtPosition(document, position);
     if (symbol === undefined) {

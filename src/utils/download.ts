@@ -21,7 +21,7 @@ export async function fetchFromUrl(fullUrl: string): Promise<string> {
           res.on("end", () => {
             resolve(data);
           });
-        }
+        },
       )
       .on("error", (err: any) => {
         console.error(`Error downloading file from ${url}: ${err.message}`);
@@ -32,7 +32,7 @@ export async function fetchFromUrl(fullUrl: string): Promise<string> {
 
 export async function downloadFromUrl(
   url: string,
-  filePath: string
+  filePath: string,
 ): Promise<void> {
   console.log("Downloading file from", url);
   return new Promise((resolve, reject) => {

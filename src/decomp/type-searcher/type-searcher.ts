@@ -237,24 +237,24 @@ async function searchForTypes(message: any): Promise<any> {
     projectRoot = getWorkspaceFolderByName("jak-project");
     if (projectRoot === undefined) {
       vscode.window.showErrorMessage(
-        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+        "OpenGOAL - Unable to locate 'jak-project' workspace folder",
       );
       return [];
     }
   }
   const typeSearcherPath = vscode.Uri.joinPath(
     projectRoot,
-    defaultTypeSearcherPath()
+    defaultTypeSearcherPath(),
   );
   if (!existsSync(typeSearcherPath.fsPath)) {
     vscode.window.showErrorMessage(
-      "OpenGOAL - Unable to locate 'type_searcher' binary"
+      "OpenGOAL - Unable to locate 'type_searcher' binary",
     );
   }
 
   const searchFile = vscode.Uri.joinPath(
     projectRoot,
-    "search-results.json"
+    "search-results.json",
   ).fsPath;
 
   const args = [`--output-path`, searchFile, "--game", message.gameName];
@@ -298,7 +298,7 @@ async function searchForTypes(message: any): Promise<any> {
         encoding: "utf8",
         cwd: projectRoot?.fsPath,
         timeout: 20000,
-      }
+      },
     );
     // Parse the file
     const result = readFileSync(searchFile, { encoding: "utf-8" });
@@ -324,7 +324,7 @@ async function openPanel() {
     {
       enableScripts: true,
       retainContextWhenHidden: true,
-    }
+    },
   );
 
   currentPanel.webview.html = getWebviewContent();
@@ -342,7 +342,7 @@ async function openPanel() {
       }
     },
     undefined,
-    getExtensionContext().subscriptions
+    getExtensionContext().subscriptions,
   );
 }
 
@@ -351,7 +351,7 @@ export async function activateDecompTypeSearcher() {
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.typeSearcher.open",
-      openPanel
-    )
+      openPanel,
+    ),
   );
 }

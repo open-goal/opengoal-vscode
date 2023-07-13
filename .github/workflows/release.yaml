@@ -35,7 +35,7 @@ jobs:
       - name: Bump Version
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        # TODO - https://github.com/microsoft/vscode-vsce/pull/876  
+        # TODO - https://github.com/microsoft/vscode-vsce/pull/876
         run: |
           git config --global user.name "OpenGOALBot"
           git config --global user.email "OpenGOALBot@users.noreply.github.com"
