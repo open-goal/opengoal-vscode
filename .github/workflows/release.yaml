@@ -35,11 +35,12 @@ jobs:
       - name: Bump Version
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        # TODO - https://github.com/microsoft/vscode-vsce/pull/876  
         run: |
           git config --global user.name "OpenGOALBot"
           git config --global user.email "OpenGOALBot@users.noreply.github.com"
-          yarn vsce package
-          yarn vsce publish ${{ github.event.inputs.bump }}
+          yarn vsce package --no-yarn
+          yarn vsce publish ${{ github.event.inputs.bump }} --no-yarn
           git push
           git push origin $(git tag --points-at HEAD)
 
