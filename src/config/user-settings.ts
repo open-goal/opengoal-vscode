@@ -35,7 +35,7 @@ export async function setVSIconAssociations() {
   // - NOTE this may break situations where a file type is being handled by another extension
 
   let currentIconAssociations: any = userConfig.get(
-    "vsicons.associations.files"
+    "vsicons.associations.files",
   );
   if (currentIconAssociations === undefined) {
     currentIconAssociations = opengoalVSIconAssocs;
@@ -64,11 +64,11 @@ export async function setVSIconAssociations() {
     await userConfig.update(
       "vsicons.associations.files",
       currentIconAssociations,
-      vscode.ConfigurationTarget.Global
+      vscode.ConfigurationTarget.Global,
     );
   } catch (err) {
     getMainChannel().append(
-      `Failed to write icon configuration override - ${err}`
+      `Failed to write icon configuration override - ${err}`,
     );
   }
 }
@@ -267,7 +267,7 @@ export async function setTextmateColors() {
   const userConfig = vscode.workspace.getConfiguration();
 
   const currentTokenColorCustomizations: any = userConfig.get(
-    "editor.tokenColorCustomizations"
+    "editor.tokenColorCustomizations",
   );
 
   const opengoalTextMateRules = getTextMateRules();
@@ -302,7 +302,7 @@ export async function setTextmateColors() {
     await userConfig.update(
       "editor.tokenColorCustomizations",
       currentTokenColorCustomizations,
-      vscode.ConfigurationTarget.Global
+      vscode.ConfigurationTarget.Global,
     );
   } catch (err) {
     getMainChannel().append(`Failed to write textmate rule override - ${err}`);

@@ -19,7 +19,7 @@ function parinferRangeToVSCodeRange(parenTrail: any) {
     parenTrail.lineNo,
     parenTrail.startX,
     parenTrail.lineNo,
-    parenTrail.endX
+    parenTrail.endX,
   );
 }
 
@@ -74,7 +74,7 @@ let currentParinferMode = ParinferMode.DISABLED;
 
 const parinferStatusItem = vscode.window.createStatusBarItem(
   vscode.StatusBarAlignment.Left,
-  0
+  0,
 );
 
 function updateStatus() {
@@ -125,7 +125,7 @@ function applyParinfer(
   editor: vscode.TextEditor,
   text: string,
   options: ParinferOptions,
-  mode: ParinferMode
+  mode: ParinferMode,
 ) {
   // console.log(`Options Before - ${JSON.stringify(options, null, 2)}`);
   let parinferResult: any; // TODO - make a type def for this
@@ -154,18 +154,18 @@ function applyParinfer(
       {
         undoStopAfter: false,
         undoStopBefore: false,
-      }
+      },
     )
     .then(function (editWasApplied) {
       if (editWasApplied) {
         // set the new cursor position
         const newCursorPosition = new vscode.Position(
           parinferResult.cursorLine,
-          parinferResult.cursorX
+          parinferResult.cursorX,
         );
         const nextCursor = new vscode.Selection(
           newCursorPosition,
-          newCursorPosition
+          newCursorPosition,
         );
         editor.selection = nextCursor;
         updateParenTrails(editor, parinferResult.parenTrails);
@@ -218,12 +218,12 @@ function processEventQueue() {
     activeEditor,
     selectionEvent.text,
     options,
-    currentParinferMode
+    currentParinferMode,
   );
 }
 
 export function onChangeSelection(
-  event: vscode.TextEditorSelectionChangeEvent
+  event: vscode.TextEditorSelectionChangeEvent,
 ) {
   const editor = event.textEditor;
 
@@ -262,7 +262,7 @@ function getTextFromRange(txt: string, range: vscode.Range, length: integer) {
 
 function convertChangeObjects(
   oldText: string,
-  changeEvent: vscode.TextDocumentContentChangeEvent
+  changeEvent: vscode.TextDocumentContentChangeEvent,
 ) {
   return {
     lineNo: changeEvent.range.start.line,
@@ -270,7 +270,7 @@ function convertChangeObjects(
     oldText: getTextFromRange(
       oldText,
       changeEvent.range,
-      changeEvent.rangeLength
+      changeEvent.rangeLength,
     ),
     x: changeEvent.range.start.character,
   };
@@ -338,17 +338,17 @@ function showChangeModeMenu() {
 }
 
 export function registerParinferCommands(
-  context: vscode.ExtensionContext
+  context: vscode.ExtensionContext,
 ): void {
   changeParinferMode(
-    (getConfig().opengoalParinferMode as ParinferMode) ?? ParinferMode.DISABLED
+    (getConfig().opengoalParinferMode as ParinferMode) ?? ParinferMode.DISABLED,
   );
   updateStatus();
   parinferStatusItem.hide(); // TODO - consolidate menu https://github.com/rust-lang/rust-analyzer/blob/9c03aa1ac2e67051db83a85baf3cfee902e4dd84/editors/code/src/ctx.ts#L406
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.parinfer.changeMode",
-      showChangeModeMenu
-    )
+      showChangeModeMenu,
+    ),
   );
 }

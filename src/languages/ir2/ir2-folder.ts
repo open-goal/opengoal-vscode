@@ -29,8 +29,8 @@ export class IRFoldingRangeProvider implements vscode.FoldingRangeProvider {
             new vscode.FoldingRange(
               currFunctionStart,
               i - 1,
-              vscode.FoldingRangeKind.Region
-            )
+              vscode.FoldingRangeKind.Region,
+            ),
           );
         }
       }
@@ -42,8 +42,8 @@ export class IRFoldingRangeProvider implements vscode.FoldingRangeProvider {
             new vscode.FoldingRange(
               currLabelStart,
               i - 1,
-              vscode.FoldingRangeKind.Region
-            )
+              vscode.FoldingRangeKind.Region,
+            ),
           );
         }
         currLabelStart = i;
@@ -56,8 +56,8 @@ export class IRFoldingRangeProvider implements vscode.FoldingRangeProvider {
           new vscode.FoldingRange(
             currLabelStart,
             i - 1,
-            vscode.FoldingRangeKind.Region
-          )
+            vscode.FoldingRangeKind.Region,
+          ),
         );
         currLabelStart = -1;
       }
@@ -68,8 +68,8 @@ export class IRFoldingRangeProvider implements vscode.FoldingRangeProvider {
             new vscode.FoldingRange(
               currBranchStart,
               i - 1,
-              vscode.FoldingRangeKind.Region
-            )
+              vscode.FoldingRangeKind.Region,
+            ),
           );
         }
         currBranchStart = i;
@@ -82,8 +82,8 @@ export class IRFoldingRangeProvider implements vscode.FoldingRangeProvider {
           new vscode.FoldingRange(
             currBranchStart,
             i - 1,
-            vscode.FoldingRangeKind.Region
-          )
+            vscode.FoldingRangeKind.Region,
+          ),
         );
         currBranchStart = -1;
       }

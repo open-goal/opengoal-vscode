@@ -75,7 +75,7 @@
           mode +
           '" is invalid. ' +
           "Must be one of: " +
-          MODES.join(",")
+          MODES.join(","),
       );
     }
   }
@@ -85,7 +85,7 @@
     if (!state) {
       throw error(
         "You must call parinferCodeMirror.init(cm) on a CodeMirror instance " +
-          "before you can use the rest of the API."
+          "before you can use the rest of the API.",
       );
     }
     return state;
@@ -141,7 +141,7 @@
           error.extra.lineNo,
           error.extra.x,
           error.extra.x + 1,
-          CLASSNAME_ERROR
+          CLASSNAME_ERROR,
         );
       }
     }
@@ -158,7 +158,7 @@
           trail.lineNo,
           trail.startX,
           trail.endX,
-          CLASSNAME_PARENTRAIL
+          CLASSNAME_PARENTRAIL,
         );
       }
     }
@@ -259,7 +259,7 @@
         "",
         { line: lineNo, ch: x + delta },
         { line: lineNo, ch: x },
-        "+indent"
+        "+indent",
       );
     }
   }
@@ -333,7 +333,7 @@
         paren.closer.lineNo,
         paren.closer.x,
         paren.closer.x + 1,
-        CLASSNAME_LOCUS_PAREN
+        CLASSNAME_LOCUS_PAREN,
       );
     }
     hideParens(cm, paren.children);
@@ -389,7 +389,7 @@
       switch (layer.type) {
         case "guides":
           paper.path(
-            ["M", open.midx, open.bottom, "V", close.bottom].join(" ")
+            ["M", open.midx, open.bottom, "V", close.bottom].join(" "),
           );
           break;
         case "locus":
@@ -423,7 +423,7 @@
               open.midx,
               "V",
               open.bottom,
-            ].join(" ")
+            ].join(" "),
           );
           break;
       }

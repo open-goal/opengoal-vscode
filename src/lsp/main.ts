@@ -90,12 +90,12 @@ class LSPStatusItem {
 }
 
 const statusItem = new LSPStatusItem(
-  vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0)
+  vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0),
 );
 
 async function ensureServerDownloaded(): Promise<string | undefined> {
   const installedVersion = getVersionFromMetaFile(
-    extensionContext.extensionPath
+    extensionContext.extensionPath,
   );
   const configuredVersion = getConfig().opengoalLspVersion;
 
@@ -116,7 +116,7 @@ async function ensureServerDownloaded(): Promise<string | undefined> {
       // Check that the file wasn't unexpectedly removed
       const lspPath = getLspPath(
         extensionContext.extensionPath,
-        installedVersion
+        installedVersion,
       );
       if (lspPath === undefined) {
         versionToDownload = latestVersion;
@@ -130,7 +130,7 @@ async function ensureServerDownloaded(): Promise<string | undefined> {
   statusItem.updateStatus("downloading", versionToDownload);
   const newLspPath = await downloadLsp(
     extensionContext.extensionPath,
-    versionToDownload
+    versionToDownload,
   );
   if (newLspPath === undefined) {
     statusItem.updateStatus("error");
@@ -149,7 +149,7 @@ async function maybeDownloadLspServer(): Promise<void> {
     // Copy the binary to the extension directory so it doesn't block future compilations
     const lspPath = path.join(
       extensionContext.extensionPath,
-      `opengoal-lsp-local.bin`
+      `opengoal-lsp-local.bin`,
     );
     fs.copyFileSync(userConfiguredOpengoalLspPath, lspPath);
     opengoalLspPath = lspPath;
@@ -202,7 +202,7 @@ function createClient(lspPath: string): LanguageClient {
     "opengoal-lsp",
     "OpenGOAL LSP",
     serverOptions,
-    clientOptions
+    clientOptions,
   );
 }
 
@@ -255,7 +255,7 @@ class StatusBarFeature implements StaticFeature {
             disposeAll(this.requestHandlers);
           }
         });
-      })
+      }),
     );
   }
 }
@@ -300,7 +300,7 @@ async function restartClient() {
 
 function showMenu(
   items: vscode.QuickPickItem[],
-  commands: Record<string, string>
+  commands: Record<string, string>,
 ) {
   void vscode.window
     .showQuickPick(items, { title: "OpenGOAL LSP" })
@@ -336,24 +336,24 @@ function startedMenuCommand() {
 
 function registerLifeCycleCommands(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
-    vscode.commands.registerCommand("opengoal.lsp.start", startClientCommand)
+    vscode.commands.registerCommand("opengoal.lsp.start", startClientCommand),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("opengoal.lsp.stop", stopClient)
+    vscode.commands.registerCommand("opengoal.lsp.stop", stopClient),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("opengoal.lsp.restart", restartClient)
+    vscode.commands.registerCommand("opengoal.lsp.restart", restartClient),
   );
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.lsp.showLspStartedMenu",
-      startedMenuCommand
-    )
+      startedMenuCommand,
+    ),
   );
 }
 
 export async function activate(
-  context: vscode.ExtensionContext
+  context: vscode.ExtensionContext,
 ): Promise<void> {
   extensionContext = context;
   registerLifeCycleCommands(context);

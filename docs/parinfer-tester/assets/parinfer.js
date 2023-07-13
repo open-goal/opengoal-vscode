@@ -480,7 +480,7 @@
         result.lineNo,
         result.x,
         result.x + origCh.length,
-        ch
+        ch,
       );
       result.indentDelta -= origCh.length - ch.length;
     }
@@ -849,7 +849,7 @@
         cursorX,
         cursorLine,
         result.parenTrail.startX,
-        result.lineNo
+        result.lineNo,
       ) && !isCursorInComment(result, cursorX, cursorLine)
     );
   }
@@ -862,7 +862,7 @@
     var clamping = isCursorClampingParenTrail(
       result,
       result.cursorX,
-      result.cursorLine
+      result.cursorLine,
     );
 
     if (clamping) {
@@ -1107,7 +1107,7 @@
           opener,
           result.parenTrail.lineNo,
           result.parenTrail.startX + i,
-          closeCh
+          closeCh,
         );
       }
     }
@@ -1118,7 +1118,7 @@
         result.parenTrail.lineNo,
         result.parenTrail.startX,
         result.parenTrail.endX,
-        parens
+        parens,
       );
       result.parenTrail.endX = result.parenTrail.startX + parens.length;
       rememberParenTrail(result);
@@ -1161,7 +1161,7 @@
         opener,
         result.parenTrail.lineNo,
         result.parenTrail.endX,
-        closeCh
+        closeCh,
       );
     }
 
@@ -1170,7 +1170,7 @@
       result,
       result.parenTrail.lineNo,
       result.parenTrail.endX,
-      closeCh
+      closeCh,
     );
 
     result.parenTrail.endX++;
@@ -1346,7 +1346,7 @@
           result.cursorX,
           result.cursorLine,
           result.x,
-          result.lineNo
+          result.lineNo,
         )
       ) {
         resetParenTrail(result, result.lineNo, result.x);

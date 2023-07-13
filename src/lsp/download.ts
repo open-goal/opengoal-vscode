@@ -5,7 +5,7 @@ import { downloadFromUrl } from "../utils/download";
 
 export async function downloadLsp(
   extensionPath: string,
-  version: string
+  version: string,
 ): Promise<string | undefined> {
   const assetName = getLspReleaseAssetName(version);
   if (assetName === undefined) {

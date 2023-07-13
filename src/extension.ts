@@ -39,7 +39,7 @@ export async function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(
-      vscode.commands.registerCommand("opengoal.switchFile", switchFile)
+      vscode.commands.registerCommand("opengoal.switchFile", switchFile),
     );
 
     activateDecompTools();
@@ -48,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Customized PDF Viewer
     const provider = new PdfCustomProvider(
-      vscode.Uri.file(context.extensionPath)
+      vscode.Uri.file(context.extensionPath),
     );
     context.subscriptions.push(
       vscode.window.registerCustomEditorProvider(
@@ -59,8 +59,8 @@ export async function activate(context: vscode.ExtensionContext) {
             enableFindWidget: false, // default
             retainContextWhenHidden: true,
           },
-        }
-      )
+        },
+      ),
     );
 
     // TODO - disposable stuff?
@@ -68,24 +68,24 @@ export async function activate(context: vscode.ExtensionContext) {
     // Language Customizations
     vscode.languages.registerFoldingRangeProvider(
       { scheme: "file", language: "opengoal-ir" },
-      new IRFoldingRangeProvider()
+      new IRFoldingRangeProvider(),
     );
     vscode.languages.registerInlayHintsProvider(
       { scheme: "file", language: "opengoal-ir" },
-      new IRInlayHintsProvider()
+      new IRInlayHintsProvider(),
     );
     vscode.languages.registerRenameProvider(
       { scheme: "file", language: "opengoal", pattern: "**/*_disasm.gc" },
-      new OpenGOALDisasmRenameProvider()
+      new OpenGOALDisasmRenameProvider(),
     );
     vscode.languages.registerRenameProvider(
       { scheme: "file", language: "opengoal-ir" },
-      new IRRenameProvider()
+      new IRRenameProvider(),
     );
     vscode.languages.registerCompletionItemProvider(
       { scheme: "file", language: "opengoal-ir" },
       new IRCompletionItemProvider(),
-      "@" // NOTE - can't use `"` without overriding a default setting https://github.com/microsoft/vscode/issues/131238#issuecomment-902519923
+      "@", // NOTE - can't use `"` without overriding a default setting https://github.com/microsoft/vscode/issues/131238#issuecomment-902519923
     );
 
     // Start the LSP
@@ -101,7 +101,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidSaveTextDocument(nreplOnFileSaveHandler);
   } catch (err) {
     vscode.window.showErrorMessage(
-      "Failed to activate OpenGOAL extension, see logs for details"
+      "Failed to activate OpenGOAL extension, see logs for details",
     );
     getMainChannel().append(`Failed to activate extension - ${err}`);
   }

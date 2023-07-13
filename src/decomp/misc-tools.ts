@@ -37,7 +37,7 @@ async function addToOffsets() {
       (match, key) => {
         console.log(`${match}-${key}`);
         return `${parseInt(key) + incAmount}`;
-      }
+      },
     );
 
     selectedText.replace(editor.selection, result);
@@ -86,7 +86,7 @@ async function preserveBlock() {
     blockContent = content;
     selectedText.replace(
       editor.selection,
-      `;; +++${fileName}:${blockName}\n${content}\n;; ---${fileName}:${blockName}`
+      `;; +++${fileName}:${blockName}\n${content}\n;; ---${fileName}:${blockName}`,
     );
   });
 
@@ -95,7 +95,7 @@ async function preserveBlock() {
   const projectRoot = getWorkspaceFolderByName("jak-project");
   if (projectRoot === undefined) {
     vscode.window.showErrorMessage(
-      "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+      "OpenGOAL - Unable to locate 'jak-project' workspace folder",
     );
     return undefined;
   }
@@ -112,7 +112,7 @@ async function preserveBlock() {
   // Otherwise, let's update it...
   await updateFileBeforeDecomp(
     gsrcPath,
-    `;; +++${blockName}\n${blockContent}\n;; ---${blockName}`
+    `;; +++${blockName}\n${blockContent}\n;; ---${blockName}`,
   );
 }
 
@@ -184,20 +184,20 @@ async function generateTypeFlags() {
   // :flag-assert         #xcb036003d4 / #x9 0000 0010
   let clipboardVal = `  :method-count-assert ${parseInt(
     methodCount.replace("0x", ""),
-    16
+    16,
   )}\n`;
   clipboardVal += `  :size-assert         #x${parseInt(
     flags.slice(-4),
-    16
+    16,
   ).toString(16)} ;; ${parseInt(flags.slice(-4), 16)}\n`;
   clipboardVal += `  :flag-assert         #x${parseInt(
     methodCount.replace("0x", ""),
-    16
+    16,
   ).toString(16)}${flags}`;
 
   vscode.env.clipboard.writeText(clipboardVal);
   vscode.window.showInformationMessage(
-    "OpenGOAL - Type Flags Copied to Clipboard!"
+    "OpenGOAL - Type Flags Copied to Clipboard!",
   );
   return;
 }
@@ -215,7 +215,7 @@ async function genTypeFields() {
     ["basic", "structure"],
     {
       title: "Structure Type?",
-    }
+    },
   );
   if (structureTypeSelection === undefined) {
     return;
@@ -421,7 +421,7 @@ async function genMethodStubs() {
     }
     if (foundType && line.includes("method-count-assert")) {
       parentTypeMethodCount = parseInt(
-        line.split("method-count-assert")[1].trim()
+        line.split("method-count-assert")[1].trim(),
       );
       break;
     }
@@ -441,43 +441,43 @@ export async function activateMiscDecompTools() {
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.addToOffsets",
-      addToOffsets
-    )
+      addToOffsets,
+    ),
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.preserveBlock",
-      preserveBlock
-    )
+      preserveBlock,
+    ),
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.convertHexToDec",
-      convertHexToDec
-    )
+      convertHexToDec,
+    ),
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.convertDecToHex",
-      convertDecToHex
-    )
+      convertDecToHex,
+    ),
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.generateTypeFlags",
-      generateTypeFlags
-    )
+      generateTypeFlags,
+    ),
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.genTypeFields",
-      genTypeFields
-    )
+      genTypeFields,
+    ),
   );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.genMethodStubs",
-      genMethodStubs
-    )
+      genMethodStubs,
+    ),
   );
 }

@@ -15,7 +15,7 @@ export class PdfPreview extends Disposable {
   constructor(
     private readonly extensionRoot: vscode.Uri,
     private readonly resource: vscode.Uri,
-    private readonly webviewEditor: vscode.WebviewPanel
+    private readonly webviewEditor: vscode.WebviewPanel,
   ) {
     super();
     this.associatedUri = resource;
@@ -36,42 +36,42 @@ export class PdfPreview extends Disposable {
               "vscode.openWith",
               resource,
               "default",
-              webviewEditor.viewColumn
+              webviewEditor.viewColumn,
             );
             break;
           }
         }
-      })
+      }),
     );
 
     this._register(
       webviewEditor.onDidChangeViewState(() => {
         this.update();
-      })
+      }),
     );
 
     this._register(
       webviewEditor.onDidDispose(() => {
         this._previewState = "Disposed";
-      })
+      }),
     );
 
     const watcher = this._register(
-      vscode.workspace.createFileSystemWatcher(resource.fsPath)
+      vscode.workspace.createFileSystemWatcher(resource.fsPath),
     );
     this._register(
       watcher.onDidChange((e) => {
         if (e.toString() === this.resource.toString()) {
           this.reload();
         }
-      })
+      }),
     );
     this._register(
       watcher.onDidDelete((e) => {
         if (e.toString() === this.resource.toString()) {
           this.webviewEditor.dispose();
         }
-      })
+      }),
     );
 
     this.webviewEditor.webview.html = this.getWebviewContents();
@@ -133,7 +133,7 @@ export class PdfPreview extends Disposable {
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${cspSource}; script-src 'unsafe-inline' ${cspSource}; style-src 'unsafe-inline' ${cspSource}; img-src blob: data: ${cspSource};">
 <meta id="pdf-preview-config" data-config="${escapeAttribute(
-      JSON.stringify(settings)
+      JSON.stringify(settings),
     )}">
 <title>PDF.js viewer</title>
 <link rel="resource" type="application/l10n" href="${resolveAsUri(
@@ -141,25 +141,25 @@ export class PdfPreview extends Disposable {
       "pdfjs",
       "web",
       "locale",
-      "locale.properties"
+      "locale.properties",
     )}">
 <link rel="stylesheet" href="${resolveAsUri(
       "lib",
       "pdfjs",
       "web",
-      "viewer.css"
+      "viewer.css",
     )}">
 <link rel="stylesheet" href="${resolveAsUri(
       "lib",
       "vscode-pdfviewer",
-      "pdf.css"
+      "pdf.css",
     )}">
 <script src="${resolveAsUri("lib", "pdfjs", "build", "pdf.js")}"></script>
 <script src="${resolveAsUri(
       "lib",
       "pdfjs",
       "build",
-      "pdf.worker.js"
+      "pdf.worker.js",
     )}"></script>
 <script src="${resolveAsUri("lib", "pdfjs", "web", "viewer.js")}"></script>
 <script src="${resolveAsUri("lib", "vscode-pdfviewer", "main.js")}"></script>

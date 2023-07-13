@@ -14,7 +14,7 @@ import { getWorkspaceFolderByName } from "../utils/workspace";
 export function getCastFileData(
   projectRoot: vscode.Uri,
   document: vscode.TextDocument,
-  fileName: string
+  fileName: string,
 ): any | undefined {
   const gameName = determineGameFromPath(document.uri);
   if (gameName === undefined) {
@@ -25,12 +25,12 @@ export function getCastFileData(
   if (gameName == GameName.Jak1) {
     castFilePath = vscode.Uri.joinPath(
       projectRoot,
-      `decompiler/config/jak1/${config.jak2DecompConfigVersion}/${fileName}`
+      `decompiler/config/jak1/${config.jak2DecompConfigVersion}/${fileName}`,
     ).fsPath;
   } else if (gameName == GameName.Jak2) {
     castFilePath = vscode.Uri.joinPath(
       projectRoot,
-      `decompiler/config/jak2/${config.jak2DecompConfigVersion}/${fileName}`
+      `decompiler/config/jak2/${config.jak2DecompConfigVersion}/${fileName}`,
     ).fsPath;
   }
   if (!existsSync(castFilePath)) {
@@ -41,12 +41,12 @@ export function getCastFileData(
 }
 
 export function getDecompilerConfigDirectory(
-  activeFile: vscode.Uri
+  activeFile: vscode.Uri,
 ): string | undefined {
   const projectRoot = getWorkspaceFolderByName("jak-project");
   if (projectRoot === undefined) {
     vscode.window.showErrorMessage(
-      "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+      "OpenGOAL - Unable to locate 'jak-project' workspace folder",
     );
     return undefined;
   }
@@ -57,13 +57,13 @@ export function getDecompilerConfigDirectory(
     decompConfigPath = vscode.Uri.joinPath(
       projectRoot,
       `decompiler/config/jak1/`,
-      getConfig().jak1DecompConfigVersion
+      getConfig().jak1DecompConfigVersion,
     ).fsPath;
   } else if (gameName == GameName.Jak2) {
     decompConfigPath = vscode.Uri.joinPath(
       projectRoot,
       `decompiler/config/jak2/`,
-      getConfig().jak1DecompConfigVersion
+      getConfig().jak1DecompConfigVersion,
     ).fsPath;
   }
   if (decompConfigPath === undefined || !existsSync(decompConfigPath)) {
@@ -78,7 +78,7 @@ export async function updateVarCasts(
   funcName: string,
   argMeta: ArgumentMeta | undefined,
   currSymbol: string,
-  newName: string
+  newName: string,
 ) {
   // If the user provides a name with a space and an extra word, interpret that as the variable type
   let varType = undefined;
@@ -91,7 +91,7 @@ export async function updateVarCasts(
   const projectRoot = getWorkspaceFolderByName("jak-project");
   if (projectRoot === undefined) {
     vscode.window.showErrorMessage(
-      "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+      "OpenGOAL - Unable to locate 'jak-project' workspace folder",
     );
     return;
   }
@@ -113,7 +113,7 @@ export async function updateVarCasts(
       for (const argName of varNameData[funcName].args) {
         if (argName === newName) {
           vscode.window.showErrorMessage(
-            "OpenGOAL - Cannot cast different args to the same name, unsupported!"
+            "OpenGOAL - Cannot cast different args to the same name, unsupported!",
           );
           return;
         }
@@ -155,7 +155,7 @@ export async function updateVarCasts(
             value === newName)
         ) {
           vscode.window.showErrorMessage(
-            "OpenGOAL - Cannot cast different variables to the same name, unsupported!"
+            "OpenGOAL - Cannot cast different variables to the same name, unsupported!",
           );
           return;
         }

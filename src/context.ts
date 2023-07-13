@@ -36,7 +36,7 @@ export function getProjectRoot(): vscode.Uri {
     // if it's still undefined, throw an error
     if (projectRoot === undefined) {
       vscode.window.showErrorMessage(
-        "OpenGOAL - Unable to locate 'jak-project' workspace folder"
+        "OpenGOAL - Unable to locate 'jak-project' workspace folder",
       );
       throw new Error("unable to locate 'jak-project' workspace folder");
     }

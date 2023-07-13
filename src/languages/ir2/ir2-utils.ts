@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 // This is somewhat guaranteed by the fact that this is how the embded syntax highlighting works
 export function insideGoalCodeInIR(
   document: vscode.TextDocument,
-  position: vscode.Position
+  position: vscode.Position,
 ): boolean {
   // Somewhat primitive, walk back until we find a `;;-*-OpenGOAL-Start-*-` before we find a `.function`
   let idx = position.line;
@@ -23,7 +23,7 @@ export function insideGoalCodeInIR(
 
 export async function getFuncNameFromPosition(
   document: vscode.TextDocument,
-  position: vscode.Position
+  position: vscode.Position,
 ): Promise<string | undefined> {
   const funcNameRegex = /; \.function (.*).*/g;
   for (let i = position.line; i >= 0; i--) {
@@ -34,14 +34,14 @@ export async function getFuncNameFromPosition(
     }
   }
   await vscode.window.showErrorMessage(
-    "Couldn't determine function or method name"
+    "Couldn't determine function or method name",
   );
   return undefined;
 }
 
 export async function getFuncNameFromSelection(
   document: vscode.TextDocument,
-  selection: vscode.Selection
+  selection: vscode.Selection,
 ): Promise<string | undefined> {
   return await getFuncNameFromPosition(document, selection.start);
 }
