@@ -4,11 +4,7 @@ import { join } from "path";
 import * as vscode from "vscode";
 import { getConfig } from "../config/config";
 import { ArgumentMeta } from "../languages/opengoal/opengoal-tools";
-import {
-  determineGameFromPath,
-  GameName,
-  getDirectoriesInDir,
-} from "../utils/file-utils";
+import { determineGameFromPath, GameName } from "../utils/file-utils";
 import { getWorkspaceFolderByName } from "../utils/workspace";
 
 export function getCastFileData(
