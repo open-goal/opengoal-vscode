@@ -1,7 +1,7 @@
 import { getExtensionContext, getProjectRoot } from "../context";
 import * as vscode from "vscode";
 import { basename, join } from "path";
-import { fstat, readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
 import { parse, stringify } from "comment-json";
 import { getFuncNameFromSelection } from "../languages/ir2/ir2-utils";
 import { getDecompilerConfigDirectory } from "./utils";
