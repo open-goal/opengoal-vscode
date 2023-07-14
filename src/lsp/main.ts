@@ -151,6 +151,17 @@ async function maybeDownloadLspServer(): Promise<void> {
       extensionContext.extensionPath,
       `opengoal-lsp-local.bin`,
     );
+    // Check that the LSP is statically linked, we can assume
+    // this from the file size (if it's less than 4mb, conservatively it ain't statically linked)
+    const stats = fs.statSync(userConfiguredOpengoalLspPath);
+    const fileSizeInBytes = stats.size;
+    const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+    if (fileSizeInMegabytes <= 4) {
+      vscode.window.showErrorMessage(
+        "OpenGOAL - Local LSP path does not appear to point to astatically linked binary",
+      );
+      return;
+    }
     fs.copyFileSync(userConfiguredOpengoalLspPath, lspPath);
     opengoalLspPath = lspPath;
   } else {
