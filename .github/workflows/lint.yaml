@@ -23,9 +23,7 @@ jobs:
           cache: yarn
 
       - name: Install Dependencies
-        run: |
-          yarn set version stable
-          yarn install --immutable
+        run: yarn install --immutable
 
       - name: Check Linting
         run: yarn lint
@@ -44,9 +42,7 @@ jobs:
           cache: yarn
 
       - name: Install Dependencies
-        run: |
-          yarn set version stable
-          yarn install --immutable
+        run: yarn install --immutable
 
       - name: Check Linting
         run: yarn format:check
