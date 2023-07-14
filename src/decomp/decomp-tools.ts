@@ -173,7 +173,7 @@ async function decompFiles(
       "--version",
       getDecompilerConfigVersion(gameName),
       "--config-override",
-      `{"decompile_code": true, "levels_extract": false, "allowed_objects": [${allowed_objects}]}`,
+      `{"decompile_code": true, "print_cfgs": true, "levels_extract": false, "allowed_objects": [${allowed_objects}]}`,
     ];
     const { stdout, stderr } = await execFileAsync(decompilerPath, args, {
       encoding: "utf8",
