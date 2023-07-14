@@ -28,9 +28,7 @@ jobs:
           cache: yarn
 
       - name: Install Dependencies
-        run: |
-          yarn set version stable
-          yarn install --immutable
+        run: yarn install --immutable
 
       - name: Bump Version
         env:
@@ -39,8 +37,8 @@ jobs:
         run: |
           git config --global user.name "OpenGOALBot"
           git config --global user.email "OpenGOALBot@users.noreply.github.com"
-          yarn vsce package --no-yarn
-          yarn vsce publish ${{ github.event.inputs.bump }} --no-yarn
+          yarn vsce package
+          yarn vsce publish ${{ github.event.inputs.bump }}
           git push
           git push origin $(git tag --points-at HEAD)
 

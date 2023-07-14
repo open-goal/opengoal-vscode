@@ -14,7 +14,7 @@ import {
 } from "../utils/workspace";
 import { activateDecompTypeSearcher } from "./type-searcher/type-searcher";
 import { updateTypeCastSuggestions } from "./type-caster";
-import { glob } from "glob";
+import { glob } from "fast-glob";
 
 const execFileAsync = util.promisify(execFile);
 const execAsync = util.promisify(exec);
