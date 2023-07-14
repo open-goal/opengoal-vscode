@@ -40,8 +40,8 @@
   },
   "dependencies": {
     "comment-json": "^4.2.3",
+    "fast-glob": "^3.3.0",
     "follow-redirects": "^1.15.2",
-    "glob": "^10.0.0",
     "parinfer": "^3.13.1",
     "promise-socket": "^7.0.0",
     "vscode-languageclient": "^8.1.0"
