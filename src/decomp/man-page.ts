@@ -5,7 +5,7 @@ import {
   updateEeManPagePath,
   updateVuManPagePath,
 } from "../config/config";
-import * as instructions from "../data/decomp/instructions.json";
+import instructions from "../data/decomp/instructions.json";
 
 export async function open_in_pdf(mnemonic: string) {
   const relevant_options: any[] = [];

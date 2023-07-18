@@ -28,4 +28,4 @@ jobs:
         run: yarn install --immutable
 
       - name: Build Extension
-        run: yarn compile
+        run: yarn esbuild
