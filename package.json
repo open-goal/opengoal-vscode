@@ -16,15 +16,15 @@
     "type": "git",
     "url": "https://github.com/open-goal/opengoal-vscode"
   },
-  "main": "./out/extension.js",
+  "main": "dist/main.js",
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
     "lint": "eslint . --ext .ts,.tsx",
-    "watch": "tsc -watch -p ./",
     "format": "npx prettier --write .",
     "format:check": "npx prettier --check .",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "vscode:prepublish": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --minify",
+    "esbuild": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "dev": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --sourcemap --watch"
   },
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
@@ -34,6 +34,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vscode/vsce": "^2.15.0",
+    "esbuild": "^0.18.13",
     "eslint": "^8.44.0",
     "patch-package": "^7.0.0",
     "typescript": "^5.1.6"

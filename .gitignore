@@ -10,3 +10,4 @@ lsp-metadata.json
 !.yarn/patches
 .pnp.*
 .yarnrc.yml
+dist/

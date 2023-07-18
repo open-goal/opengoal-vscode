@@ -5,14 +5,10 @@
 */**/.DS_Store
 
 # Whitelist
-!img/**
-!icons/**
-!out/**
-!lib/**
-!snippets/**
-!syntaxes/**
-!package.json
-!README.md
+!img/
+!icons/
+!dist/
+!snippets/
+!syntaxes/
+!lib/
 !LICENSE
-!src/vendor/**/LICENSE
-!node_modules/**
