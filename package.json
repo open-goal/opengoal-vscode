@@ -29,12 +29,12 @@
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
     "@types/glob": "^8.1.0",
-    "@types/node": "^20.4.2",
+    "@types/node": "^20.4.4",
     "@types/vscode": "^1.80.0",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
     "@vscode/vsce": "^2.15.0",
-    "esbuild": "^0.18.13",
+    "esbuild": "^0.18.16",
     "eslint": "^8.45.0",
     "patch-package": "^7.0.0",
     "prettier": "3.0.0",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "comment-json": "^4.2.3",
-    "fast-glob": "^3.3.0",
+    "fast-glob": "^3.3.1",
     "follow-redirects": "^1.15.2",
     "parinfer": "^3.13.1",
     "promise-socket": "^7.0.0",
