@@ -29,16 +29,16 @@
   "devDependencies": {
     "@types/follow-redirects": "^1.14.1",
     "@types/glob": "^8.1.0",
-    "@types/node": "^20.4.4",
-    "@types/vscode": "^1.80.0",
-    "@typescript-eslint/eslint-plugin": "^6.1.0",
-    "@typescript-eslint/parser": "^6.1.0",
-    "@vscode/vsce": "^2.15.0",
-    "esbuild": "^0.18.16",
-    "eslint": "^8.45.0",
-    "patch-package": "^7.0.0",
-    "prettier": "3.0.0",
-    "typescript": "^5.1.6"
+    "@types/node": "^20.6.0",
+    "@types/vscode": "^1.82.0",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
+    "@vscode/vsce": "^2.21.0",
+    "esbuild": "^0.19.2",
+    "eslint": "^8.49.0",
+    "patch-package": "^8.0.0",
+    "prettier": "3.0.3",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "comment-json": "^4.2.3",
