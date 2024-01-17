@@ -103,6 +103,8 @@ async function preserveBlock() {
   let gameName = "jak1";
   if (game === GameName.Jak2) {
     gameName = "jak2";
+  } else if (game === GameName.Jak3) {
+    gameName = "jak3";
   }
 
   const gsrcPath = await findFileInGoalSrc(projectRoot, gameName, fileName);
