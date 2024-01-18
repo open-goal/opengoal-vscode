@@ -132,6 +132,10 @@
         "title": "OpenGOAL - Misc - Generate Method Stubs"
       },
       {
+        "command": "opengoal.decomp.misc.applyDecompilerSuggestions",
+        "title": "OpenGOAL - Misc - Apply Decompiler Suggestions to Selection"
+      },
+      {
         "command": "opengoal.decomp.typeSearcher.open",
         "title": "OpenGOAL - Misc - Type Searcher"
       },
