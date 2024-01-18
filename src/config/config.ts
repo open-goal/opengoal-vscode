@@ -25,6 +25,10 @@ export function getConfig() {
       "decompilerJak2ConfigVersion",
       "ntsc_v1",
     ),
+    jak3DecompConfigVersion: configOptions.get<string>(
+      "decompilerJak3ConfigVersion",
+      "ntsc_v1",
+    ),
     colorsGoalGlobals: configOptions.get<string>("colors.goal.entity.global"),
     colorsGoalStorageControl: configOptions.get<string>(
       "colors.goal.storage.control",

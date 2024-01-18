@@ -92,6 +92,11 @@ function getDecompilerConfig(gameName: GameName): string | undefined {
       getProjectRoot(),
       `decompiler/config/jak2/jak2_config.jsonc`,
     ).fsPath;
+  } else if (gameName == GameName.Jak3) {
+    decompConfigPath = vscode.Uri.joinPath(
+      getProjectRoot(),
+      `decompiler/config/jak3/jak3_config.jsonc`,
+    ).fsPath;
   }
   if (decompConfigPath === undefined || !existsSync(decompConfigPath)) {
     return undefined;
@@ -106,6 +111,8 @@ function getDecompilerConfigVersion(gameName: GameName): string {
     version = getConfig().jak1DecompConfigVersion;
   } else if (gameName == GameName.Jak2) {
     version = getConfig().jak2DecompConfigVersion;
+  } else if (gameName == GameName.Jak3) {
+    version = getConfig().jak3DecompConfigVersion;
   }
   if (version === undefined) {
     return "ntsc_v1";
@@ -221,7 +228,7 @@ async function decompSpecificFile() {
   // Prompt the user for the game name
   let gameName;
   const gameNameSelection = await vscode.window.showQuickPick(
-    ["jak1", "jak2"],
+    ["jak1", "jak2", "jak3"],
     {
       title: "Game?",
     },
@@ -234,8 +241,10 @@ async function decompSpecificFile() {
   } else {
     if (gameNameSelection == "jak1") {
       gameName = GameName.Jak1;
-    } else {
+    } else if (gameNameSelection == "jak2") {
       gameName = GameName.Jak2;
+    } else if (gameNameSelection == "jak3") {
+      gameName = GameName.Jak3;
     }
   }
   const validNames = await getValidObjectNames(gameNameSelection);
@@ -318,6 +327,7 @@ async function decompAllActiveFiles() {
     ),
   );
   jak1ObjectNames = [...new Set(jak1ObjectNames)];
+
   let jak2ObjectNames = truncateFileNameEndings(
     getFileNamesFromUris(getUrisFromTabs(/.*jak2\/.*_ir2\.asm/)),
     "_ir2.asm",
@@ -330,11 +340,23 @@ async function decompAllActiveFiles() {
   );
   jak2ObjectNames = [...new Set(jak2ObjectNames)];
 
+  let jak3ObjectNames = truncateFileNameEndings(
+    getFileNamesFromUris(getUrisFromTabs(/.*jak3\/.*_ir2\.asm/)),
+    "_ir2.asm",
+  );
+  jak3ObjectNames = jak3ObjectNames.concat(
+    truncateFileNameEndings(
+      getFileNamesFromUris(getUrisFromTabs(/.*jak3\/.*_disasm\.gc/)),
+      "_disasm.gc",
+    ),
+  );
+  jak3ObjectNames = [...new Set(jak3ObjectNames)];
+
   if (jak1ObjectNames.length > 0) {
     const jak1Config = getDecompilerConfig(GameName.Jak1);
     if (jak1Config === undefined) {
       await vscode.window.showErrorMessage(
-        "OpenGOAL - Can't decompile no Jak 1 config selected",
+        "OpenGOAL - Can't decompile, no Jak 1 config selected",
       );
       return;
     }
@@ -345,11 +367,21 @@ async function decompAllActiveFiles() {
     const jak2Config = getDecompilerConfig(GameName.Jak2);
     if (jak2Config === undefined) {
       await vscode.window.showErrorMessage(
-        "OpenGOAL - Can't decompile no Jak 2 config selected",
+        "OpenGOAL - Can't decompile, no Jak 2 config selected",
       );
       return;
     }
     await decompFiles(jak2Config, GameName.Jak2, jak2ObjectNames);
+  }
+  if (jak3ObjectNames.length > 0) {
+    const jak3Config = getDecompilerConfig(GameName.Jak3);
+    if (jak3Config === undefined) {
+      await vscode.window.showErrorMessage(
+        "OpenGOAL - Can't decompile, no Jak 3 config selected",
+      );
+      return;
+    }
+    await decompFiles(jak3Config, GameName.Jak3, jak3ObjectNames);
   }
 }
 
@@ -419,6 +451,8 @@ async function updateSourceFile() {
   let gameName = "jak1";
   if (editor.document.uri.fsPath.includes("jak2")) {
     gameName = "jak2";
+  } else if (editor.document.uri.fsPath.includes("jak3")) {
+    gameName = "jak3";
   }
 
   const { stdout, stderr } = await execAsync(
@@ -463,6 +497,8 @@ async function updateReferenceTest() {
   let gameName = "jak1";
   if (editor.document.uri.fsPath.includes("jak2")) {
     gameName = "jak2";
+  } else if (editor.document.uri.fsPath.includes("jak3")) {
+    gameName = "jak3";
   }
   const folderToSearch = vscode.Uri.joinPath(
     getProjectRoot(),

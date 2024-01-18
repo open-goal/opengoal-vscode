@@ -6,6 +6,7 @@ import { getRecentFiles } from "../context";
 export enum GameName {
   Jak1 = "jak1",
   Jak2 = "jak2",
+  Jak3 = "jak3",
 }
 
 const fileSwitchingAssoc = {
@@ -51,6 +52,8 @@ export function determineGameFromPath(path: vscode.Uri): GameName | undefined {
     return GameName.Jak1;
   } else if (path.fsPath.includes("jak2")) {
     return GameName.Jak2;
+  } else if (path.fsPath.includes("jak3")) {
+    return GameName.Jak3;
   }
   return undefined;
 }
@@ -58,11 +61,13 @@ export function determineGameFromPath(path: vscode.Uri): GameName | undefined {
 export function determineGameFromAllTypes(
   path: vscode.Uri,
 ): GameName | undefined {
-  if (path.fsPath.includes("jak2")) {
+  if (path.fsPath.includes("jak1")) {
+    return GameName.Jak1;
+  } else if (path.fsPath.includes("jak2")) {
     return GameName.Jak2;
+  } else if (path.fsPath.includes("jak3")) {
+    return GameName.Jak3;
   }
-  // jak 1 isn't in it's own folder sadly
-  return GameName.Jak1;
 }
 
 export async function getDirectoriesInDir(dir: string) {
