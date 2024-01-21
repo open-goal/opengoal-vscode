@@ -216,10 +216,13 @@ async function getValidObjectNames(gameName: string) {
   const objs = JSON.parse(objsData);
   const names = [];
   for (const obj of objs) {
-    if (obj[2] != 3) {
-      continue;
+    const is_tpage = obj[0].includes("tpage");
+    const is_art_file = obj[0].endsWith("-ag");
+    if (obj[2] == 4 || obj[2] == 5) {
+      if (!is_tpage && !is_art_file) {
+        names.push(obj[0]);
+      }
     }
-    names.push(obj[0]);
   }
   return names;
 }

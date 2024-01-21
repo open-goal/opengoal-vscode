@@ -1,0 +1,14 @@
+diff --git a/node_modules/vscode-jsonrpc/lib/common/messageReader.js b/node_modules/vscode-jsonrpc/lib/common/messageReader.js
+index a7518d7..9bb776a 100644
+--- a/node_modules/vscode-jsonrpc/lib/common/messageReader.js
++++ b/node_modules/vscode-jsonrpc/lib/common/messageReader.js
+@@ -137,6 +137,9 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
+                     }
+                     const contentLength = headers.get('content-length');
+                     if (!contentLength) {
++                        const bodyBuffer = this.buffer.tryReadBody(this.buffer._totalLength);
++                        const bodyString = bodyBuffer.toString();
++                        console.log(`[LSP Debug] ERROR: Body - ${bodyString}`);
+                         this.fireError(new Error(`Header must provide a Content-Length property.\n${JSON.stringify(Object.fromEntries(headers))}`));
+                         return;
+                     }

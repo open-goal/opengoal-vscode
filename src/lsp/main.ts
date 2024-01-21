@@ -3,9 +3,12 @@ import * as path from "path";
 import {
   BaseLanguageClient,
   ClientCapabilities,
+  DocumentSelector,
   FeatureState,
+  InitializeParams,
   LanguageClient,
   LanguageClientOptions,
+  ServerCapabilities,
   ServerOptions,
   StaticFeature,
   TransportKind,
@@ -158,7 +161,7 @@ async function maybeDownloadLspServer(): Promise<void> {
     const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
     if (fileSizeInMegabytes <= 4) {
       vscode.window.showErrorMessage(
-        "OpenGOAL - Local LSP path does not appear to point to astatically linked binary",
+        "OpenGOAL - Local LSP path does not appear to point to a statically linked binary",
       );
       return;
     }
@@ -242,6 +245,17 @@ class StatusBarFeature implements StaticFeature {
   }
 
   constructor(private readonly client: BaseLanguageClient) {}
+
+  fillInitializeParams?: ((params: InitializeParams) => void) | undefined;
+  preInitialize?:
+    | ((
+        capabilities: ServerCapabilities<any>,
+        documentSelector: DocumentSelector | undefined,
+      ) => void)
+    | undefined;
+  clear(): void {
+    throw new Error("Method not implemented.");
+  }
 
   public getState(): FeatureState {
     return { kind: "static" };

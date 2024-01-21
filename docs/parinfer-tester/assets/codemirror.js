@@ -4878,8 +4878,8 @@
           e.clientY < editorSize.top
             ? -20
             : e.clientY > editorSize.bottom
-            ? 20
-            : 0;
+              ? 20
+              : 0;
         if (outside)
           setTimeout(
             operation(cm, function () {
@@ -6214,10 +6214,10 @@
         var type = isWordChar(cur, helper)
           ? "w"
           : group && cur == "\n"
-          ? "n"
-          : !group || /\s/.test(cur)
-          ? null
-          : "p";
+            ? "n"
+            : !group || /\s/.test(cur)
+              ? null
+              : "p";
         if (group && !first && !type) type = "s";
         if (sawType && sawType != type) {
           if (dir < 0) {
@@ -6706,12 +6706,12 @@
               return isWordChar(ch, helper);
             }
           : /\s/.test(startChar)
-          ? function (ch) {
-              return /\s/.test(ch);
-            }
-          : function (ch) {
-              return !/\s/.test(ch) && !isWordChar(ch);
-            };
+            ? function (ch) {
+                return /\s/.test(ch);
+              }
+            : function (ch) {
+                return !/\s/.test(ch) && !isWordChar(ch);
+              };
         while (start > 0 && check(line.charAt(start - 1))) --start;
         while (end < line.length && check(line.charAt(end))) ++end;
       }
@@ -9883,10 +9883,10 @@
             where == "text"
               ? "textClass"
               : where == "background"
-              ? "bgClass"
-              : where == "gutter"
-              ? "gutterClass"
-              : "wrapClass";
+                ? "bgClass"
+                : where == "gutter"
+                  ? "gutterClass"
+                  : "wrapClass";
           if (!line[prop]) line[prop] = cls;
           else if (classTest(cls).test(line[prop])) return false;
           else line[prop] += " " + cls;
@@ -9904,10 +9904,10 @@
             where == "text"
               ? "textClass"
               : where == "background"
-              ? "bgClass"
-              : where == "gutter"
-              ? "gutterClass"
-              : "wrapClass";
+                ? "bgClass"
+                : where == "gutter"
+                  ? "gutterClass"
+                  : "wrapClass";
           var cur = line[prop];
           if (!cur) return false;
           else if (cls == null) line[prop] = null;
@@ -11256,8 +11256,8 @@
     var ch = !order
       ? 0
       : order[0].level % 2
-      ? lineRight(visual)
-      : lineLeft(visual);
+        ? lineRight(visual)
+        : lineLeft(visual);
     return Pos(lineN, ch);
   }
   function lineEnd(cm, lineN) {
@@ -11271,8 +11271,8 @@
     var ch = !order
       ? line.text.length
       : order[0].level % 2
-      ? lineLeft(line)
-      : lineRight(line);
+        ? lineLeft(line)
+        : lineRight(line);
     return Pos(lineN == null ? lineNo(line) : lineN, ch);
   }
   function lineStartSmart(cm, pos) {
