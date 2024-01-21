@@ -103,6 +103,8 @@ async function preserveBlock() {
   let gameName = "jak1";
   if (game === GameName.Jak2) {
     gameName = "jak2";
+  } else if (game === GameName.Jak3) {
+    gameName = "jak3";
   }
 
   const gsrcPath = await findFileInGoalSrc(projectRoot, gameName, fileName);
@@ -437,6 +439,22 @@ async function genMethodStubs() {
   return;
 }
 
+async function applyDecompilerSuggestions() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined || editor.selection.isEmpty) {
+    return;
+  }
+
+  editor.edit((selectedText) => {
+    const content = editor.document.getText(editor.selection);
+    const result = content.replace(
+      /\(define-extern (\S+) (\S+)\) ;; (.+)/g,
+      "(define-extern $1 $3)",
+    );
+    selectedText.replace(editor.selection, result);
+  });
+}
+
 export async function activateMiscDecompTools() {
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
@@ -478,6 +496,12 @@ export async function activateMiscDecompTools() {
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.genMethodStubs",
       genMethodStubs,
+    ),
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.misc.applyDecompilerSuggestions",
+      applyDecompilerSuggestions,
     ),
   );
 }

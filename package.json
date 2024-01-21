@@ -3,7 +3,7 @@
   "displayName": "OpenGOAL",
   "description": "OpenGOAL Support for VSCode",
   "publisher": "opengoal",
-  "version": "0.15.2",
+  "version": "0.16.0",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -132,6 +132,10 @@
         "title": "OpenGOAL - Misc - Generate Method Stubs"
       },
       {
+        "command": "opengoal.decomp.misc.applyDecompilerSuggestions",
+        "title": "OpenGOAL - Misc - Apply Decompiler Suggestions to Selection"
+      },
+      {
         "command": "opengoal.decomp.typeSearcher.open",
         "title": "OpenGOAL - Misc - Type Searcher"
       },
@@ -234,12 +238,17 @@
           "opengoal.decompilerJak1ConfigVersion": {
             "type": "string",
             "default": "ntsc_v1",
-            "description": "Config version to use for decompiling jak 1 related files"
+            "description": "Config version to use for decompiling Jak 1 related files"
           },
           "opengoal.decompilerJak2ConfigVersion": {
             "type": "string",
             "default": "ntsc_v1",
-            "description": "Config version to use for decompiling jak 2 related files"
+            "description": "Config version to use for decompiling Jak 2 related files"
+          },
+          "opengoal.decompilerJak3ConfigVersion": {
+            "type": "string",
+            "default": "ntsc_v1",
+            "description": "Config version to use for decompiling Jak 3 related files"
           }
         }
       },

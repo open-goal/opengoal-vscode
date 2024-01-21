@@ -21,12 +21,17 @@ export function getCastFileData(
   if (gameName == GameName.Jak1) {
     castFilePath = vscode.Uri.joinPath(
       projectRoot,
-      `decompiler/config/jak1/${config.jak2DecompConfigVersion}/${fileName}`,
+      `decompiler/config/jak1/${config.jak1DecompConfigVersion}/${fileName}`,
     ).fsPath;
   } else if (gameName == GameName.Jak2) {
     castFilePath = vscode.Uri.joinPath(
       projectRoot,
       `decompiler/config/jak2/${config.jak2DecompConfigVersion}/${fileName}`,
+    ).fsPath;
+  } else if (gameName == GameName.Jak3) {
+    castFilePath = vscode.Uri.joinPath(
+      projectRoot,
+      `decompiler/config/jak3/${config.jak3DecompConfigVersion}/${fileName}`,
     ).fsPath;
   }
   if (!existsSync(castFilePath)) {
@@ -59,7 +64,13 @@ export function getDecompilerConfigDirectory(
     decompConfigPath = vscode.Uri.joinPath(
       projectRoot,
       `decompiler/config/jak2/`,
-      getConfig().jak1DecompConfigVersion,
+      getConfig().jak2DecompConfigVersion,
+    ).fsPath;
+  } else if (gameName == GameName.Jak3) {
+    decompConfigPath = vscode.Uri.joinPath(
+      projectRoot,
+      `decompiler/config/jak3/`,
+      getConfig().jak3DecompConfigVersion,
     ).fsPath;
   }
   if (decompConfigPath === undefined || !existsSync(decompConfigPath)) {
