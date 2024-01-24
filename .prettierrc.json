@@ -1,4 +1,12 @@
 {
   "tabWidth": 2,
-  "endOfLine": "lf"
+  "endOfLine": "auto",
+  "overrides": [
+    {
+      "files": ["**/*.jsonc"],
+      "options": {
+        "parser": "json"
+      }
+    }
+  ]
 }
