@@ -7,6 +7,13 @@ import {
   updateFileBeforeDecomp,
 } from "../utils/file-utils";
 import { getWorkspaceFolderByName } from "../utils/workspace";
+import { getFuncNameFromPosition } from "../languages/ir2/ir2-utils";
+import {
+  ArgumentMeta,
+  getArgumentsInSignature,
+  getSymbolsArgumentInfo,
+} from "../languages/opengoal/opengoal-tools";
+import { bulkUpdateVarCasts } from "./utils";
 
 async function addToOffsets() {
   const editor = vscode.window.activeTextEditor;
@@ -455,7 +462,118 @@ async function applyDecompilerSuggestions() {
   });
 }
 
+let originalDocumentForRename: vscode.TextDocument | undefined = undefined;
+let currentRenameWindow: vscode.TextEditor | undefined = undefined;
+let currentRenameLines: string[] = [];
+let currentRenameFunctionName: string | undefined = undefined;
+let currentRenameArgMeta: ArgumentMeta | undefined = undefined;
+let currentRenameFileVersion = 0;
+
+async function batchRenameUnnamedVars() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor === undefined || editor.selection.isEmpty) {
+    return;
+  }
+  const currentSelection = editor.document.getText(editor.selection);
+
+  // We can determine the function in a more consistent way here, that will also allow
+  // for renaming anon-functions / states / etc
+  const funcName = await getFuncNameFromPosition(
+    editor.document,
+    editor.selection.active,
+  );
+  if (funcName === undefined) {
+    return;
+  }
+  currentRenameFunctionName = funcName;
+  currentRenameArgMeta = {
+    index: 0,
+    totalCount: getArgumentsInSignature(currentSelection.split("\n")[0]).length,
+    isMethod: currentSelection.split("\n")[0].includes("defmethod"),
+  };
+
+  const unnamedVarRegex =
+    /(?:(?:arg\d+)|(?:f\d+|at|v[0-1]|a[0-3]|t[0-9]|s[0-7]|k[0-1]|gp|sp|sv|fp|ra)-\d+)/g;
+
+  const vars = new Set(
+    [...currentSelection.matchAll(unnamedVarRegex)].map((match) => match[0]),
+  );
+
+  currentRenameLines = [];
+  currentRenameLines.push(`Renaming Vars in - ${funcName}:`);
+  for (const variable of vars) {
+    currentRenameLines.push(`${variable} => `);
+  }
+
+  originalDocumentForRename = editor.document;
+  currentRenameFileVersion++;
+  currentRenameWindow = await vscode.window.showTextDocument(
+    vscode.Uri.from({
+      scheme: "opengoalBatchRename",
+      path: "/opengoalBatchRename",
+    }),
+    { preview: false, viewColumn: vscode.ViewColumn.Beside },
+  );
+}
+
+async function processOpengoalBatchRename() {
+  if (
+    originalDocumentForRename === undefined ||
+    currentRenameFunctionName === undefined ||
+    currentRenameArgMeta === undefined
+  ) {
+    return;
+  }
+
+  const renameMap: Record<string, string> = {};
+
+  for (let i = 0; i < currentRenameLines.length; i++) {
+    const tokens = currentRenameLines[i].split("=>");
+    if (tokens.length !== 2) {
+      continue;
+    }
+    const oldName = tokens[0].trim();
+    const newName = tokens[1].trim();
+    renameMap[oldName] = newName;
+  }
+
+  await bulkUpdateVarCasts(
+    originalDocumentForRename,
+    currentRenameFunctionName,
+    currentRenameArgMeta,
+    renameMap,
+  );
+  await vscode.commands.executeCommand(
+    "workbench.action.revertAndCloseActiveEditor",
+  );
+}
+
 export async function activateMiscDecompTools() {
+  const emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+  vscode.workspace.registerFileSystemProvider("opengoalBatchRename", {
+    createDirectory() {},
+    delete() {},
+    onDidChangeFile: emitter.event,
+    readDirectory() {
+      return [];
+    },
+    readFile() {
+      return new TextEncoder().encode(currentRenameLines.join("\n"));
+    },
+    rename() {},
+    stat() {
+      return { ctime: 0, mtime: currentRenameFileVersion, size: 0, type: 0 };
+    },
+    watch(uri) {
+      return new vscode.Disposable(() => {});
+    },
+    writeFile(uri, content) {
+      currentRenameLines = new TextDecoder().decode(content).split("\n");
+      processOpengoalBatchRename();
+      currentRenameFileVersion++;
+    },
+  });
+
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.addToOffsets",
@@ -502,6 +620,12 @@ export async function activateMiscDecompTools() {
     vscode.commands.registerCommand(
       "opengoal.decomp.misc.applyDecompilerSuggestions",
       applyDecompilerSuggestions,
+    ),
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.misc.batchRenameUnnamedVars",
+      batchRenameUnnamedVars,
     ),
   );
 }

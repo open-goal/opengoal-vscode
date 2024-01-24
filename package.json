@@ -136,6 +136,10 @@
         "title": "OpenGOAL - Misc - Apply Decompiler Suggestions to Selection"
       },
       {
+        "command": "opengoal.decomp.misc.batchRenameUnnamedVars",
+        "title": "OpenGOAL - Misc - Batch Rename Unnamed Vars"
+      },
+      {
         "command": "opengoal.decomp.typeSearcher.open",
         "title": "OpenGOAL - Misc - Type Searcher"
       },
@@ -413,6 +417,11 @@
           "when": "resourceLangId == opengoal-ir",
           "command": "opengoal.decomp.openManPage",
           "group": "z_commands"
+        }
+      ],
+      "editor/title": [
+        {
+          "when": "resourceScheme == opengoalBatchRename"
         }
       ]
     },

@@ -14,12 +14,12 @@ export interface ArgumentDefinition {
 export function getArgumentsInSignature(
   signature: string,
 ): ArgumentDefinition[] {
-  const isArgument =
+  const isSignature =
     signature.includes("defun") ||
     signature.includes("defmethod") ||
     signature.includes("defbehavior");
 
-  if (!isArgument) {
+  if (!isSignature) {
     return [];
   }
 

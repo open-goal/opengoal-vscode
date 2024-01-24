@@ -144,7 +144,7 @@ export async function updateVarCasts(
           }
         } else {
           if (argMeta.isMethod && i == 0) {
-            varNameData[funcName].args[i] = "obj";
+            varNameData[funcName].args[i] = "this";
           } else {
             varNameData[funcName].args[i] = `arg${i}`;
           }
@@ -203,6 +203,67 @@ export async function updateVarCasts(
       } else {
         varNameData[funcName]["vars"][currSymbol] = newName;
       }
+    }
+  }
+
+  // Write out cast file change
+  const configDir = await getDecompilerConfigDirectory(document.uri);
+  if (configDir === undefined) {
+    return;
+  }
+  const filePath = join(configDir, "var_names.jsonc");
+
+  writeFileSync(filePath, stringify(varNameData, null, 2));
+}
+
+export async function bulkUpdateVarCasts(
+  document: vscode.TextDocument,
+  funcName: string,
+  argMeta: ArgumentMeta,
+  renameMap: Record<string, string>,
+) {
+  // Update the var-names file
+  const projectRoot = getWorkspaceFolderByName("jak-project");
+  if (projectRoot === undefined) {
+    vscode.window.showErrorMessage(
+      "OpenGOAL - Unable to locate 'jak-project' workspace folder",
+    );
+    return;
+  }
+
+  const varNameData = getCastFileData(projectRoot, document, "var_names.jsonc");
+  if (varNameData === undefined) {
+    return;
+  }
+
+  if (!(funcName in varNameData)) {
+    varNameData[funcName] = {};
+  }
+
+  for (const [oldName, newName] of Object.entries(renameMap)) {
+    if (oldName.startsWith("arg")) {
+      // initialize if not already done
+      if (!("args" in varNameData[funcName])) {
+        varNameData[funcName].args = [];
+        for (let i = 0; i < argMeta.totalCount; i++) {
+          if (argMeta.isMethod && i == 0) {
+            varNameData[funcName].args[i] = "this";
+          } else {
+            varNameData[funcName].args[i] = `arg${i}`;
+          }
+        }
+      }
+      let argIndex = parseInt(oldName.substring(3));
+      if (argMeta.isMethod) {
+        argIndex++;
+      }
+      varNameData[funcName].args[argIndex] = newName;
+    } else {
+      if (!("vars" in varNameData[funcName])) {
+        varNameData[funcName].vars = {};
+      }
+      // NOTE - omitting check for duplicate names, just know what you're doing
+      varNameData[funcName].vars[oldName] = newName;
     }
   }
 
