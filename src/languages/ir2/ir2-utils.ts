@@ -21,10 +21,10 @@ export function insideGoalCodeInIR(
   return false;
 }
 
-export async function getFuncNameFromPosition(
+export function getFuncNameFromPosition(
   document: vscode.TextDocument,
   position: vscode.Position,
-): Promise<string | undefined> {
+): string | undefined {
   const funcNameRegex = /; \.function (.*).*/g;
   for (let i = position.line; i >= 0; i--) {
     const line = document.lineAt(i).text;
@@ -33,9 +33,7 @@ export async function getFuncNameFromPosition(
       return matches[0][1].toString();
     }
   }
-  await vscode.window.showErrorMessage(
-    "Couldn't determine function or method name",
-  );
+  vscode.window.showErrorMessage("Couldn't determine function or method name");
   return undefined;
 }
 
@@ -44,4 +42,53 @@ export async function getFuncNameFromSelection(
   selection: vscode.Selection,
 ): Promise<string | undefined> {
   return await getFuncNameFromPosition(document, selection.start);
+}
+
+export function getFuncBodyFromPosition(
+  document: vscode.TextDocument,
+  position: vscode.Position,
+): string[] | undefined {
+  let funcName = undefined;
+  let funcNamePosition = 0;
+  const funcNameRegex = /; \.function (.*).*/g;
+  for (let i = position.line; i >= 0; i--) {
+    const line = document.lineAt(i).text;
+    const matches = [...line.matchAll(funcNameRegex)];
+    if (matches.length == 1) {
+      funcName = matches[0][1].toString();
+      funcNamePosition = i;
+      break;
+    }
+  }
+  if (funcName === undefined) {
+    vscode.window.showErrorMessage(
+      "Couldn't determine function or method name",
+    );
+    return undefined;
+  }
+  // Find the function body
+  let foundFunc = false;
+  let foundFuncBody = false;
+  const funcBody = [];
+  for (let i = funcNamePosition; i <= document.lineCount; i++) {
+    const line = document.lineAt(i).text;
+    if (line.includes(`; .function ${funcName}`)) {
+      foundFunc = true;
+      continue;
+    }
+    if (foundFunc && line.includes(";;-*-OpenGOAL-Start-*-")) {
+      foundFuncBody = true;
+      continue;
+    }
+    if (foundFuncBody) {
+      if (line.includes(";;-*-OpenGOAL-End-*-")) {
+        break;
+      }
+      if (line.trim() === ``) {
+        continue;
+      }
+      funcBody.push(line.trimEnd());
+    }
+  }
+  return funcBody;
 }
