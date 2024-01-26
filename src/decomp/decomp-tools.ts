@@ -15,6 +15,11 @@ import {
 import { activateDecompTypeSearcher } from "./type-searcher/type-searcher";
 import { updateTypeCastSuggestions } from "./type-caster";
 import { glob } from "fast-glob";
+import {
+  getFuncBodyFromPosition,
+  getFuncNameFromPosition,
+} from "../languages/ir2/ir2-utils";
+import { copyVarCastsFromOneGameToAnother } from "./utils";
 
 const execFileAsync = util.promisify(execFile);
 const execAsync = util.promisify(exec);
@@ -155,10 +160,17 @@ async function checkDecompilerPath(): Promise<string | undefined> {
 }
 
 async function decompFiles(
-  decompConfig: string,
   gameName: GameName,
   fileNames: string[],
+  omitVariableCasts: boolean = false,
 ) {
+  const decompConfig = getDecompilerConfig(gameName);
+  if (decompConfig === undefined) {
+    await vscode.window.showErrorMessage(
+      `OpenGOAL - Can't decompile no ${gameName.toString} config selected`,
+    );
+    return;
+  }
   if (fileNames.length == 0) {
     return;
   }
@@ -180,8 +192,16 @@ async function decompFiles(
       "--version",
       getDecompilerConfigVersion(gameName),
       "--config-override",
-      `{"decompile_code": true, "print_cfgs": true, "levels_extract": false, "allowed_objects": [${allowed_objects}]}`,
     ];
+    if (omitVariableCasts) {
+      args.push(
+        `{"decompile_code": true, "print_cfgs": true, "levels_extract": false, "ignore_var_name_casts": true,"allowed_objects": [${allowed_objects}]}`,
+      );
+    } else {
+      args.push(
+        `{"decompile_code": true, "print_cfgs": true, "levels_extract": false, "allowed_objects": [${allowed_objects}]}`,
+      );
+    }
     const { stdout, stderr } = await execFileAsync(decompilerPath, args, {
       encoding: "utf8",
       cwd: getProjectRoot()?.fsPath,
@@ -218,10 +238,8 @@ async function getValidObjectNames(gameName: string) {
   for (const obj of objs) {
     const is_tpage = obj[0].includes("tpage");
     const is_art_file = obj[0].endsWith("-ag");
-    if (obj[2] == 4 || obj[2] == 5) {
-      if (!is_tpage && !is_art_file) {
-        names.push(obj[0]);
-      }
+    if (!is_tpage && !is_art_file) {
+      names.push(obj[0]);
     }
   }
   return names;
@@ -268,16 +286,7 @@ async function decompSpecificFile() {
     return;
   }
 
-  // Determine what decomp config to use
-  const decompConfig = getDecompilerConfig(gameName);
-  if (decompConfig === undefined) {
-    await vscode.window.showErrorMessage(
-      `OpenGOAL - Can't decompile no ${gameName.toString} config selected`,
-    );
-    return;
-  }
-
-  await decompFiles(decompConfig, gameName, [fileName]);
+  await decompFiles(gameName, [fileName]);
 }
 
 async function decompCurrentFile() {
@@ -307,15 +316,8 @@ async function decompCurrentFile() {
     );
     return;
   }
-  const decompConfig = getDecompilerConfig(gameName);
-  if (decompConfig === undefined) {
-    await vscode.window.showErrorMessage(
-      `OpenGOAL - Can't decompile no ${gameName.toString} config selected`,
-    );
-    return;
-  }
 
-  await decompFiles(decompConfig, gameName, [fileName]);
+  await decompFiles(gameName, [fileName]);
 }
 
 async function decompAllActiveFiles() {
@@ -356,35 +358,13 @@ async function decompAllActiveFiles() {
   jak3ObjectNames = [...new Set(jak3ObjectNames)];
 
   if (jak1ObjectNames.length > 0) {
-    const jak1Config = getDecompilerConfig(GameName.Jak1);
-    if (jak1Config === undefined) {
-      await vscode.window.showErrorMessage(
-        "OpenGOAL - Can't decompile, no Jak 1 config selected",
-      );
-      return;
-    }
-    await decompFiles(jak1Config, GameName.Jak1, jak1ObjectNames);
+    await decompFiles(GameName.Jak1, jak1ObjectNames);
   }
-
   if (jak2ObjectNames.length > 0) {
-    const jak2Config = getDecompilerConfig(GameName.Jak2);
-    if (jak2Config === undefined) {
-      await vscode.window.showErrorMessage(
-        "OpenGOAL - Can't decompile, no Jak 2 config selected",
-      );
-      return;
-    }
-    await decompFiles(jak2Config, GameName.Jak2, jak2ObjectNames);
+    await decompFiles(GameName.Jak2, jak2ObjectNames);
   }
   if (jak3ObjectNames.length > 0) {
-    const jak3Config = getDecompilerConfig(GameName.Jak3);
-    if (jak3Config === undefined) {
-      await vscode.window.showErrorMessage(
-        "OpenGOAL - Can't decompile, no Jak 3 config selected",
-      );
-      return;
-    }
-    await decompFiles(jak3Config, GameName.Jak3, jak3ObjectNames);
+    await decompFiles(GameName.Jak3, jak3ObjectNames);
   }
 }
 
@@ -534,6 +514,111 @@ async function updateReferenceTest() {
   });
 }
 
+async function compareFunctionWithJak2() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || !editor.document === undefined) {
+    await vscode.window.showErrorMessage(
+      "No active file open, can't compare decompiler output!",
+    );
+    return;
+  }
+  let fileName = path.basename(editor.document.fileName);
+  if (!fileName.match(/.*_ir2\.asm/)) {
+    await vscode.window.showErrorMessage(
+      "Current file is not a valid IR2 file, can't compare!",
+    );
+    return;
+  } else {
+    fileName = fileName.split("_ir2.asm")[0];
+  }
+
+  // 0. Determine the current function we are interested in comparing
+  const funcName = getFuncNameFromPosition(
+    editor.document,
+    editor.selection.start,
+  );
+  if (funcName === undefined) {
+    await vscode.window.showErrorMessage(
+      "Couldn't determine function name to compare with jak 2!",
+    );
+    return;
+  }
+  // 1. Run the decompiler on the same file in jak 2 without variable names
+  await decompFiles(GameName.Jak2, [fileName], true);
+  // 2. Go grab that file's contents, find the same function and grab it, cut out the docstring if it's there (and save it)
+  const decompiledOutput = (
+    await fs.readFile(
+      path.join(
+        getProjectRoot()?.fsPath,
+        "decompiler_out",
+        "jak2",
+        `${fileName}_ir2.asm`,
+      ),
+    )
+  )
+    .toString()
+    .split("\n");
+  let foundFunc = false;
+  let foundFuncBody = false;
+  const funcBody = [];
+  const docstring = [];
+  for (const line of decompiledOutput) {
+    if (line.includes(`; .function ${funcName}`)) {
+      foundFunc = true;
+      continue;
+    }
+    if (foundFunc && line.includes(";;-*-OpenGOAL-Start-*-")) {
+      foundFuncBody = true;
+      continue;
+    }
+    if (foundFuncBody) {
+      if (line.includes(";;-*-OpenGOAL-End-*-")) {
+        break;
+      }
+      if (line.trim() === ``) {
+        continue;
+      }
+      // NOTE - this will fail with functions with multi-line signatures
+      if (
+        funcBody.length === 1 &&
+        (line.trim().startsWith('"') || !line.trim().startsWith("("))
+      ) {
+        docstring.push(line.trimEnd());
+        continue;
+      }
+      funcBody.push(line.trimEnd());
+    }
+  }
+  // 3. Compare the two, if they match, then copy over any var-name changes and put the docstring in the clipboard
+  const jak3FuncBody = getFuncBodyFromPosition(
+    editor.document,
+    editor.selection.start,
+  );
+  if (jak3FuncBody === undefined) {
+    await vscode.window.showErrorMessage(
+      "Couldn't determine function body in jak 3!",
+    );
+    return;
+  }
+  if (funcBody.join("\n") === jak3FuncBody.join("\n")) {
+    // Update var casts
+    await copyVarCastsFromOneGameToAnother(
+      editor.document,
+      GameName.Jak2,
+      GameName.Jak3,
+      funcName,
+    );
+    await vscode.window.showInformationMessage(
+      "Function bodies match! Docstring copied to clipboard if it was found.",
+    );
+    if (docstring.length > 0) {
+      await vscode.env.clipboard.writeText(docstring.join("\n"));
+    }
+  } else {
+    await vscode.window.showWarningMessage("Function bodies don't match!");
+  }
+}
+
 export async function activateDecompTools() {
   // no color support :( - https://github.com/microsoft/vscode/issues/571
   channel = vscode.window.createOutputChannel(
@@ -578,6 +663,12 @@ export async function activateDecompTools() {
     vscode.commands.registerCommand(
       "opengoal.decomp.updateReferenceTest",
       updateReferenceTest,
+    ),
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.misc.compareFuncWithJak2",
+      compareFunctionWithJak2,
     ),
   );
 

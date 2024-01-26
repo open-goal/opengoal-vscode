@@ -140,6 +140,10 @@
         "title": "OpenGOAL - Misc - Batch Rename Unnamed Vars"
       },
       {
+        "command": "opengoal.decomp.misc.compareFuncWithJak2",
+        "title": "OpenGOAL - Misc - Compare Func with Jak 2"
+      },
+      {
         "command": "opengoal.decomp.typeSearcher.open",
         "title": "OpenGOAL - Misc - Type Searcher"
       },

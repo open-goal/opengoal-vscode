@@ -7,6 +7,30 @@ import { ArgumentMeta } from "../languages/opengoal/opengoal-tools";
 import { determineGameFromPath, GameName } from "../utils/file-utils";
 import { getWorkspaceFolderByName } from "../utils/workspace";
 
+export function getCastFilePathForGame(
+  projectRoot: vscode.Uri,
+  gameName: GameName,
+  fileName: string,
+): string {
+  const config = getConfig();
+  if (gameName == GameName.Jak1) {
+    return vscode.Uri.joinPath(
+      projectRoot,
+      `decompiler/config/jak1/${config.jak1DecompConfigVersion}/${fileName}`,
+    ).fsPath;
+  } else if (gameName == GameName.Jak2) {
+    return vscode.Uri.joinPath(
+      projectRoot,
+      `decompiler/config/jak2/${config.jak2DecompConfigVersion}/${fileName}`,
+    ).fsPath;
+  } else {
+    return vscode.Uri.joinPath(
+      projectRoot,
+      `decompiler/config/jak3/${config.jak3DecompConfigVersion}/${fileName}`,
+    ).fsPath;
+  }
+}
+
 export function getCastFileData(
   projectRoot: vscode.Uri,
   document: vscode.TextDocument,
@@ -16,24 +40,20 @@ export function getCastFileData(
   if (gameName === undefined) {
     return undefined;
   }
-  const config = getConfig();
-  let castFilePath = "";
-  if (gameName == GameName.Jak1) {
-    castFilePath = vscode.Uri.joinPath(
-      projectRoot,
-      `decompiler/config/jak1/${config.jak1DecompConfigVersion}/${fileName}`,
-    ).fsPath;
-  } else if (gameName == GameName.Jak2) {
-    castFilePath = vscode.Uri.joinPath(
-      projectRoot,
-      `decompiler/config/jak2/${config.jak2DecompConfigVersion}/${fileName}`,
-    ).fsPath;
-  } else if (gameName == GameName.Jak3) {
-    castFilePath = vscode.Uri.joinPath(
-      projectRoot,
-      `decompiler/config/jak3/${config.jak3DecompConfigVersion}/${fileName}`,
-    ).fsPath;
+  const castFilePath = getCastFilePathForGame(projectRoot, gameName, fileName);
+  if (!existsSync(castFilePath)) {
+    return undefined;
   }
+
+  return parse(readFileSync(castFilePath).toString(), undefined, true);
+}
+
+export function getCastFileDataForGame(
+  projectRoot: vscode.Uri,
+  gameName: GameName,
+  fileName: string,
+): any | undefined {
+  const castFilePath = getCastFilePathForGame(projectRoot, gameName, fileName);
   if (!existsSync(castFilePath)) {
     return undefined;
   }
@@ -268,11 +288,56 @@ export async function bulkUpdateVarCasts(
   }
 
   // Write out cast file change
-  const configDir = await getDecompilerConfigDirectory(document.uri);
+  const configDir = getDecompilerConfigDirectory(document.uri);
   if (configDir === undefined) {
     return;
   }
   const filePath = join(configDir, "var_names.jsonc");
 
   writeFileSync(filePath, stringify(varNameData, null, 2));
+}
+
+export async function copyVarCastsFromOneGameToAnother(
+  document: vscode.TextDocument,
+  oldGame: GameName,
+  newGame: GameName,
+  funcName: string,
+) {
+  const projectRoot = getWorkspaceFolderByName("jak-project");
+  if (projectRoot === undefined) {
+    vscode.window.showErrorMessage(
+      "OpenGOAL - Unable to locate 'jak-project' workspace folder",
+    );
+    return;
+  }
+
+  const oldVarNameData = getCastFileDataForGame(
+    projectRoot,
+    oldGame,
+    "var_names.jsonc",
+  );
+  if (oldVarNameData === undefined) {
+    return;
+  }
+  const newVarNameData = getCastFileDataForGame(
+    projectRoot,
+    newGame,
+    "var_names.jsonc",
+  );
+  if (newVarNameData === undefined) {
+    return;
+  }
+
+  if (!(funcName in oldVarNameData)) {
+    return;
+  }
+  newVarNameData[funcName] = oldVarNameData[funcName];
+  // Write out cast file change
+  const configDir = getDecompilerConfigDirectory(document.uri);
+  if (configDir === undefined) {
+    return;
+  }
+  const filePath = join(configDir, "var_names.jsonc");
+
+  writeFileSync(filePath, stringify(newVarNameData, null, 2));
 }
