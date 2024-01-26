@@ -37,8 +37,11 @@ export async function jackIn() {
     socket = new PromiseSocket();
     socket.setEncoding("utf8");
     socket.socket.setTimeout(100);
-    await socket.connect(8181, "127.0.0.1");
-    jackedIn = true;
+    const port = getConfig().replPort;
+    if (port !== undefined) {
+      await socket.connect(port, "127.0.0.1");
+      jackedIn = true;
+    }
   } catch (e) {
     console.error(e);
     socket = undefined;
