@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { getArgumentsInSignature } from "../opengoal/opengoal-tools";
+import { getFuncBodyFromPosition } from "./ir2-utils";
 
 export class IRCompletionItemProvider implements vscode.CompletionItemProvider {
   provideCompletionItems(
@@ -32,9 +33,33 @@ export class IRCompletionItemProvider implements vscode.CompletionItemProvider {
       position.character,
     );
 
+    const funcBody = getFuncBodyFromPosition(document, position);
+    if (funcBody === undefined) {
+      return [];
+    }
+
     let docstring = `"something\n`;
     for (const arg of args) {
-      docstring += ` @param ${arg.name} something\n`;
+      // Determine the nature of the parameter
+      // _ - unused (if it doesn't show up AT ALL)
+      // ! - mutated (if it's involved in a set)
+      // ? - optional (can't easily determine this and is frankly rare)
+      let paramFound = false;
+      for (let i = 1; i < funcBody.length; i++) {
+        const line = funcBody[i];
+        if (line.includes(`(set! (-> ${arg.name}`)) {
+          docstring += ` @param! ${arg.name} something\n`;
+          paramFound = true;
+          break;
+        } else if (line.includes(arg.name)) {
+          paramFound = true;
+        }
+      }
+      if (paramFound) {
+        docstring += ` @param ${arg.name} something\n`;
+      } else {
+        docstring += ` @param_ ${arg.name} something\n`;
+      }
     }
     docstring += ` @returns something"`;
 
