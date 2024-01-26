@@ -13,10 +13,14 @@ export function getConfig() {
     opengoalLspPath: configOptions.get<string>("opengoalLspPath"),
     opengoalLspLogPath: configOptions.get<string>("opengoalLspLogPath"),
     opengoalLspLogVerbose: configOptions.get<boolean>("opengoalLspLogVerbose"),
+    formatDecompilationOutput: configOptions.get<boolean>(
+      "formatDecompilationOutput",
+    ),
 
     eeManPagePath: configOptions.get<string>("eeManPagePath"),
     vuManPagePath: configOptions.get<string>("vuManPagePath"),
     decompilerPath: configOptions.get<string>("decompilerPath"),
+    formatterPath: configOptions.get<string>("formatterPath"),
     typeSearcherPath: configOptions.get<string>("typeSearcherPath"),
     jak1DecompConfigVersion: configOptions.get<string>(
       "decompilerJak1ConfigVersion",
@@ -78,6 +82,15 @@ export async function updateDecompilerPath(path: string) {
   const userConfig = vscode.workspace.getConfiguration();
   await userConfig.update(
     "opengoal.decompilerPath",
+    path,
+    vscode.ConfigurationTarget.Global,
+  );
+}
+
+export async function updateFormatterPath(path: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.formatterPath",
     path,
     vscode.ConfigurationTarget.Global,
   );

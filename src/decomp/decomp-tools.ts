@@ -4,7 +4,11 @@ import * as vscode from "vscode";
 import { determineGameFromPath, GameName } from "../utils/file-utils";
 import { open_in_pdf } from "./man-page";
 import * as util from "util";
-import { getConfig, updateDecompilerPath } from "../config/config";
+import {
+  getConfig,
+  updateDecompilerPath,
+  updateFormatterPath,
+} from "../config/config";
 import * as path from "path";
 import { getExtensionContext, getProjectRoot } from "../context";
 import {
@@ -36,6 +40,7 @@ enum DecompStatus {
   Idle,
   Running,
   Errored,
+  Formatting,
 }
 
 function updateStatus(status: DecompStatus, metadata?: any) {
@@ -71,6 +76,20 @@ function updateStatus(status: DecompStatus, metadata?: any) {
       decompStatusItem.tooltip = "Decompiling...";
       decompStatusItem.command = undefined;
       break;
+    case DecompStatus.Formatting:
+      if (metadata.objectNames.length > 0) {
+        if (metadata.objectNames.length <= 5) {
+          subText = metadata.objectNames.join(", ");
+        } else {
+          subText = `${metadata.objectNames.slice(0, 5).join(", ")}, and ${
+            metadata.objectNames.length - 5
+          } more`;
+        }
+      }
+      decompStatusItem.text = `$(loading~spin) Formatting - ${subText} - [ ${metadata.decompConfig} ]`;
+      decompStatusItem.tooltip = "Formatting...";
+      decompStatusItem.command = undefined;
+      break;
     default:
       break;
   }
@@ -82,6 +101,15 @@ function defaultDecompPath() {
     return "out/build/Release/bin/decompiler.exe";
   } else {
     return "build/decompiler/decompiler";
+  }
+}
+
+function defaultFormatterPath() {
+  const platform = process.platform;
+  if (platform == "win32") {
+    return "out/build/Release/bin/formatter.exe";
+  } else {
+    return "build/tools/formatter";
   }
 }
 
@@ -159,6 +187,39 @@ async function checkDecompilerPath(): Promise<string | undefined> {
   return decompilerPath;
 }
 
+async function checkFormatterPath(): Promise<string | undefined> {
+  let formatterPath = getConfig().formatterPath;
+
+  // Look for the decompiler if the path isn't set or the file is now missing
+  if (formatterPath !== undefined && existsSync(formatterPath)) {
+    return formatterPath;
+  }
+
+  const potentialPath = vscode.Uri.joinPath(
+    getProjectRoot(),
+    defaultFormatterPath(),
+  );
+  if (existsSync(potentialPath.fsPath)) {
+    formatterPath = potentialPath.fsPath;
+  } else {
+    // Ask the user to find it cause we have no idea
+    const path = await vscode.window.showOpenDialog({
+      canSelectMany: false,
+      openLabel: "Select Formatter",
+      title: "Provide the formatter executable's path",
+    });
+    if (path === undefined || path.length == 0) {
+      vscode.window.showErrorMessage(
+        "OpenGOAL - Aborting formatting, you didn't provide a path to the executable",
+      );
+      return undefined;
+    }
+    formatterPath = path[0].fsPath;
+  }
+  updateFormatterPath(formatterPath);
+  return formatterPath;
+}
+
 async function decompFiles(
   gameName: GameName,
   fileNames: string[],
@@ -215,6 +276,49 @@ async function decompFiles(
     channel.append(
       `DECOMP ERROR:\nSTDOUT:\n${error.stdout}\nSTDERR:\n${error.stderr}`,
     );
+  }
+
+  // Format results
+  if (getConfig().formatDecompilationOutput) {
+    const formatterPath = await checkFormatterPath();
+    if (!formatterPath) {
+      return;
+    }
+
+    updateStatus(DecompStatus.Formatting, {
+      objectNames: fileNames,
+      decompConfig: path.parse(decompConfig).name,
+    });
+
+    for (const name of fileNames) {
+      const filePath = path.join(
+        getProjectRoot()?.fsPath,
+        "decompiler_out",
+        gameName,
+        `${name}_disasm.gc`,
+      );
+
+      const formatterArgs = ["--write", "--file", filePath];
+      try {
+        const { stdout, stderr } = await execFileAsync(
+          formatterPath,
+          formatterArgs,
+          {
+            encoding: "utf8",
+            cwd: getProjectRoot()?.fsPath,
+            timeout: 20000,
+          },
+        );
+        channel.append(stdout.toString());
+        channel.append(stderr.toString());
+      } catch (error: any) {
+        updateStatus(DecompStatus.Errored);
+        channel.append(
+          `DECOMP ERROR:\nSTDOUT:\n${error.stdout}\nSTDERR:\n${error.stderr}`,
+        );
+      }
+    }
+    updateStatus(DecompStatus.Idle);
   }
 }
 
