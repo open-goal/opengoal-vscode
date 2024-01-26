@@ -191,6 +191,11 @@
         "id": "opengoal-repl",
         "title": "REPL",
         "properties": {
+          "opengoal.replPort": {
+            "type": "number",
+            "default": 8181,
+            "description": "Port for the nREPL server"
+          },
           "opengoal.replAutoJackIn": {
             "type": "boolean",
             "default": false,
