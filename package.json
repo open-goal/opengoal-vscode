@@ -240,6 +240,14 @@
             "default": null,
             "description": "File path to the decompiler executable"
           },
+          "opengoal.formatterPath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "File path to the formatter executable for when invoking directly (not via LSP)"
+          },
           "opengoal.typeSearcherPath": {
             "type": [
               "string",
@@ -262,6 +270,11 @@
             "type": "string",
             "default": "ntsc_v1",
             "description": "Config version to use for decompiling Jak 3 related files"
+          },
+          "opengoal.formatDecompilationOutput": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether or not the results of the decompiler should be auto-formatted"
           }
         }
       },
@@ -426,11 +439,6 @@
           "when": "resourceLangId == opengoal-ir",
           "command": "opengoal.decomp.openManPage",
           "group": "z_commands"
-        }
-      ],
-      "editor/title": [
-        {
-          "when": "resourceScheme == opengoalBatchRename"
         }
       ]
     },

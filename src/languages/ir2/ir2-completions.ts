@@ -45,19 +45,21 @@ export class IRCompletionItemProvider implements vscode.CompletionItemProvider {
       // ! - mutated (if it's involved in a set)
       // ? - optional (can't easily determine this and is frankly rare)
       let paramFound = false;
+      let paramPrinted = false;
       for (let i = 1; i < funcBody.length; i++) {
         const line = funcBody[i];
         if (line.includes(`(set! (-> ${arg.name}`)) {
           docstring += ` @param! ${arg.name} something\n`;
           paramFound = true;
+          paramPrinted = true;
           break;
         } else if (line.includes(arg.name)) {
           paramFound = true;
         }
       }
-      if (paramFound) {
+      if (paramFound && !paramPrinted) {
         docstring += ` @param ${arg.name} something\n`;
-      } else {
+      } else if (!paramPrinted) {
         docstring += ` @param_ ${arg.name} something\n`;
       }
     }
