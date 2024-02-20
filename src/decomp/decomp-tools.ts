@@ -41,6 +41,7 @@ enum DecompStatus {
   Running,
   Errored,
   Formatting,
+  FormattingError,
 }
 
 function updateStatus(status: DecompStatus, metadata?: any) {
@@ -50,6 +51,11 @@ function updateStatus(status: DecompStatus, metadata?: any) {
       decompStatusItem.tooltip = "Toggle Auto-Decomp";
       decompStatusItem.command = "opengoal.decomp.toggleAutoDecompilation";
       decompStatusItem.text = "$(testing-error-icon) Decomp Failed";
+      break;
+    case DecompStatus.FormattingError:
+      decompStatusItem.tooltip = "Toggle Auto-Decomp";
+      decompStatusItem.command = "opengoal.decomp.toggleAutoDecompilation";
+      decompStatusItem.text = "$(testing-error-icon) Formatting Failed";
       break;
     case DecompStatus.Idle:
       decompStatusItem.tooltip = "Toggle Auto-Decomp";
@@ -250,6 +256,7 @@ async function decompFiles(
       decompConfig,
       "./iso_data",
       "./decompiler_out",
+      "--disable-ansi",
       "--version",
       getDecompilerConfigVersion(gameName),
       "--config-override",
@@ -298,7 +305,7 @@ async function decompFiles(
         `${name}_disasm.gc`,
       );
 
-      const formatterArgs = ["--write", "--file", filePath];
+      const formatterArgs = ["--write", "--disable-ansi", "--file", filePath];
       try {
         const { stdout, stderr } = await execFileAsync(
           formatterPath,
@@ -312,9 +319,9 @@ async function decompFiles(
         channel.append(stdout.toString());
         channel.append(stderr.toString());
       } catch (error: any) {
-        updateStatus(DecompStatus.Errored);
+        updateStatus(DecompStatus.FormattingError);
         channel.append(
-          `DECOMP ERROR:\nSTDOUT:\n${error.stdout}\nSTDERR:\n${error.stderr}`,
+          `FORMATTER ERROR:\nSTDOUT:\n${error.stdout}\nSTDERR:\n${error.stderr}`,
         );
       }
     }
