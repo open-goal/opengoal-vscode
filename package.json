@@ -5,7 +5,7 @@
   "publisher": "opengoal",
   "version": "0.18.1",
   "engines": {
-    "vscode": "^1.86.0"
+    "vscode": "^1.87.0"
   },
   "categories": [
     "Programming Languages"
@@ -29,16 +29,16 @@
   "devDependencies": {
     "@types/follow-redirects": "^1.14.4",
     "@types/glob": "^8.1.0",
-    "@types/node": "^20.11.20",
-    "@types/vscode": "^1.86.0",
-    "@typescript-eslint/eslint-plugin": "^7.0.2",
-    "@typescript-eslint/parser": "^7.0.2",
+    "@types/node": "^20.11.25",
+    "@types/vscode": "^1.87.0",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@typescript-eslint/parser": "^7.1.1",
     "@vscode/vsce": "^2.24.0",
     "esbuild": "^0.20.1",
     "eslint": "^8.57.0",
     "patch-package": "^8.0.0",
     "prettier": "3.2.5",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   },
   "dependencies": {
     "comment-json": "^4.2.3",
