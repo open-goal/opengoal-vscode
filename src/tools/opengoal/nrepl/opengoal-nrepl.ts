@@ -3,34 +3,21 @@ import * as path from "path";
 import PromiseSocket from "promise-socket";
 import * as vscode from "vscode";
 import { getConfig } from "../../../config/config";
+import { updateStatusBar } from "../../../context";
 
 let jackedIn = false;
 let socket: PromiseSocket<Socket> | undefined = undefined;
 
-const nreplStatusItem = vscode.window.createStatusBarItem(
-  vscode.StatusBarAlignment.Left,
-  0,
-);
+// TODO - status bar updates for errors and such
 
-function updateStatus() {
-  // TODO - show errors
-  if (!jackedIn) {
-    nreplStatusItem.text = "$(call-outgoing) nREPL";
-    nreplStatusItem.tooltip =
-      "Jack-in to a running OpenGOAL nREPL on port 8181";
-    nreplStatusItem.command = "opengoal.nrepl.jackin";
-  } else {
-    nreplStatusItem.text = "$(debug-disconnect) nREPL";
-    nreplStatusItem.tooltip =
-      "Un-jack from a running OpenGOAL nREPL on port 8181";
-    nreplStatusItem.command = "opengoal.nrepl.unjack";
-  }
+export function isJackedIn() {
+  return jackedIn;
 }
 
 export async function jackIn() {
   if (socket !== undefined) {
     jackedIn = true;
-    updateStatus();
+    updateStatusBar(false, false);
     return;
   }
   try {
@@ -46,13 +33,13 @@ export async function jackIn() {
     console.error(e);
     socket = undefined;
   }
-  updateStatus();
+  updateStatusBar(false, false);
 }
 
 export async function unJack() {
   if (socket === undefined) {
     jackedIn = false;
-    updateStatus();
+    updateStatusBar(false, false);
     return;
   }
   try {
@@ -62,7 +49,7 @@ export async function unJack() {
   }
   socket = undefined;
   jackedIn = false;
-  updateStatus();
+  updateStatusBar(false, false);
 }
 
 export async function reloadFile(fileName: string) {
@@ -100,8 +87,6 @@ export function registerNReplCommands(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("opengoal.nrepl.jackin", jackIn),
     vscode.commands.registerCommand("opengoal.nrepl.unjack", unJack),
   );
-  updateStatus();
-  nreplStatusItem.show();
 }
 
 export function nreplOnFileSaveHandler(e: vscode.TextDocument) {
@@ -110,6 +95,5 @@ export function nreplOnFileSaveHandler(e: vscode.TextDocument) {
   }
   // Get the name
   const fileName = path.basename(e.fileName).replace(".gc", "");
-  console.log(fileName);
   reloadFile(fileName);
 }
