@@ -56,6 +56,14 @@
         "title": "OpenGOAL - Switch File"
       },
       {
+        "command": "opengoal.openLogs",
+        "title": "OpenGOAL - Open Logs"
+      },
+      {
+        "command": "opengoal.decomp.openLogs",
+        "title": "OpenGOAL - Open Decompiler Logs"
+      },
+      {
         "command": "opengoal.decomp.openMostRecentIRFile",
         "title": "OpenGOAL - Open Recent IR2 File"
       },
@@ -160,6 +168,10 @@
         "title": "OpenGOAL - LSP - Restart"
       },
       {
+        "command": "opengoal.lsp.openLogs",
+        "title": "OpenGOAL - LSP - Open Logs"
+      },
+      {
         "command": "opengoal.nrepl.jackin",
         "title": "OpenGOAL - nREPL - Jack-In"
       },
@@ -216,6 +228,11 @@
         "id": "opengoal-decomp",
         "title": "Decompilation",
         "properties": {
+          "opengoal.autoDecompilation": {
+            "type": "boolean",
+            "default": true,
+            "description": "Automatically active IR2 files"
+          },
           "opengoal.eeManPagePath": {
             "type": [
               "string",

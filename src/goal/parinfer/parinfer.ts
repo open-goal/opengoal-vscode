@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { integer } from "vscode-languageclient";
 import { getConfig, updateOpengoalParinferMode } from "../../config/config";
 import { getEditorRange } from "../../utils/editor-utils";
+import { updateStatusBar } from "../../context";
 
 // TODO:
 // - iron out some quirks around undoing
@@ -72,45 +73,9 @@ const eventQueue: EventQueueItem[] = [];
 const maxEventQueueSize = 10;
 let currentParinferMode = ParinferMode.DISABLED;
 
-const parinferStatusItem = vscode.window.createStatusBarItem(
-  vscode.StatusBarAlignment.Left,
-  0,
-);
-
-function updateStatus() {
-  switch (currentParinferMode) {
-    case ParinferMode.DISABLED:
-      parinferStatusItem.text = "$(json) Parinfer Disabled";
-      parinferStatusItem.tooltip = "Currently doing nothing! - Change Mode";
-      parinferStatusItem.command = "opengoal.parinfer.changeMode";
-      break;
-    case ParinferMode.SMART:
-      parinferStatusItem.text = "$(json) Smart Parinfer";
-      parinferStatusItem.tooltip =
-        "Automatically runs in Paren or Indent mode - Change Mode";
-      parinferStatusItem.command = "opengoal.parinfer.changeMode";
-      break;
-    case ParinferMode.PAREN:
-      parinferStatusItem.text = "$(json) Paren Parinfer";
-      parinferStatusItem.tooltip =
-        "You handle the parens while parinfer handles indentation! - Change Mode";
-      parinferStatusItem.command = "opengoal.parinfer.changeMode";
-      break;
-    case ParinferMode.INDENT:
-      parinferStatusItem.text = "$(json) Parinfer Disabled";
-      parinferStatusItem.tooltip =
-        "You handle the indentation while parinfer handles the parens! - Change Mode";
-      parinferStatusItem.command = "opengoal.parinfer.changeMode";
-      break;
-    default:
-      break;
-  }
-}
-
 async function changeParinferMode(mode: ParinferMode) {
   currentParinferMode = mode;
   await updateOpengoalParinferMode(mode);
-  updateStatus();
 }
 
 function cleanUpEventQueue() {
@@ -333,6 +298,7 @@ function showChangeModeMenu() {
     .then((v) => {
       if (v !== undefined) {
         changeParinferMode(v.label as ParinferMode);
+        updateStatusBar(false, false);
       }
     });
 }
@@ -343,8 +309,6 @@ export function registerParinferCommands(
   changeParinferMode(
     (getConfig().opengoalParinferMode as ParinferMode) ?? ParinferMode.DISABLED,
   );
-  updateStatus();
-  parinferStatusItem.hide(); // TODO - consolidate menu https://github.com/rust-lang/rust-analyzer/blob/9c03aa1ac2e67051db83a85baf3cfee902e4dd84/editors/code/src/ctx.ts#L406
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "opengoal.parinfer.changeMode",

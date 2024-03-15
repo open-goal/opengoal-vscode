@@ -6,11 +6,16 @@ import { open_in_pdf } from "./man-page";
 import * as util from "util";
 import {
   getConfig,
+  updateAutoDecompilation,
   updateDecompilerPath,
   updateFormatterPath,
 } from "../config/config";
 import * as path from "path";
-import { getExtensionContext, getProjectRoot } from "../context";
+import {
+  getExtensionContext,
+  getProjectRoot,
+  updateStatusBar,
+} from "../context";
 import {
   getFileNamesFromUris,
   getUrisFromTabs,
@@ -31,14 +36,9 @@ const execAsync = util.promisify(exec);
 let channel: vscode.OutputChannel;
 let fsWatcher: vscode.FileSystemWatcher | undefined;
 
-const decompStatusItem = vscode.window.createStatusBarItem(
-  vscode.StatusBarAlignment.Left,
-  0,
-);
-
 enum DecompStatus {
   Idle,
-  Running,
+  Decompiling,
   Errored,
   Formatting,
   FormattingError,
@@ -48,40 +48,12 @@ function updateStatus(status: DecompStatus, metadata?: any) {
   let subText = "";
   switch (status) {
     case DecompStatus.Errored:
-      decompStatusItem.tooltip = "Toggle Auto-Decomp";
-      decompStatusItem.command = "opengoal.decomp.toggleAutoDecompilation";
-      decompStatusItem.text = "$(testing-error-icon) Decomp Failed";
+      updateStatusBar(false, true, "Decomp Failed");
       break;
     case DecompStatus.FormattingError:
-      decompStatusItem.tooltip = "Toggle Auto-Decomp";
-      decompStatusItem.command = "opengoal.decomp.toggleAutoDecompilation";
-      decompStatusItem.text = "$(testing-error-icon) Formatting Failed";
+      updateStatusBar(false, true, "Formatting Failed");
       break;
-    case DecompStatus.Idle:
-      decompStatusItem.tooltip = "Toggle Auto-Decomp";
-      decompStatusItem.command = "opengoal.decomp.toggleAutoDecompilation";
-      if (fsWatcher === undefined) {
-        decompStatusItem.text =
-          "$(extensions-sync-ignored) Auto-Decomp Disabled";
-      } else {
-        decompStatusItem.text =
-          "$(extensions-sync-enabled) Auto-Decomp Enabled";
-      }
-      break;
-    case DecompStatus.Running:
-      if (metadata.objectNames.length > 0) {
-        if (metadata.objectNames.length <= 5) {
-          subText = metadata.objectNames.join(", ");
-        } else {
-          subText = `${metadata.objectNames.slice(0, 5).join(", ")}, and ${
-            metadata.objectNames.length - 5
-          } more`;
-        }
-      }
-      decompStatusItem.text = `$(loading~spin) Decompiling - ${subText} - [ ${metadata.decompConfig} ]`;
-      decompStatusItem.tooltip = "Decompiling...";
-      decompStatusItem.command = undefined;
-      break;
+    case DecompStatus.Decompiling:
     case DecompStatus.Formatting:
       if (metadata.objectNames.length > 0) {
         if (metadata.objectNames.length <= 5) {
@@ -92,11 +64,14 @@ function updateStatus(status: DecompStatus, metadata?: any) {
           } more`;
         }
       }
-      decompStatusItem.text = `$(loading~spin) Formatting - ${subText} - [ ${metadata.decompConfig} ]`;
-      decompStatusItem.tooltip = "Formatting...";
-      decompStatusItem.command = undefined;
+      updateStatusBar(
+        true,
+        false,
+        `${status == DecompStatus.Decompiling ? "Decompiling" : "Formatting"} - ${subText} - [ ${metadata.decompConfig} ]`,
+      );
       break;
     default:
+      updateStatusBar(false, false);
       break;
   }
 }
@@ -247,7 +222,7 @@ async function decompFiles(
   }
 
   const allowed_objects = fileNames.map((name) => `"${name}"`).join(",");
-  updateStatus(DecompStatus.Running, {
+  updateStatus(DecompStatus.Decompiling, {
     objectNames: fileNames,
     decompConfig: path.parse(decompConfig).name,
   });
@@ -375,7 +350,7 @@ async function decompSpecificFile() {
       gameName = GameName.Jak1;
     } else if (gameNameSelection == "jak2") {
       gameName = GameName.Jak2;
-    } else if (gameNameSelection == "jak3") {
+    } else {
       gameName = GameName.Jak3;
     }
   }
@@ -496,8 +471,9 @@ function openManPage() {
   open_in_pdf(word);
 }
 
-function toggleAutoDecompilation() {
-  if (fsWatcher === undefined) {
+function setupAutoDecompilation() {
+  const isEnabled = getConfig().autoDecompilation;
+  if (isEnabled && fsWatcher === undefined) {
     fsWatcher = vscode.workspace.createFileSystemWatcher(
       "**/decompiler/config/**/*.{jsonc,json,gc}",
     );
@@ -511,11 +487,19 @@ function toggleAutoDecompilation() {
     });
     fsWatcher.onDidCreate(() => decompAllActiveFiles());
     fsWatcher.onDidDelete(() => decompAllActiveFiles());
-  } else {
+  }
+}
+
+async function toggleAutoDecompilation() {
+  const isEnabled = getConfig().autoDecompilation;
+  await updateAutoDecompilation(!isEnabled);
+  if (!getConfig().autoDecompilation && fsWatcher !== undefined) {
     fsWatcher.dispose();
     fsWatcher = undefined;
+  } else if (getConfig().autoDecompilation) {
+    setupAutoDecompilation();
   }
-  updateStatus(DecompStatus.Idle);
+  updateStatusBar(false, false);
 }
 
 async function updateSourceFile() {
@@ -737,12 +721,15 @@ export async function activateDecompTools() {
     "opengoal-ir",
   );
 
-  toggleAutoDecompilation();
-
+  setupAutoDecompilation();
   updateStatus(DecompStatus.Idle);
-  decompStatusItem.show();
 
   // Commands
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand("opengoal.decomp.openLogs", () => {
+      channel.show();
+    }),
+  );
   getExtensionContext().subscriptions.push(
     vscode.commands.registerCommand("opengoal.decomp.openManPage", openManPage),
   );

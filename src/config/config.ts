@@ -16,7 +16,6 @@ export function getConfig() {
     formatDecompilationOutput: configOptions.get<boolean>(
       "formatDecompilationOutput",
     ),
-
     eeManPagePath: configOptions.get<string>("eeManPagePath"),
     vuManPagePath: configOptions.get<string>("vuManPagePath"),
     decompilerPath: configOptions.get<string>("decompilerPath"),
@@ -34,6 +33,7 @@ export function getConfig() {
       "decompilerJak3ConfigVersion",
       "ntsc_v1",
     ),
+    autoDecompilation: configOptions.get<boolean>("autoDecompilation"),
     colorsGoalGlobals: configOptions.get<string>("colors.goal.entity.global"),
     colorsGoalStorageControl: configOptions.get<string>(
       "colors.goal.storage.control",
@@ -58,6 +58,15 @@ export function getConfig() {
     colorsIRRegProcess: configOptions.get<string>("colors.ir.reg.process"),
     colorsIRRegGeneral: configOptions.get<string>("colors.ir.reg.general"),
   };
+}
+
+export async function updateAutoDecompilation(val: boolean) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.autoDecompilation",
+    val,
+    vscode.ConfigurationTarget.Global,
+  );
 }
 
 export async function updateEeManPagePath(path: string) {
