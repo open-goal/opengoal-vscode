@@ -34,6 +34,7 @@ export function getConfig() {
       "ntsc_v1",
     ),
     autoDecompilation: configOptions.get<boolean>("autoDecompilation"),
+    autoDecompDGO : configOptions.get<boolean>("autoDecompDGO"),
     colorsGoalGlobals: configOptions.get<string>("colors.goal.entity.global"),
     colorsGoalStorageControl: configOptions.get<string>(
       "colors.goal.storage.control",
@@ -64,6 +65,15 @@ export async function updateAutoDecompilation(val: boolean) {
   const userConfig = vscode.workspace.getConfiguration();
   await userConfig.update(
     "opengoal.autoDecompilation",
+    val,
+    vscode.ConfigurationTarget.Global,
+  );
+}
+
+export async function updateAutoDecompDGO(val: boolean) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.autoDecompDGO",
     val,
     vscode.ConfigurationTarget.Global,
   );
