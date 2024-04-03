@@ -271,7 +271,9 @@ async function decompFiles(
   }
 
   const allowed_objects = fileNames.map((name) => `"${name}"`).join(",");
-  const dgo_override = getConfig().autoDecompDGO ? await getDgosForInput(gameName, fileNames) : [];
+  const dgo_override = getConfig().autoDecompDGO
+    ? await getDgosForInput(gameName, fileNames)
+    : [];
   updateStatus(DecompStatus.Decompiling, {
     objectNames: fileNames,
     decompConfig: path.parse(decompConfig).name,
@@ -288,8 +290,7 @@ async function decompFiles(
     ];
     let override = `{"decompile_code": true, "print_cfgs": true, "levels_extract": false, `;
     if (omitVariableCasts) {
-      override +=
-        `"ignore_var_name_casts": true, `;
+      override += `"ignore_var_name_casts": true, `;
     }
     if (dgo_override.length > 0) {
       override += `"dgo_names": [${dgo_override}], `;
