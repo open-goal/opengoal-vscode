@@ -240,7 +240,7 @@ async function getDgosForInput(gameName: string, files: string[]) {
         default:
           extension = "DGO";
       }
-      let dgo_name = `"${extension}/${name}.${extension}"`;
+      const dgo_name = `"${extension}/${name}.${extension}"`;
       // ignore duplicates
       if (dgos.indexOf(dgo_name) === -1) {
         dgos.push(dgo_name);
