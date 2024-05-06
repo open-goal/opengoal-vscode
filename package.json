@@ -84,6 +84,10 @@
         "title": "OpenGOAL - Toggle Auto-Decompilation"
       },
       {
+        "command": "opengoal.decomp.toggleAutoDecompDGO",
+        "title": "OpenGOAL - Toggle DGO overrides for Auto-Decompilation"
+      },
+      {
         "command": "opengoal.decomp.updateSourceFile",
         "title": "OpenGOAL - Copy Decompilation to Source File"
       },
@@ -231,7 +235,12 @@
           "opengoal.autoDecompilation": {
             "type": "boolean",
             "default": true,
-            "description": "Automatically active IR2 files"
+            "description": "Automatically decompile active IR2 files"
+          },
+          "opengoal.autoDecompDGO": {
+            "type": "boolean",
+            "default": true,
+            "description": "Try to automatically determine the DGO files needed for the auto decomp input"
           },
           "opengoal.eeManPagePath": {
             "type": [

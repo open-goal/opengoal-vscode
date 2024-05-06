@@ -6,6 +6,7 @@ import { open_in_pdf } from "./man-page";
 import * as util from "util";
 import {
   getConfig,
+  updateAutoDecompDGO,
   updateAutoDecompilation,
   updateDecompilerPath,
   updateFormatterPath,
@@ -201,6 +202,54 @@ async function checkFormatterPath(): Promise<string | undefined> {
   return formatterPath;
 }
 
+async function parseAllObjs(gameName: string) {
+  const objsPath = path.join(
+    getProjectRoot().fsPath,
+    "goal_src",
+    gameName,
+    "build",
+    "all_objs.json",
+  );
+  if (!existsSync(objsPath)) {
+    return undefined;
+  }
+  const objsData = await fs.readFile(objsPath, {
+    encoding: "utf-8",
+  });
+  return JSON.parse(objsData);
+}
+
+// get all the DGOs needed for the input files to pass to the config override
+async function getDgosForInput(gameName: string, files: string[]) {
+  const dgos = [];
+  const objs = await parseAllObjs(gameName);
+  for (const file of files) {
+    const obj = objs.find((obj: any) => obj[0] === file);
+    const obj_dgos = obj[3];
+    for (const dgo in obj_dgos) {
+      const name = obj_dgos[dgo];
+      let extension;
+      switch (name) {
+        case "ART":
+        case "KERNEL":
+        case "ENGINE":
+        case "GAME":
+        case "COMMON":
+          extension = "CGO";
+          break;
+        default:
+          extension = "DGO";
+      }
+      const dgo_name = `"${extension}/${name}.${extension}"`;
+      // ignore duplicates
+      if (dgos.indexOf(dgo_name) === -1) {
+        dgos.push(dgo_name);
+      }
+    }
+  }
+  return dgos;
+}
+
 async function decompFiles(
   gameName: GameName,
   fileNames: string[],
@@ -209,7 +258,7 @@ async function decompFiles(
   const decompConfig = getDecompilerConfig(gameName);
   if (decompConfig === undefined) {
     await vscode.window.showErrorMessage(
-      `OpenGOAL - Can't decompile no ${gameName.toString} config selected`,
+      `OpenGOAL - Can't decompile, no ${gameName.toString} config selected`,
     );
     return;
   }
@@ -222,6 +271,9 @@ async function decompFiles(
   }
 
   const allowed_objects = fileNames.map((name) => `"${name}"`).join(",");
+  const dgo_override = getConfig().autoDecompDGO
+    ? await getDgosForInput(gameName, fileNames)
+    : [];
   updateStatus(DecompStatus.Decompiling, {
     objectNames: fileNames,
     decompConfig: path.parse(decompConfig).name,
@@ -236,15 +288,15 @@ async function decompFiles(
       getDecompilerConfigVersion(gameName),
       "--config-override",
     ];
+    let override = `{"decompile_code": true, "print_cfgs": true, "levels_extract": false, `;
     if (omitVariableCasts) {
-      args.push(
-        `{"decompile_code": true, "print_cfgs": true, "levels_extract": false, "ignore_var_name_casts": true,"allowed_objects": [${allowed_objects}]}`,
-      );
-    } else {
-      args.push(
-        `{"decompile_code": true, "print_cfgs": true, "levels_extract": false, "allowed_objects": [${allowed_objects}]}`,
-      );
+      override += `"ignore_var_name_casts": true, `;
     }
+    if (dgo_override.length > 0) {
+      override += `"dgo_names": [${dgo_override}], `;
+    }
+    override += `"allowed_objects": [${allowed_objects}]}`;
+    args.push(override);
     const { stdout, stderr } = await execFileAsync(decompilerPath, args, {
       encoding: "utf8",
       cwd: getProjectRoot()?.fsPath,
@@ -305,21 +357,7 @@ async function decompFiles(
 }
 
 async function getValidObjectNames(gameName: string) {
-  // Look for the `all_objs.json` file
-  const objsPath = path.join(
-    getProjectRoot().fsPath,
-    "goal_src",
-    gameName,
-    "build",
-    "all_objs.json",
-  );
-  if (!existsSync(objsPath)) {
-    return undefined;
-  }
-  const objsData = await fs.readFile(objsPath, {
-    encoding: "utf-8",
-  });
-  const objs = JSON.parse(objsData);
+  const objs = await parseAllObjs(gameName.toString());
   const names = [];
   for (const obj of objs) {
     const is_tpage = obj[0].includes("tpage");
@@ -500,6 +538,11 @@ async function toggleAutoDecompilation() {
     setupAutoDecompilation();
   }
   updateStatusBar(false, false);
+}
+
+async function toggleAutoDecompDGO() {
+  const isEnabled = getConfig().autoDecompDGO;
+  await updateAutoDecompDGO(!isEnabled);
 }
 
 async function updateSourceFile() {
@@ -749,6 +792,12 @@ export async function activateDecompTools() {
     vscode.commands.registerCommand(
       "opengoal.decomp.toggleAutoDecompilation",
       toggleAutoDecompilation,
+    ),
+  );
+  getExtensionContext().subscriptions.push(
+    vscode.commands.registerCommand(
+      "opengoal.decomp.toggleAutoDecompDGO",
+      toggleAutoDecompDGO,
     ),
   );
   getExtensionContext().subscriptions.push(
