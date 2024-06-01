@@ -4,6 +4,7 @@ import PromiseSocket from "promise-socket";
 import * as vscode from "vscode";
 import { getConfig } from "../../../config/config";
 import { updateStatusBar } from "../../../context";
+import Parser from "web-tree-sitter";
 
 let jackedIn = false;
 let socket: PromiseSocket<Socket> | undefined = undefined;
@@ -82,10 +83,68 @@ export async function reloadFile(fileName: string) {
   }
 }
 
+export async function evalCurrentForm() {
+  if (getConfig().autoReplJackIn && socket === undefined) {
+    await jackIn();
+  }
+  if (!jackedIn || socket === undefined) {
+    return;
+  }
+  try {
+    // Find the current form
+    const currDocument = vscode.window.activeTextEditor?.document;
+    const currPosition = vscode.window.activeTextEditor?.selection.start;
+    const documentText = currDocument?.getText();
+    if (documentText === undefined || currPosition === undefined) {
+      return;
+    }
+
+    // Parse the document
+    await Parser.init();
+    const opengoalParser = new Parser();
+    const opengoalLang = await Parser.Language.load(
+      path.join(__dirname, "tree-sitter-opengoal.wasm"),
+    );
+    opengoalParser.setLanguage(opengoalLang);
+    const tree = opengoalParser.parse(documentText);
+    let foundNode = tree.rootNode.descendantForPosition({
+      row: currPosition.line,
+      column: currPosition.character,
+    });
+
+    // Walk back up the tree until we find a `list_lit` node, this is a bit limiting in some ways but is good enough for now
+    // this prevents you from sending symbol names to the repl
+    while (foundNode.type !== "list_lit" && foundNode.parent) {
+      foundNode = foundNode.parent;
+    }
+
+    const form = foundNode.text;
+    // Define your data
+    const headerLength = 8;
+
+    // Create a buffer
+    const headerBuffer = Buffer.alloc(headerLength);
+
+    // Pack the data into the buffer
+    headerBuffer.writeUInt32LE(Buffer.byteLength(form), 0);
+    headerBuffer.writeUInt32LE(10, 4);
+
+    const formBuffer = Buffer.from(form, "utf8");
+
+    await socket.writeAll(Buffer.concat([headerBuffer, formBuffer]));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 export function registerNReplCommands(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand("opengoal.nrepl.jackin", jackIn),
     vscode.commands.registerCommand("opengoal.nrepl.unjack", unJack),
+    vscode.commands.registerCommand(
+      "opengoal.nrepl.evalCurrentForm",
+      evalCurrentForm,
+    ),
   );
 }
 

@@ -21,11 +21,13 @@
     "format": "npx prettier --write .",
     "format:check": "npx prettier --check .",
     "postinstall": "patch-package",
-    "vscode:prepublish": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --minify",
-    "esbuild": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --sourcemap",
-    "dev": "esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --sourcemap --watch"
+    "wasm-update": "node ./copy-static-assets.js",
+    "vscode:prepublish": "npm run wasm-update && esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --minify",
+    "esbuild": "npm run wasm-update && esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "dev": "npm run wasm-update && esbuild ./src/extension.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --sourcemap --watch"
   },
   "devDependencies": {
+    "@electron/rebuild": "^3.6.0",
     "@types/follow-redirects": "^1.14.4",
     "@types/glob": "^8.1.0",
     "@types/node": "^20.12.12",
@@ -36,6 +38,7 @@
     "esbuild": "^0.21.4",
     "patch-package": "^8.0.0",
     "prettier": "3.2.5",
+    "tree-sitter-cli": "^0.22.6",
     "typescript": "^5.4.5"
   },
   "dependencies": {
@@ -44,7 +47,9 @@
     "follow-redirects": "^1.15.6",
     "parinfer": "^3.13.1",
     "promise-socket": "^7.0.0",
-    "vscode-languageclient": "^9.0.1"
+    "tree-sitter-opengoal": "^1.0.1",
+    "vscode-languageclient": "^9.0.1",
+    "web-tree-sitter": "^0.22.6"
   },
   "activationEvents": [],
   "contributes": {
@@ -180,6 +185,10 @@
       {
         "command": "opengoal.nrepl.unjack",
         "title": "OpenGOAL - nREPL - Un-jack"
+      },
+      {
+        "command": "opengoal.nrepl.evalCurrentForm",
+        "title": "OpenGOAL - nREPL - Eval Current Form"
       }
     ],
     "configuration": [
