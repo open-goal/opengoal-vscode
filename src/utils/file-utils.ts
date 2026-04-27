@@ -7,6 +7,7 @@ export enum GameName {
   Jak1 = "jak1",
   Jak2 = "jak2",
   Jak3 = "jak3",
+  JakX = "jakx",
 }
 
 const fileSwitchingAssoc = {
@@ -54,6 +55,8 @@ export function determineGameFromPath(path: vscode.Uri): GameName | undefined {
     return GameName.Jak2;
   } else if (path.fsPath.includes("jak3")) {
     return GameName.Jak3;
+  } else if (path.fsPath.includes("jakx")) {
+    return GameName.JakX;
   }
   return undefined;
 }
@@ -67,6 +70,8 @@ export function determineGameFromAllTypes(
     return GameName.Jak2;
   } else if (path.fsPath.includes("jak3")) {
     return GameName.Jak3;
+  } else if (path.fsPath.includes("jakx")) {
+    return GameName.JakX;
   }
 }
 

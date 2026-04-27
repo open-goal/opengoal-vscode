@@ -23,10 +23,15 @@ export function getCastFilePathForGame(
       projectRoot,
       `decompiler/config/jak2/${config.jak2DecompConfigVersion}/${fileName}`,
     ).fsPath;
-  } else {
+  } else if (gameName == GameName.Jak3) {
     return vscode.Uri.joinPath(
       projectRoot,
       `decompiler/config/jak3/${config.jak3DecompConfigVersion}/${fileName}`,
+    ).fsPath;
+  } else {
+    return vscode.Uri.joinPath(
+      projectRoot,
+      `decompiler/config/jakx/${config.jak3DecompConfigVersion}/${fileName}`,
     ).fsPath;
   }
 }
@@ -91,6 +96,12 @@ export function getDecompilerConfigDirectory(
       projectRoot,
       `decompiler/config/jak3/`,
       getConfig().jak3DecompConfigVersion,
+    ).fsPath;
+  } else if (gameName == GameName.JakX) {
+    decompConfigPath = vscode.Uri.joinPath(
+      projectRoot,
+      `decompiler/config/jakx/`,
+      getConfig().jakXDecompConfigVersion,
     ).fsPath;
   }
   if (decompConfigPath === undefined || !existsSync(decompConfigPath)) {
