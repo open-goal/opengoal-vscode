@@ -304,6 +304,11 @@
             "default": "ntsc_v1",
             "description": "Config version to use for decompiling Jak 3 related files"
           },
+          "opengoal.decompilerJakXConfigVersion": {
+            "type": "string",
+            "default": "ntsc_v1",
+            "description": "Config version to use for decompiling Jak X related files"
+          },
           "opengoal.formatDecompilationOutput": {
             "type": "boolean",
             "default": false,

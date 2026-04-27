@@ -33,6 +33,10 @@ export function getConfig() {
       "decompilerJak3ConfigVersion",
       "ntsc_v1",
     ),
+    jakXDecompConfigVersion: configOptions.get<string>(
+      "decompilerJakXConfigVersion",
+      "ntsc_v1",
+    ),
     autoDecompilation: configOptions.get<boolean>("autoDecompilation"),
     autoDecompDGO: configOptions.get<boolean>("autoDecompDGO"),
     colorsGoalGlobals: configOptions.get<string>("colors.goal.entity.global"),

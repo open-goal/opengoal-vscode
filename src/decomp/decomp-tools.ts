@@ -112,6 +112,11 @@ function getDecompilerConfig(gameName: GameName): string | undefined {
       getProjectRoot(),
       `decompiler/config/jak3/jak3_config.jsonc`,
     ).fsPath;
+  } else if (gameName == GameName.JakX) {
+    decompConfigPath = vscode.Uri.joinPath(
+      getProjectRoot(),
+      `decompiler/config/jakx/jakx_config.jsonc`,
+    ).fsPath;
   }
   if (decompConfigPath === undefined || !existsSync(decompConfigPath)) {
     return undefined;
@@ -128,6 +133,8 @@ function getDecompilerConfigVersion(gameName: GameName): string {
     version = getConfig().jak2DecompConfigVersion;
   } else if (gameName == GameName.Jak3) {
     version = getConfig().jak3DecompConfigVersion;
+  } else if (gameName == GameName.JakX) {
+    version = getConfig().jakXDecompConfigVersion;
   }
   if (version === undefined) {
     return "ntsc_v1";
@@ -373,7 +380,7 @@ async function decompSpecificFile() {
   // Prompt the user for the game name
   let gameName;
   const gameNameSelection = await vscode.window.showQuickPick(
-    ["jak1", "jak2", "jak3"],
+    ["jak1", "jak2", "jak3", "jakx"],
     {
       title: "Game?",
     },
@@ -388,8 +395,10 @@ async function decompSpecificFile() {
       gameName = GameName.Jak1;
     } else if (gameNameSelection == "jak2") {
       gameName = GameName.Jak2;
-    } else {
+    } else if (gameNameSelection == "jakx") {
       gameName = GameName.Jak3;
+    } else {
+      gameName = GameName.JakX;
     }
   }
   const validNames = await getValidObjectNames(gameNameSelection);
@@ -481,6 +490,18 @@ async function decompAllActiveFiles() {
   );
   jak3ObjectNames = [...new Set(jak3ObjectNames)];
 
+  let jakXObjectNames = truncateFileNameEndings(
+    getFileNamesFromUris(getUrisFromTabs(/.*jakx\/.*_ir2\.asm/)),
+    "_ir2.asm",
+  );
+  jakXObjectNames = jakXObjectNames.concat(
+    truncateFileNameEndings(
+      getFileNamesFromUris(getUrisFromTabs(/.*jakx\/.*_disasm\.gc/)),
+      "_disasm.gc",
+    ),
+  );
+  jakXObjectNames = [...new Set(jakXObjectNames)];
+
   if (jak1ObjectNames.length > 0) {
     await decompFiles(GameName.Jak1, jak1ObjectNames);
   }
@@ -489,6 +510,9 @@ async function decompAllActiveFiles() {
   }
   if (jak3ObjectNames.length > 0) {
     await decompFiles(GameName.Jak3, jak3ObjectNames);
+  }
+  if (jakXObjectNames.length > 0) {
+    await decompFiles(GameName.JakX, jakXObjectNames);
   }
 }
 
@@ -574,6 +598,8 @@ async function updateSourceFile() {
     gameName = "jak2";
   } else if (editor.document.uri.fsPath.includes("jak3")) {
     gameName = "jak3";
+  } else if (editor.document.uri.fsPath.includes("jakx")) {
+    gameName = "jakx";
   }
 
   const { stdout, stderr } = await execAsync(
@@ -620,6 +646,8 @@ async function updateReferenceTest() {
     gameName = "jak2";
   } else if (editor.document.uri.fsPath.includes("jak3")) {
     gameName = "jak3";
+  } else if (editor.document.uri.fsPath.includes("jakx")) {
+    gameName = "jakx";
   }
   const folderToSearch = vscode.Uri.joinPath(
     getProjectRoot(),
