@@ -395,7 +395,7 @@ async function decompSpecificFile() {
       gameName = GameName.Jak1;
     } else if (gameNameSelection == "jak2") {
       gameName = GameName.Jak2;
-    } else if (gameNameSelection == "jakx") {
+    } else if (gameNameSelection == "jak3") {
       gameName = GameName.Jak3;
     } else {
       gameName = GameName.JakX;
