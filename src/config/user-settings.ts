@@ -266,9 +266,8 @@ export async function setTextmateColors() {
   // https://github.com/microsoft/vscode/issues/66729
   const userConfig = vscode.workspace.getConfiguration();
 
-  const currentTokenColorCustomizations: any = userConfig.get(
-    "editor.tokenColorCustomizations",
-  );
+  const currentTokenColorCustomizations: any =
+    userConfig.get("editor.tokenColorCustomizations") ?? {};
 
   const opengoalTextMateRules = getTextMateRules();
 
