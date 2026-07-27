@@ -24,9 +24,12 @@ import {
   nreplOnFileSaveHandler,
   registerNReplCommands,
 } from "./tools/opengoal/nrepl/opengoal-nrepl";
+import { activateDebugger } from "./debugger/main";
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
+    activateDebugger(context);
+
     // Init Context
     initContext(context);
 

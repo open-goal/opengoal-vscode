@@ -8,6 +8,7 @@ export function getConfig() {
     replPort: configOptions.get<number>("replPort"),
     autoReplJackIn: configOptions.get<boolean>("replAutoJackIn"),
     reloadFileOnSave: configOptions.get<boolean>("reloadFileOnSave"),
+    debugPort: configOptions.get<number>("debugPort"),
     launchLspOnStartup: configOptions.get<boolean>("launchLspOnStartup"),
     opengoalLspVersion: configOptions.get<string>("opengoalLspVersion"),
     opengoalLspPath: configOptions.get<string>("opengoalLspPath"),

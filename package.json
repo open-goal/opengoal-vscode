@@ -42,6 +42,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@vscode/debugadapter": "^1.68.0",
+    "@vscode/debugprotocol": "^1.68.0",
     "comment-json": "^4.2.3",
     "fast-glob": "^3.3.2",
     "follow-redirects": "^1.15.6",
@@ -51,7 +53,9 @@
     "vscode-languageclient": "^9.0.1",
     "web-tree-sitter": "^0.22.6"
   },
-  "activationEvents": [],
+  "activationEvents": [
+    "onDebugResolve:opengoal"
+  ],
   "contributes": {
     "commands": [
       {
@@ -232,6 +236,14 @@
             "type": "boolean",
             "default": false,
             "description": "Whether to automatically (ml \"file-name\") when saving a `.gc` file"
+          },
+          "opengoal.debugPort": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "default": null,
+            "description": "Port for the REPL's debug server. Default 8128 for Jak 1, 8129 for Jak 2, 8130 for Jak 3"
           }
         }
       },
@@ -460,6 +472,65 @@
         "editor.inlayHints.enabled": "offUnlessPressed"
       }
     },
+    "breakpoints": [
+      {
+        "language": "opengoal"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "opengoal",
+        "label": "OpenGOAL",
+        "languages": [
+          "opengoal"
+        ],
+        "configurationAttributes": {
+          "attach": {
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "Host running goalc",
+                "default": "127.0.0.1"
+              },
+              "port": {
+                "type": "number",
+                "description": "The REPL debug server port. Defaults to the port for the game the active file belongs to (8128 Jak 1 / 8129 Jak 2 / 8130 Jak 3)"
+              },
+              "projectRoot": {
+                "type": "string",
+                "description": "Absolute path to jak-project, used to resolve the source paths goalc reports. Defaults to the workspace folder",
+                "default": "${workspaceFolder}"
+              },
+              "stopOnEntry": {
+                "type": "boolean",
+                "description": "Break as soon as the debugger attaches",
+                "default": true
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "type": "opengoal",
+            "request": "attach",
+            "name": "OpenGOAL: Attach to running game",
+            "projectRoot": "${workspaceFolder}"
+          }
+        ],
+        "configurationSnippets": [
+          {
+            "label": "OpenGOAL: Attach to running game",
+            "description": "Attach to a game already running with the REPL connected",
+            "body": {
+              "type": "opengoal",
+              "request": "attach",
+              "name": "OpenGOAL: Attach to running game",
+              "projectRoot": "^\"\\${workspaceFolder}\""
+            }
+          }
+        ]
+      }
+    ],
     "customEditors": [
       {
         "viewType": "pdf.opengoal.manpage",
