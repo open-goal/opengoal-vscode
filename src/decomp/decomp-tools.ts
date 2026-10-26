@@ -255,7 +255,7 @@ async function decompFiles(
       getDecompilerConfigVersion(gameName),
       "--config-override",
     ];
-    let override = `{"decompile_code": true, "print_cfgs": true, "levels_extract": false, `;
+    let override = `{"decompile_code": true, "levels_extract": false, `;
     if (omitVariableCasts) {
       override += `"ignore_var_name_casts": true, `;
     }
