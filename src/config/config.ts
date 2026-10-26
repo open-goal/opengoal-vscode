@@ -22,6 +22,11 @@ export function getConfig() {
     decompilerPath: configOptions.get<string>("decompilerPath"),
     formatterPath: configOptions.get<string>("formatterPath"),
     typeSearcherPath: configOptions.get<string>("typeSearcherPath"),
+    asmBranchPermuterPath: configOptions.get<string>("asmBranchPermuterPath"),
+    methodCallSearcherPath: configOptions.get<string>("methodCallSearcherPath"),
+    fieldAccessSearcherPath: configOptions.get<string>(
+      "fieldAccessSearcherPath",
+    ),
     jak1DecompConfigVersion: configOptions.get<string>(
       "decompilerJak1ConfigVersion",
       "ntsc_v1",
@@ -124,6 +129,33 @@ export async function updateTypeSearcherPath(path: string) {
   const userConfig = vscode.workspace.getConfiguration();
   await userConfig.update(
     "opengoal.typeSearcherPath",
+    path,
+    vscode.ConfigurationTarget.Global,
+  );
+}
+
+export async function updateAsmBranchPermuterPath(path: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.asmBranchPermuterPath",
+    path,
+    vscode.ConfigurationTarget.Global,
+  );
+}
+
+export async function updateMethodCallSearcherPath(path: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.methodCallSearcherPath",
+    path,
+    vscode.ConfigurationTarget.Global,
+  );
+}
+
+export async function updateFieldAccessSearcherPath(path: string) {
+  const userConfig = vscode.workspace.getConfiguration();
+  await userConfig.update(
+    "opengoal.fieldAccessSearcherPath",
     path,
     vscode.ConfigurationTarget.Global,
   );

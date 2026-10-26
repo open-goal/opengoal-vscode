@@ -23,13 +23,21 @@ import {
   truncateFileNameEndings,
 } from "../utils/workspace";
 import { activateDecompTypeSearcher } from "./type-searcher/type-searcher";
+import { activateAsmBranchPermuter } from "./asm-branch-permuter/asm-branch-permuter";
+import { activateMethodCallSearcher } from "./method-call-searcher/method-call-searcher";
+import { activateFieldAccessSearcher } from "./field-access-searcher/field-access-searcher";
+import { activateAllTypesSymbols } from "./all-types-symbols";
 import { updateTypeCastSuggestions } from "./type-caster";
 import { glob } from "fast-glob";
 import {
   getFuncBodyFromPosition,
   getFuncNameFromPosition,
 } from "../languages/ir2/ir2-utils";
-import { copyVarCastsFromOneGameToAnother } from "./utils";
+import {
+  copyVarCastsFromOneGameToAnother,
+  getDecompilerConfig,
+  getDecompilerConfigVersion,
+} from "./utils";
 
 const execFileAsync = util.promisify(execFile);
 const execAsync = util.promisify(exec);
@@ -92,54 +100,6 @@ function defaultFormatterPath() {
     return "out/build/Release/bin/formatter.exe";
   } else {
     return "build/tools/formatter";
-  }
-}
-
-function getDecompilerConfig(gameName: GameName): string | undefined {
-  let decompConfigPath = undefined;
-  if (gameName == GameName.Jak1) {
-    decompConfigPath = vscode.Uri.joinPath(
-      getProjectRoot(),
-      `decompiler/config/jak1/jak1_config.jsonc`,
-    ).fsPath;
-  } else if (gameName == GameName.Jak2) {
-    decompConfigPath = vscode.Uri.joinPath(
-      getProjectRoot(),
-      `decompiler/config/jak2/jak2_config.jsonc`,
-    ).fsPath;
-  } else if (gameName == GameName.Jak3) {
-    decompConfigPath = vscode.Uri.joinPath(
-      getProjectRoot(),
-      `decompiler/config/jak3/jak3_config.jsonc`,
-    ).fsPath;
-  } else if (gameName == GameName.JakX) {
-    decompConfigPath = vscode.Uri.joinPath(
-      getProjectRoot(),
-      `decompiler/config/jakx/jakx_config.jsonc`,
-    ).fsPath;
-  }
-  if (decompConfigPath === undefined || !existsSync(decompConfigPath)) {
-    return undefined;
-  } else {
-    return decompConfigPath;
-  }
-}
-
-function getDecompilerConfigVersion(gameName: GameName): string {
-  let version = undefined;
-  if (gameName == GameName.Jak1) {
-    version = getConfig().jak1DecompConfigVersion;
-  } else if (gameName == GameName.Jak2) {
-    version = getConfig().jak2DecompConfigVersion;
-  } else if (gameName == GameName.Jak3) {
-    version = getConfig().jak3DecompConfigVersion;
-  } else if (gameName == GameName.JakX) {
-    version = getConfig().jakXDecompConfigVersion;
-  }
-  if (version === undefined) {
-    return "ntsc_v1";
-  } else {
-    return version;
   }
 }
 
@@ -848,4 +808,8 @@ export async function activateDecompTools() {
   );
 
   activateDecompTypeSearcher();
+  activateAsmBranchPermuter();
+  activateMethodCallSearcher();
+  activateFieldAccessSearcher();
+  activateAllTypesSymbols();
 }

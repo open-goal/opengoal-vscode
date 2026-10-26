@@ -167,6 +167,22 @@
         "title": "OpenGOAL - Misc - Type Searcher"
       },
       {
+        "command": "opengoal.decomp.asmBranchPermuter.open",
+        "title": "OpenGOAL - Misc - ASM Branch Permuter"
+      },
+      {
+        "command": "opengoal.decomp.methodCallSearcher.open",
+        "title": "OpenGOAL - Misc - Method Call Searcher"
+      },
+      {
+        "command": "opengoal.decomp.fieldAccessSearcher.open",
+        "title": "OpenGOAL - Misc - Field Access Searcher"
+      },
+      {
+        "command": "opengoal.decomp.allTypes.goToIR2Symbol",
+        "title": "OpenGOAL - Misc - Go to IR2 Symbol"
+      },
+      {
         "command": "opengoal.lsp.start",
         "title": "OpenGOAL - LSP - Start"
       },
@@ -300,6 +316,30 @@
             ],
             "default": null,
             "description": "File path to the type searcher executable"
+          },
+          "opengoal.asmBranchPermuterPath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "File path to the asm branch permuter executable"
+          },
+          "opengoal.methodCallSearcherPath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "File path to the method call searcher executable"
+          },
+          "opengoal.fieldAccessSearcherPath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "File path to the field access searcher executable"
           },
           "opengoal.decompilerJak1ConfigVersion": {
             "type": "string",
@@ -542,11 +582,34 @@
         ]
       }
     ],
+    "keybindings": [
+      {
+        "command": "opengoal.decomp.allTypes.goToIR2Symbol",
+        "key": "ctrl+shift+o",
+        "mac": "cmd+shift+o",
+        "when": "editorTextFocus && resourceFilename == all-types.gc"
+      }
+    ],
     "menus": {
       "editor/context": [
         {
           "when": "resourceLangId == opengoal-ir",
           "command": "opengoal.decomp.openManPage",
+          "group": "z_commands"
+        },
+        {
+          "when": "resourceLangId == opengoal-ir",
+          "command": "opengoal.decomp.asmBranchPermuter.open",
+          "group": "z_commands"
+        },
+        {
+          "when": "resourceLangId == opengoal-ir",
+          "command": "opengoal.decomp.methodCallSearcher.open",
+          "group": "z_commands"
+        },
+        {
+          "when": "resourceLangId == opengoal-ir",
+          "command": "opengoal.decomp.fieldAccessSearcher.open",
           "group": "z_commands"
         }
       ]
