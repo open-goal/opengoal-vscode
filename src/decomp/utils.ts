@@ -6,6 +6,55 @@ import { getConfig } from "../config/config";
 import { ArgumentMeta } from "../languages/opengoal/opengoal-tools";
 import { determineGameFromPath, GameName } from "../utils/file-utils";
 import { getWorkspaceFolderByName } from "../utils/workspace";
+import { getProjectRoot } from "../context";
+
+export function getDecompilerConfig(gameName: GameName): string | undefined {
+  let decompConfigPath = undefined;
+  if (gameName == GameName.Jak1) {
+    decompConfigPath = vscode.Uri.joinPath(
+      getProjectRoot(),
+      `decompiler/config/jak1/jak1_config.jsonc`,
+    ).fsPath;
+  } else if (gameName == GameName.Jak2) {
+    decompConfigPath = vscode.Uri.joinPath(
+      getProjectRoot(),
+      `decompiler/config/jak2/jak2_config.jsonc`,
+    ).fsPath;
+  } else if (gameName == GameName.Jak3) {
+    decompConfigPath = vscode.Uri.joinPath(
+      getProjectRoot(),
+      `decompiler/config/jak3/jak3_config.jsonc`,
+    ).fsPath;
+  } else if (gameName == GameName.JakX) {
+    decompConfigPath = vscode.Uri.joinPath(
+      getProjectRoot(),
+      `decompiler/config/jakx/jakx_config.jsonc`,
+    ).fsPath;
+  }
+  if (decompConfigPath === undefined || !existsSync(decompConfigPath)) {
+    return undefined;
+  } else {
+    return decompConfigPath;
+  }
+}
+
+export function getDecompilerConfigVersion(gameName: GameName): string {
+  let version = undefined;
+  if (gameName == GameName.Jak1) {
+    version = getConfig().jak1DecompConfigVersion;
+  } else if (gameName == GameName.Jak2) {
+    version = getConfig().jak2DecompConfigVersion;
+  } else if (gameName == GameName.Jak3) {
+    version = getConfig().jak3DecompConfigVersion;
+  } else if (gameName == GameName.JakX) {
+    version = getConfig().jakXDecompConfigVersion;
+  }
+  if (version === undefined) {
+    return "ntsc_v1";
+  } else {
+    return version;
+  }
+}
 
 export function getCastFilePathForGame(
   projectRoot: vscode.Uri,
@@ -31,7 +80,7 @@ export function getCastFilePathForGame(
   } else {
     return vscode.Uri.joinPath(
       projectRoot,
-      `decompiler/config/jakx/${config.jak3DecompConfigVersion}/${fileName}`,
+      `decompiler/config/jakx/${config.jakXDecompConfigVersion}/${fileName}`,
     ).fsPath;
   }
 }
