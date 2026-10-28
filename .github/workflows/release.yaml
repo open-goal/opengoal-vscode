@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   cut-release:
@@ -40,12 +41,20 @@ jobs:
           git config --global user.email "OpenGOALBot@users.noreply.github.com"
           yarn vsce package
           yarn vsce publish ${{ github.event.inputs.bump }}
-          git push
-          git push origin $(git tag --points-at HEAD)
+
+      - name: Create Version Bump PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release/version-bump
+          commit-message: "Bump extension version"
+          title: "Bump extension version"
+          body: "Updates package.json to the newly published extension version."
+          add-paths: package.json
 
       - name: Create Release
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mv ./*.vsix ./opengoal-vscode-$(git tag --points-at HEAD).vsix
           gh release create $(git tag --points-at HEAD) --generate-notes --repo open-goal/opengoal-vscode ./*.vsix
