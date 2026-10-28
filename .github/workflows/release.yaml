@@ -42,16 +42,6 @@ jobs:
           yarn vsce package
           yarn vsce publish ${{ github.event.inputs.bump }}
 
-      - name: Create Version Bump PR
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: release/version-bump
-          commit-message: "Bump extension version"
-          title: "Bump extension version"
-          body: "Updates package.json to the newly published extension version."
-          add-paths: package.json
-
       - name: Create Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
